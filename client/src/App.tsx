@@ -1,7 +1,7 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import {socket, socketContext} from './context/socket';
+import Game from './screen/Game/Game';
 import Home from './screen/Home/Home';
-
 
 function App() {
   return (
@@ -10,6 +10,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home/>} />
+            <Route path=":id" element={<Game/>} />
           </Routes>
         </BrowserRouter>
       </socketContext.Provider>

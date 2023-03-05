@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { socketContext, ExtendedSocket } from '../../context/socket';
 import Navbar from "../../component/Navbar";
 
-
 function Home() {
     const socket = useContext<ExtendedSocket>(socketContext);
     const navigate = useNavigate();
@@ -13,8 +12,8 @@ function Home() {
     const [alert, setAlert] = useState<string>('');
     const [card, setCard] = useState<string>('create');
 
-    socket.on('redirectToSettings', (id: string) => {
-        navigate(id)
+    socket.on('navigate', (id: string) => {
+        navigate(id);
     })
 
     socket.on('alert', (msg: string) => {
@@ -24,7 +23,6 @@ function Home() {
     const handleSubmit = () => {
         let id: string = Date.now().toString();
         socket.emit('setRoom', { id: id, players: players, pseudo: pseudo })
-        navigate(id)
     }
 
     const join = () => {
@@ -77,11 +75,11 @@ function Home() {
                                         <option value="6">6 joueurs</option>
                                     </select>
                                 </div>
-                                <div className='my-3'>
+                                <div className='my-3 d-grid'>
                                     {
                                         pseudo === ''
-                                            ? <button type="submit" disabled className='btn btn-success'>Créer</button>
-                                            : <button type="submit" onClick={handleSubmit} className='btn btn-success'>Créer</button>
+                                            ? <button type="submit" disabled className='btn btn-lg btn-success'>Créer la partie</button>
+                                            : <button type="submit" onClick={handleSubmit} className='btn btn-lg btn-success'>Créer la partie</button>
                                     }
                                 </div>
                             </div>
@@ -94,11 +92,11 @@ function Home() {
                                 <div className="form-group my-3">
                                     <input type="text" className='form-control' value={room} placeholder="ID du lobby" onChange={(e) => { setRoom(e.target.value) }} />
                                 </div>
-                                <div className='my-3'>
+                                <div className='my-3 d-grid'>
                                     {
                                         pseudo === '' || room === ''
-                                            ? <button type="submit" disabled className='btn btn-success'>Rejoindre</button>
-                                            : <button type="submit" onClick={join} className='btn btn-success'>Rejoindre</button>
+                                            ? <button type="submit" disabled className='btn btn-lg btn-success'>Rejoindre la partie</button>
+                                            : <button type="submit" onClick={join} className='btn btn-lg btn-success'>Rejoindre la partie</button>
                                     }
                                 </div>
                             </div>
