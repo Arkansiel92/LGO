@@ -7,7 +7,6 @@ function Home() {
     const socket = useContext<ExtendedSocket>(socketContext);
     const navigate = useNavigate();
     const [pseudo, setPseudo] = useState<string>('');
-    const [players, setPlayers] = useState<number>(2);
     const [room, setRoom] = useState<string>('');
     const [alert, setAlert] = useState<string>('');
     const [card, setCard] = useState<string>('create');
@@ -22,7 +21,7 @@ function Home() {
 
     const handleSubmit = () => {
         let id: string = Date.now().toString();
-        socket.emit('setRoom', { id: id, players: players, pseudo: pseudo })
+        socket.emit('setRoom', { id: id, pseudo: pseudo })
     }
 
     const join = () => {
@@ -65,15 +64,6 @@ function Home() {
                                 <div className="form-group mt-3">
                                     <label className='form-label'>Nom du joueur</label>
                                     <input type="text" className='form-control' value={pseudo} placeholder="Entrez votre nom" onChange={(e) => { setPseudo(e.target.value) }} />
-                                </div>
-                                <div className="form-group my-3">
-                                    <select className='my-3 form-select' value={players} name="players" onChange={(e) => { setPlayers(Number(e.target.value)) }}>
-                                        <option value="2">2 joueurs</option>
-                                        <option value="3">3 joueurs</option>
-                                        <option value="4">4 joueurs</option>
-                                        <option value="5">5 joueurs</option>
-                                        <option value="6">6 joueurs</option>
-                                    </select>
                                 </div>
                                 <div className='my-3 d-grid'>
                                     {

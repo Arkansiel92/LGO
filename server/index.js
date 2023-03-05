@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('setRoom', ({ id, players, pseudo }) => {
+    socket.on('setRoom', ({ id, pseudo }) => {
         socket.room = id;
         socket.name = pseudo
         socket.join(id);
@@ -56,7 +56,6 @@ io.on('connection', (socket) => {
 
         hub.status = 'private';
         hub.author = socket.id;
-        hub.nbPlayers = players;
         hub.players = [socket.name];
         hub.votes = [''];
 
