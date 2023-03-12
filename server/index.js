@@ -130,13 +130,13 @@ const roles = [
         name: "Deux soeurs",
         description: "Leur objectif est d'éliminer tous les autres joueurs. Au début de la partie elles connaissent donc leur identité, et peuvent donc avoir confiance en elles. Elles peuvent se concerter en silence. Si l'une d'elle meurt, l'autre ne meurt pas forcément.",
         side: "seul",
-        max: 3
+        max: 2
     },
     {
         name: "Grand méchant loup",
         description: "Son objectif est d'éliminer tout le village. Chaque nuit, il se réunit avec ses compères Loups pour décider d'une victime à éliminer... Tant qu'aucun autre loup n'est mort, il peut, chaque nuit, dévorer une victime supplémentaire.",
         side: "méchant",
-        max: 2
+        max: 1
     },
     {
         name: "Gitane",
@@ -215,7 +215,37 @@ io.on('connection', (socket) => {
         return io.to(socket.id).emit('navigate', id);
     }
 
+    function room() {
+        return io.to(socket.room).emit('getRoom', hub);
+    }
+
+    socket.on('addRole', role => {
+        const roleObject = roles.find((roleObject) => {
+            return roleObject.name === role;
+        })
+
+        const nbrRole = hub.roles.filter((roleObject) => {
+            return roleObject === role;
+        }).length
+
+        if (nbrRole < roleObject.max) {
+            hub.roles.push(role);
+            room()
+        }
+    });
+
+    socket.on('deleteRole', role => {
+        const index = hub.roles.indexOf(role);
+
+        if (index > -1) {
+            hub.roles.splice(index, 1);
+            room()
+        }
+    });
+
     socket.on('getRoles', () => io.to(socket.id).emit('getRoles', roles));
+
+    socket.on('getRoom', () => io.to(socket.id).emit('getRoom', hub));
 
     socket.on('join', ({ id, pseudo }) => {
         hub = io.sockets.adapter.rooms.get(id);
@@ -247,14 +277,13 @@ io.on('connection', (socket) => {
         hub.author = socket.id;
         hub.players = [socket.name];
         hub.roles = [],
-            hub.votes = [''];
+        hub.votes = [''];
 
         return navigate(id);
     })
 
     socket.on('clear', () => {
         let rooms = [...socket.rooms];
-
 
         rooms.forEach((room) => {
             if (room !== socket.id) {
