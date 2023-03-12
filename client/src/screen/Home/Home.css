@@ -1,0 +1,73 @@
+.gameScreen {
+    height: 100vh;
+}
+
+/* Définition de l'animation
+@keyframes falling {
+    0% {
+        opacity: 0;
+        top: -20%;
+        transform: translateX(20px) rotate(0deg);
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    20% {
+        transform: translateX(-20px) rotate(45deg);
+    }
+
+    40% {
+        transform: translateX(20px) rotate(60deg);
+    }
+
+    60% {
+        transform: translateX(20px) rotate(90deg);
+    }
+
+    80% {
+        transform: translateX(-20px) rotate(180deg);
+    }
+
+    100% {
+        top: 85%;
+        transform: translateX(-20px) rotate(225deg);
+        opacity: 1;
+    }
+}
+
+.card-game1 {
+    position: relative;
+    animation: falling 6s linear infinite;
+}
+
+.card-game2 {
+    position: relative;
+    left: 3%;
+    animation: falling 6s linear infinite;
+}
+
+.card-game3 {
+    position: relative;
+    left: 6%;
+    animation: falling 6s linear infinite;
+}
+
+.card-game4 {
+    position: relative;
+    left: 9%;
+    animation: falling 6s linear infinite;
+}
+
+.card-game5 {
+    position: relative;
+    left: 40%;
+    animation: falling 6s linear infinite;
+}
+
+.card-game6 {
+    position: relative;
+    left: 40%;
+    animation: falling 6s linear infinite;
+} */

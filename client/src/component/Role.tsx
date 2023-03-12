@@ -7,10 +7,14 @@ interface role {
     description: string,
     side: string,
     max: number,
-    roleArray: string[] | undefined
+    img: string,
+    roleArray: string[] | undefined,
+    author: string | undefined
 }
 
-function Role({name, description, side, max, roleArray}: role) {
+function Role({name, description, side, max, img, roleArray, author}: role) {
+
+    console.log(img);
 
     const nbRole = roleArray?.filter((role) => {
         return role === name
@@ -27,15 +31,18 @@ function Role({name, description, side, max, roleArray}: role) {
     }
     
     return (
-        <div className="col-sm-2 text-center">
-            <p data-bs-toggle="tooltip" data-bs-placement="top" title={description}>
-            {name} ({nbRole})
-            </p>
-            <div className="">
-                <button className="btn btn-danger mx-1" onClick={() => {deleteRole(name)}}>-</button>
-                <button className="btn btn-success mx-1" onClick={() => {addRole(name)}}>+</button>            
-            </div>
-        </div>
+        <div className="col-sm-2 m-5 card-game text-center" style={{backgroundImage:`url(/assets/img/card/${img})`}}>
+                <p data-bs-toggle="tooltip" data-bs-placement="top" title={description}>
+                {name} ({nbRole})
+                </p>
+                {
+                    socket.id === author &&
+                    <div className="">
+                        <button className="btn btn-danger mx-1" onClick={() => {deleteRole(name)}}>-</button>
+                        <button className="btn btn-success mx-1" onClick={() => {addRole(name)}}>+</button>            
+                    </div>
+                }
+          </div>
     )
 }
 

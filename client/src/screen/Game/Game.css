@@ -2,3 +2,9 @@
     height: 100vh;
     min-height: 100%;
 }
+
+.card-game {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}

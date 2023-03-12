@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import Chat from '../../component/Chat';
 import Role from '../../component/Role';
 import {socketContext, ExtendedSocket} from '../../context/socket';
 import './Game.css';
@@ -12,6 +13,7 @@ export interface roles {
     name: string,
     description: string,
     side: string,
+    img: string,
     max: number
 }
 
@@ -54,23 +56,30 @@ function Game() {
         <div className='container-fluid'>
             <div className="row">
                 <div className="col-md-2 d-none d-md-block bg-light sidebar">
+                    <Chat />
                 </div>
                 <div className="col">
                     <div className="card bg-light container m-auto my-5">
                         <div className="card-body text-center">
                             <div className="row my-5">
-                                <h2 className='my-3'>Choissisez les rôles</h2>
+                                <h2 className='my-3'>Choissisez les rôles ({room?.roles?.length} / {room?.players?.length})</h2>
                                 {roles?.map((role: roles, index: number) => (
                                     <Role 
                                     name={role.name} 
                                     description={role.description} 
                                     side={role.side} 
                                     max={role.max}
+                                    img={role.img}
                                     roleArray={room?.roles}
+                                    author={room?.author}
                                     key={index} />
                                 ))}
                             </div>
-                            <button className="btn btn-success btn-lg">Lancer la partie</button>
+                            {
+                                room?.players?.length === room?.roles?.length 
+                                ? <button className="btn btn-success btn-lg">Lancer la partie</button>
+                                : <button disabled className="btn btn-success btn-lg">Lancer la partie</button>
+                            }
                         </div>
                     </div>
                     <div className="card container bg-light p-3 text-center">Identifiant : {id}</div>
