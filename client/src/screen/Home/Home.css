@@ -2,7 +2,14 @@
     height: 100vh;
 }
 
-/* Définition de l'animation
+.home {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
 @keyframes falling {
     0% {
         opacity: 0;
@@ -11,11 +18,12 @@
     }
 
     10% {
-        opacity: 1;
+        
     }
 
     20% {
         transform: translateX(-20px) rotate(45deg);
+        opacity: 1;
     }
 
     40% {
@@ -31,43 +39,114 @@
     }
 
     100% {
-        top: 85%;
+        top: 110%;
         transform: translateX(-20px) rotate(225deg);
-        opacity: 1;
     }
 }
 
 .card-game1 {
-    position: relative;
+    position: fixed;
     animation: falling 6s linear infinite;
 }
 
 .card-game2 {
-    position: relative;
+    position: fixed;
     left: 3%;
     animation: falling 6s linear infinite;
+    animation-delay: 1s;
 }
 
 .card-game3 {
-    position: relative;
-    left: 6%;
+    position: fixed;
+    left: 10%;
     animation: falling 6s linear infinite;
+    animation-delay: 2s;
 }
 
 .card-game4 {
-    position: relative;
-    left: 9%;
+    position: fixed;
+    left: 30%;
     animation: falling 6s linear infinite;
+    animation-delay: 3s;
 }
 
 .card-game5 {
-    position: relative;
+    position: fixed;
     left: 40%;
     animation: falling 6s linear infinite;
+    animation-delay: 2s;
 }
 
 .card-game6 {
-    position: relative;
-    left: 40%;
+    position: fixed;
+    left: 60%;
     animation: falling 6s linear infinite;
-} */
+    animation-delay: 4s;
+}
+
+.card-game7 {
+    transform: scale(2) rotateY(180deg);
+    filter: blur(2px);
+    position: fixed;
+    left: 13%;
+    animation: falling 6s linear infinite;
+    animation-delay: 2.5s;
+}
+
+.card-game8 {
+    transform: scale(2) rotateY(180deg);
+    filter: blur(2px);
+    position: fixed;
+    left: 5%;
+    animation: falling 6s linear infinite;
+    animation-delay: 4s;
+}
+
+.btn-home {
+    background: #5E5DF0;
+    border-radius: 999px;
+    box-shadow: #5E5DF0 0 10px 20px -10px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    opacity: 1;
+    outline: 0 solid transparent;
+    padding: 8px 18px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: fit-content;
+    word-break: break-word;
+    border: 0;
+}
+
+.btn-home:hover {
+    background: #dedef3;
+    color: #5E5DF0;
+}
+
+.btn-home-active {
+    background: #dedef3;
+    border-radius: 999px;
+    box-shadow: #5E5DF0 0 10px 20px -10px;
+    box-sizing: border-box;
+    color: #5E5DF0;
+    cursor: pointer;
+    font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    opacity: 1;
+    outline: 0 solid transparent;
+    padding: 8px 18px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: fit-content;
+    word-break: break-word;
+    border: 0;
+}

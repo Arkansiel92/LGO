@@ -1,5 +1,5 @@
 
-import {socketContext, ExtendedSocket} from "../context/socket";
+import {socketContext, ExtendedSocket} from "../../context/socket";
 import { useContext } from "react";
 
 interface role {
@@ -31,7 +31,7 @@ function Role({name, description, side, max, img, roleArray, author}: role) {
     }
     
     return (
-        <div className="col-sm-2 m-5 card-game text-center" style={{backgroundImage:`url(/assets/img/card/${img})`}}>
+        <div className="card-game text-center" style={{backgroundImage:`url(/assets/img/card/${img})`}}>
                 <p data-bs-toggle="tooltip" data-bs-placement="top" title={description}>
                 {name} ({nbRole})
                 </p>

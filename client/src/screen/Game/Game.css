@@ -1,3 +1,7 @@
+.game-screen {
+    height: 100vh;
+}
+
 .sidebar {
     height: 100vh;
     min-height: 100%;
