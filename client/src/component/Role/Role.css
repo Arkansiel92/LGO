@@ -1,0 +1,23 @@
+.card-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid red;
+}
+
+.selected {
+    border: 2px solid green;
+}
+
+.btn-add {
+    border-radius: 999px;
+    background-color: aquamarine;
+}
+
+.btn-delete {
+    border-radius: 999px;
+    background-color: brown;
+}

@@ -72,7 +72,7 @@ const roles = [
         description: "Chaque nuit, elle a le pouvoir de regarder la carte d'un joueur.",
         side: "village",
         max: 1,
-        img: "card-pychic.png"
+        img: "card-psychic.png"
     },
     {
         name: "Ancien du village",
@@ -142,7 +142,7 @@ const roles = [
         description: "Avant la partie. Chaque nuit, le comédien peut désigner un des rôles qui n'ont pas été choisi et utiliser le pouvoir correspondant jusqu’à la nuit suivante. Chaque rôle ne peut être utilisé qu'une seule fois et maximum 3 fois dans la partie.",
         side: "village",
         max: 1,
-        img: ""
+        img: "card-actor.png"
     },
     {
         name: "Deux soeurs",
@@ -301,6 +301,7 @@ io.on('connection', (socket) => {
         socket.name = pseudo;
         socket.join(id);
 
+        room();
         return navigate(id);
     })
 

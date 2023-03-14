@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Chat from '../../component/Chat/Chat';
+import Player from '../../component/Player/Player';
 import Role from '../../component/Role/Role';
-import {socketContext, ExtendedSocket} from '../../context/socket';
+import { socketContext, ExtendedSocket } from '../../context/socket';
 import './Game.css';
 
 type Params = {
@@ -30,16 +31,15 @@ function Game() {
     const { id } = useParams<Params>();
     const [roles, setRoles] = useState<roles[] | null>(null);
     const [room, setRoom] = useState<room | null>(null);
+    const [roleScreen, setRoleScreen] = useState(true);
     const socket = useContext<ExtendedSocket>(socketContext);
 
     socket.on('getRoom', room => {
         setRoom(room);
-        console.log(room);
     })
-    
+
     socket.on('getRoles', (roles) => {
         setRoles(roles);
-        console.log(roles);
     })
 
     useEffect(() => {
@@ -55,32 +55,71 @@ function Game() {
     return (
         <div className='game screen container-fluid'>
             <div className="row">
-                <div className="col-md-2 d-none d-md-block bg-light sidebar">
-                    <Chat />
+                <div className="col-md-3 bg-dark sidebar">
+                    <div className="my-3 d-flex justify-content-around">
+                        <div className='user-role d-flex justify-content-around align-items-center'>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><g><circle cx="7" cy="2.5" r="2" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><path d="M10.5,8a3.5,3.5,0,0,0-7,0V9.5H5l.5,4h3l.5-4h1.5Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                            <div className='mx-2'>
+                                {room?.roles?.length} / {room?.players?.length}
+                            </div>
+                        </div>
+                        <div className="user-role">
+                            ID : {id}
+                        </div>
+                        <div>
+                            {
+                                roleScreen
+                                ? <button className='btn-home' onClick={() => (setRoleScreen(false))}>
+                                    <div className='d-flex justify-content-around align-items-center'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><g><circle cx="5" cy="2.75" r="2.25" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><path d="M3.5,12.5H.5V11A4.51,4.51,0,0,1,7,7" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></path><polygon points="13.5 8.5 8.79 13.21 6.66 13.5 6.96 11.37 11.66 6.66 13.5 8.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></polygon></g></svg>
+                                    <div className="mx-2">
+                                        Rôles
+                                    </div>
+                                    </div>
+                                </button>
+                                : <button className='btn-home' onClick={() => (setRoleScreen(true))}>
+                                    <div className='d-flex justify-content-around align-items-center'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><g><circle cx="3.5" cy="7" r="0.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><circle cx="6.75" cy="7" r="0.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><circle cx="10" cy="7" r="0.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><path d="M7,.5A6.5,6.5,0,0,0,1.59,10.6L.5,13.5l3.65-.66A6.5,6.5,0,1,0,7,.5Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                                        <div className="mx-2">
+                                            Messages
+                                        </div>
+                                    </div>
+                                </button>
+                            }
+                            
+                        </div>
+                    </div>
+                    {
+                        roleScreen
+                        ? <div className="my-5 row container">
+                            <h2 className='text-center'>Rôles</h2>
+                        {roles?.map((role: roles, index: number) => (
+                            <Role
+                                name={role.name}
+                                description={role.description}
+                                side={role.side}
+                                max={role.max}
+                                img={role.img}
+                                roleArray={room?.roles}
+                                author={room?.author}
+                                key={index} />
+                        ))}
+                    </div>
+                        : <Chat />
+                    }
+                    
                 </div>
                 <div className="col">
-                    <div className="card bg-light container m-auto my-5">
-                            <div className="">
-                                <h2 className='my-3'>Choissisez les rôles ({room?.roles?.length} / {room?.players?.length})</h2>
-                                {roles?.map((role: roles, index: number) => (
-                                    <Role 
-                                    name={role.name} 
-                                    description={role.description} 
-                                    side={role.side} 
-                                    max={role.max}
-                                    img={role.img}
-                                    roleArray={room?.roles}
-                                    author={room?.author}
-                                    key={index} />
-                                ))}
-                            </div>
-                            {
-                                room?.players?.length === room?.roles?.length 
-                                ? <button className="btn btn-success btn-lg">Lancer la partie</button>
-                                : <button disabled className="btn btn-success btn-lg">Lancer la partie</button>
-                            }
-                    </div>
-                    <div className="card container bg-light p-3 text-center">Identifiant : {id}</div>
+                    {
+                        room?.players?.length === room?.roles?.length
+                            ? <button className="btn btn-success btn-lg">Lancer la partie</button>
+                            : <button disabled className="btn btn-success btn-lg">Lancer la partie</button>
+                    }
+                    {room?.players?.map((player: string, index: number) => (
+                            <Player
+                                name={player}
+                                key={index} />
+                        ))}
                 </div>
             </div>
         </div>
