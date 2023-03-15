@@ -1,4 +1,13 @@
+@font-face {
+    font-family: 'JosefinSans-Bold';
+    src: url('./fonts/JosefinSans-Bold.ttf');
+
+    font-family: 'LEMONMILK-Regular';
+    src: url('./fonts/LEMONMILK-Regular.otf');
+}
+
 body {
     background-color: #021927;
     color: #F5F5F5;
+    font-family: 'LEMONMILK-Regular', sans-serif;
 }

@@ -1,0 +1,8 @@
+#message {
+    background-color: rgb(0, 0, 0, 0.3);
+    border-radius: 100px;
+}
+
+.otherMessage {
+    margin-left: auto;
+}

@@ -26,6 +26,13 @@ const roles = [
         img: "card-villager.png"
     },
     {
+        name: "Loup-garou",
+        description: "Le loup-garou est un être mi-homme mi-loup qui se transforme la nuit pour tuer les villageois. Il se réunit chaque nuit avec les autres loups-garous pour décider de leur victime.",
+        side: "méchant",
+        max: 100,
+        img: "card-werewolf.png"
+    },
+    {
         name: "Chasseur",
         description: "À sa mort, le chasseur élimine une personne de son choix.",
         side: "village",
@@ -38,13 +45,6 @@ const roles = [
         side: "village",
         max: 1,
         img: "card-cupidon.png"
-    },
-    {
-        name: "Loup-garou",
-        description: "Le loup-garou est un être mi-homme mi-loup qui se transforme la nuit pour tuer les villageois. Il se réunit chaque nuit avec les autres loups-garous pour décider de leur victime.",
-        side: "méchant",
-        max: 100,
-        img: "card-werewolf.png"
     },
     {
         name: "Petite fille",
@@ -250,6 +250,28 @@ io.on('connection', (socket) => {
         return io.to(socket.room).emit('getRoom', hub);
     }
 
+    socket.on('ready-play', ready => {
+        hub.ready = ready;
+
+        // copy array
+        let roleArray = [...hub.roles];
+        let playerArray = [...hub.sockets];
+
+        while (roleArray.length > 0) {
+            const randomRole = Math.floor(Math.random() * roleArray.length);
+            const randomPlayer = Math.floor(Math.random() * playerArray.length);
+
+            io.to(playerArray[randomPlayer]).emit('getRole', roleArray[randomRole]);
+
+            roleArray.splice(randomRole, 1);
+            playerArray.splice(randomPlayer, 1);
+        }
+
+        console.log(hub);
+
+        return room();
+    })
+
     socket.on('addRole', role => {
         const roleObject = roles.find((roleObject) => {
             return roleObject.name === role;
@@ -265,7 +287,7 @@ io.on('connection', (socket) => {
             } else {
                 hub.roles.push(role);
             }
-            console.log(hub.roles);
+
             return room();
         }
     });
@@ -274,15 +296,25 @@ io.on('connection', (socket) => {
         const index = hub.roles.indexOf(role);
 
         if (index > -1) {
-            if (role === "Deux soeurs") {
+            if (role === "Deux soeurs") { // les deux soeurs se jouent à deux, on supprime 2 index
                 hub.roles.splice(index, 2);
             } else {
                 hub.roles.splice(index, 1);
             }
-            console.log(hub.roles);
+
             return room();
         }
     });
+
+    socket.on("setMessage", msg => {
+        hub.messages.push({
+            socket: socket.id,
+            author : socket.name,
+            msg : msg
+        })
+
+        return room();
+    })
 
     socket.on('getRoles', () => io.to(socket.id).emit('getRoles', roles));
 
@@ -295,11 +327,22 @@ io.on('connection', (socket) => {
             return socket.emit('alert', 'Ce lobby n\'existe pas !');
         }
 
+        if (hub.ready) {
+            return socket.emit('alert', 'La partie a déjà démarré !');
+        }
+
         hub.players.push(pseudo);
+        hub.sockets.push(socket.id);
         hub.votes.push('');
         socket.room = id;
         socket.name = pseudo;
         socket.join(id);
+
+        hub.messages.push({
+            socket : null,
+            author: "MJ",
+            msg: pseudo.toLowerCase() === "xprolive" || pseudo.toLowerCase() === "prolive"  ? pseudo + " vient d'arriver dans la partie ! (il sera loup-garou à la prochaine partie)" : pseudo + " vient d'arriver dans la partie !" 
+        })
 
         room();
         return navigate(id);
@@ -315,8 +358,11 @@ io.on('connection', (socket) => {
         hub.status = 'private';
         hub.author = socket.id;
         hub.players = [socket.name];
+        hub.sockets = [socket.id];
         hub.roles = [],
-            hub.votes = [''];
+        hub.votes = [''];
+        hub.messages = [];
+        hub.ready = false;
 
         return navigate(id);
     })

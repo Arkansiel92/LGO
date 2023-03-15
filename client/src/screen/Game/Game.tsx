@@ -23,7 +23,8 @@ export interface room {
     author?: string,
     players?: string[],
     roles?: string[],
-    votes?: string[]
+    votes?: string[],
+    messages?: string[]
 }
 
 function Game() {
@@ -32,10 +33,18 @@ function Game() {
     const [roles, setRoles] = useState<roles[] | null>(null);
     const [room, setRoom] = useState<room | null>(null);
     const [roleScreen, setRoleScreen] = useState(true);
+    const [role, setRole] = useState<string>("");
+    const [ready, setReady] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
 
     socket.on('getRoom', room => {
         setRoom(room);
+    })
+
+    socket.on('getRole', role => {
+        setRole(role);
+        console.log(room);
+        
     })
 
     socket.on('getRoles', (roles) => {
@@ -72,17 +81,17 @@ function Game() {
                                 ? <button className='btn-home' onClick={() => (setRoleScreen(false))}>
                                     <div className='d-flex justify-content-around align-items-center'>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><g><circle cx="5" cy="2.75" r="2.25" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><path d="M3.5,12.5H.5V11A4.51,4.51,0,0,1,7,7" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></path><polygon points="13.5 8.5 8.79 13.21 6.66 13.5 6.96 11.37 11.66 6.66 13.5 8.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></polygon></g></svg>
-                                    <div className="mx-2">
+                                    <span className="mx-2">
                                         Rôles
-                                    </div>
+                                    </span>
                                     </div>
                                 </button>
                                 : <button className='btn-home' onClick={() => (setRoleScreen(true))}>
                                     <div className='d-flex justify-content-around align-items-center'>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><g><circle cx="3.5" cy="7" r="0.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><circle cx="6.75" cy="7" r="0.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><circle cx="10" cy="7" r="0.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><path d="M7,.5A6.5,6.5,0,0,0,1.59,10.6L.5,13.5l3.65-.66A6.5,6.5,0,1,0,7,.5Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
-                                        <div className="mx-2">
+                                        <span className="mx-2">
                                             Messages
-                                        </div>
+                                        </span>
                                     </div>
                                 </button>
                             }
@@ -102,18 +111,20 @@ function Game() {
                                 img={role.img}
                                 roleArray={room?.roles}
                                 author={room?.author}
+                                ready={ready}
                                 key={index} />
                         ))}
-                    </div>
-                        : <Chat />
+                        {
+                            room?.players?.length === room?.roles?.length && ready === false && <button className="my-5 btn btn-success btn-lg" onClick={() => {setReady(true); socket.emit('ready-play', true)}}>Lancer la partie</button>
+                        }
+                        </div>
+                        : <Chat messages={room?.messages} />
                     }
                     
                 </div>
-                <div className="col">
+                <div className="col text-center my-5">
                     {
-                        room?.players?.length === room?.roles?.length
-                            ? <button className="btn btn-success btn-lg">Lancer la partie</button>
-                            : <button disabled className="btn btn-success btn-lg">Lancer la partie</button>
+                        role && <h1 className='mb-5'>ton rôle : {role}</h1>
                     }
                     {room?.players?.map((player: string, index: number) => (
                             <Player
