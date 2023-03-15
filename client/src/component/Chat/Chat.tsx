@@ -22,7 +22,7 @@ function Chat(props: messages) {
     
     return (
         <div>
-            <div id="containerMessages" className="container d-flex align-items-start flex-column">
+            <div id="containerMessages" className="d-flex align-items-start flex-column">
                 {props.messages?.map((msg, index: number) => (
                     <Message 
                         msg={msg}

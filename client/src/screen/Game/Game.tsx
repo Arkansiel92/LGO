@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Chat from '../../component/Chat/Chat';
-import Player from '../../component/Player/Player';
+import Gameboard from '../../component/Gameboard/Gameboard';
 import Role from '../../component/Role/Role';
 import { socketContext, ExtendedSocket } from '../../context/socket';
 import './Game.css';
@@ -18,13 +18,22 @@ export interface roles {
     max: number
 }
 
+export interface player {
+    name: string,
+    socket: string,
+    role: roles | null,
+    turn: false,
+    isPower: true,
+    couple: false
+}
+
 export interface room {
-    status?: string,
-    author?: string,
-    players?: string[],
-    roles?: string[],
-    votes?: string[],
-    messages?: string[]
+    status: string,
+    author: string,
+    players: player[],
+    roles: string[],
+    votes: string[],
+    messages: string[]
 }
 
 function Game() {
@@ -32,23 +41,21 @@ function Game() {
     const { id } = useParams<Params>();
     const [roles, setRoles] = useState<roles[] | null>(null);
     const [room, setRoom] = useState<room | null>(null);
-    const [roleScreen, setRoleScreen] = useState(true);
-    const [role, setRole] = useState<string>("");
-    const [ready, setReady] = useState<boolean>(false);
+    const [roleScreen, setRoleScreen] = useState(false);
+    const [inGame, setInGame] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
 
     socket.on('getRoom', room => {
         setRoom(room);
-    })
-
-    socket.on('getRole', role => {
-        setRole(role);
-        console.log(room);
-        
+      
     })
 
     socket.on('getRoles', (roles) => {
         setRoles(roles);
+    })
+
+    socket.on('inGame', bool => {
+        setInGame(bool)
     })
 
     useEffect(() => {
@@ -111,11 +118,11 @@ function Game() {
                                 img={role.img}
                                 roleArray={room?.roles}
                                 author={room?.author}
-                                ready={ready}
+                                inGame={inGame}
                                 key={index} />
                         ))}
                         {
-                            room?.players?.length === room?.roles?.length && ready === false && <button className="my-5 btn btn-success btn-lg" onClick={() => {setReady(true); socket.emit('ready-play', true)}}>Lancer la partie</button>
+                            room?.players?.length === room?.roles?.length && inGame === false && <button className="my-5 btn btn-success btn-lg" onClick={() => {socket.emit('inGame', true)}}>Lancer la partie</button>
                         }
                         </div>
                         : <Chat messages={room?.messages} />
@@ -124,13 +131,8 @@ function Game() {
                 </div>
                 <div className="col text-center my-5">
                     {
-                        role && <h1 className='mb-5'>ton rôle : {role}</h1>
+                        inGame && <Gameboard players={room?.players} />
                     }
-                    {room?.players?.map((player: string, index: number) => (
-                            <Player
-                                name={player}
-                                key={index} />
-                        ))}
                 </div>
             </div>
         </div>

@@ -10,16 +10,14 @@ function Message(props: message) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
 
-    console.log(socket.id);
-
     return (
         <div>
             {
                 props.msg.author !== "MJ"
-                ? <div id="message" className="myMessage my-2 py-2 px-4">
-                {props.msg.author} : {props.msg.msg}
+                ? <div id="message" className="myMessage m-2 py-2 px-4">
+                    {props.msg.author} : {props.msg.msg}
                 </div>
-                : <div id="message" className="otherMessage my-2 py-2 px-4">
+                : <div id="message" className="otherMessage m-2 py-2 px-4">
                     <i>{props.msg.msg}</i>
                 </div>
             }

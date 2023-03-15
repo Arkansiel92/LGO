@@ -97,14 +97,14 @@ const roles = [
     },
     {
         name: "Joueur de flûte",
-        description: "Le joueur de flûte se réveille en dernier. Il peut alors charmer un ou deux joueurs (en fonction du nombre de joueurs) qui deviendront les charmés. Il gagne lorsque tous les joueurs en vie sont charmés.",
+        description: "Se réveille en dernier. Il peut alors charmer un ou deux joueurs (en fonction du nombre de joueurs) qui deviendront les charmés. Il gagne lorsque tous les joueurs en vie sont charmés.",
         side: "seul",
         max: 1,
         img: "card-flute.png"
     },
     {
         name: "Garde",
-        description: "Chaque nuit, le salvateur protège une personne . Cette personne sera protégée et ne pourra donc pas mourir durant la nuit. Le salvateur ne peut pas protéger la même personne deux nuits de suite.",
+        description: "Chaque nuit, le garde protège une personne . Cette personne sera protégée et ne pourra donc pas mourir durant la nuit. Le garde ne peut pas protéger la même personne deux nuits de suite.",
         side: "village",
         max: 1,
         img: "card-gard.png"
@@ -237,6 +237,8 @@ const roles = [
     },
 ]
 
+const roleOrderNight = ['Voleur', 'Cupidon', 'L\'héritier', 'Comédien', 'Servante Dévouée', 'Voyante', 'Garde', 'Dictateur', 'Corbeau', 'Renard', 'Gitane', 'Loup-garou', 'Loup noir', 'Chien-loup', 'Grand méchant loup', 'Loup blanc', 'sorcière', 'Joueur de flûte']
+
 io.on('connection', (socket) => {
     let hub = io.sockets.adapter.rooms.get(socket.room);
 
@@ -250,8 +252,10 @@ io.on('connection', (socket) => {
         return io.to(socket.room).emit('getRoom', hub);
     }
 
-    socket.on('ready-play', ready => {
-        hub.ready = ready;
+    socket.on('inGame', ready => {
+        hub.inGame = ready;
+
+        io.to(socket.room).emit('inGame', true);
 
         // copy array
         let roleArray = [...hub.roles];
@@ -261,13 +265,17 @@ io.on('connection', (socket) => {
             const randomRole = Math.floor(Math.random() * roleArray.length);
             const randomPlayer = Math.floor(Math.random() * playerArray.length);
 
+            const player = hub.players.find(player => {
+                return player.socket === playerArray[randomPlayer]
+            });
+
+            player.role = roleArray[randomRole];
+
             io.to(playerArray[randomPlayer]).emit('getRole', roleArray[randomRole]);
 
             roleArray.splice(randomRole, 1);
             playerArray.splice(randomPlayer, 1);
         }
-
-        console.log(hub);
 
         return room();
     })
@@ -282,6 +290,7 @@ io.on('connection', (socket) => {
         }).length
 
         if (nbrRole < roleObject.max) {
+            
             if (role === "Deux soeurs") {
                 hub.roles = hub.roles.concat(['Deux soeurs', 'Deux soeurs'])
             } else {
@@ -327,15 +336,17 @@ io.on('connection', (socket) => {
             return socket.emit('alert', 'Ce lobby n\'existe pas !');
         }
 
-        if (hub.ready) {
+        if (hub.inGame) {
             return socket.emit('alert', 'La partie a déjà démarré !');
         }
 
-        hub.players.push(pseudo);
+        const player = {name: pseudo, socket: socket.id, role: null, turn: false, isPower: true, couple: false}
+
+        hub.players.push(player);
         hub.sockets.push(socket.id);
         hub.votes.push('');
-        socket.room = id;
         socket.name = pseudo;
+        socket.room = id;
         socket.join(id);
 
         hub.messages.push({
@@ -349,39 +360,79 @@ io.on('connection', (socket) => {
     })
 
     socket.on('setRoom', ({ id, pseudo }) => {
-        socket.room = id;
         socket.name = pseudo
+        socket.room = id;
         socket.join(id);
 
         hub = io.sockets.adapter.rooms.get(id);
 
-        hub.status = 'private';
+        hub.private = true;
         hub.author = socket.id;
-        hub.players = [socket.name];
+        hub.players = [{
+            name: pseudo,
+            socket: socket.id,
+            role: null,
+            turn: false,
+            isPower: true,
+            couple: false
+        }];
         hub.sockets = [socket.id];
         hub.roles = [],
         hub.votes = [''];
         hub.messages = [];
-        hub.ready = false;
+        hub.inGame = false;
 
         return navigate(id);
     })
 
     socket.on('clear', () => {
-        let rooms = [...socket.rooms];
+        if (hub) {
+            const index = hub.sockets.indexOf(socket.id);
+    
+            hub.sockets.splice(index, 1);
+    
+            hub.players.forEach((player, index) => {
+                if (player.socket === socket.id) {
+                    hub.players.splice(index, 1);
+                    hub.votes.splice(index, 1);
+                    socket.leave(room);
+                    console.log(`Clear de la room : ${room} du socket : ${socket.id}`)
+                }
+            })
 
-        rooms.forEach((room) => {
-            if (room !== socket.id) {
-                socket.leave(room);
-                console.log(`Clear de la room : ${room} du socket : ${socket.id}`)
-            }
-        })
-
-        rooms.filter(room => room.length === 0);
+            hub.messages.push({
+                socket : null,
+                author: "MJ",
+                msg: socket.name + " vient de quitter la partie !" 
+            })
+    
+            return room();
+        }
     })
 
     socket.on('disconnect', () => {
-        console.log(`DISCONNECT : ${socket.id}`);
+        if (hub) {
+            const index = hub.sockets.indexOf(socket.id);
+    
+            hub.sockets.splice(index, 1);
+    
+            hub.players.forEach((player, index) => {
+                if (player.socket === socket.id) {
+                    hub.players.splice(index, 1);
+                    hub.votes.splice(index, 1);
+                    socket.leave(room);
+                    console.log(`Clear de la room : ${room} du socket : ${socket.id}`)
+                }
+            })
+
+            hub.messages.push({
+                socket : null,
+                author: "MJ",
+                msg: socket.name + " vient de quitter la partie !" 
+            })
+    
+            return room();
+        }
     })
 })
 
