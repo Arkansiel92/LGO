@@ -22,9 +22,10 @@ export interface player {
     name: string,
     socket: string,
     role: roles | null,
-    turn: false,
+    isDead: boolean,
+    isTurn: false,
     isPower: true,
-    couple: false
+    isCouple: false
 }
 
 export interface room {

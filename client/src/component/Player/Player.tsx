@@ -5,9 +5,10 @@ interface props {
     name: string,
     socket: string,
     role: roles | null,
-    turn: boolean,
+    isDead: boolean,
+    isTurn: boolean,
     isPower: boolean,
-    couple: boolean,
+    isCouple: boolean,
     night: boolean,
     key: number
 }

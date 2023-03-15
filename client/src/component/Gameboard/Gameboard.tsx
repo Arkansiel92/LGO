@@ -31,9 +31,10 @@ function Gameboard({players}: props) {
                     name={player.name}
                     socket={player.socket}
                     role={player.role}
-                    turn={player.turn}
+                    isDead={player.isDead}
+                    isTurn={player.isTurn}
                     isPower={player.isPower}
-                    couple={player.couple}
+                    isCouple={player.isCouple}
                     night={night}
                     key={index} />
             ))}

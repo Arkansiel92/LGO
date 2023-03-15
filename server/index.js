@@ -340,7 +340,7 @@ io.on('connection', (socket) => {
             return socket.emit('alert', 'La partie a déjà démarré !');
         }
 
-        const player = {name: pseudo, socket: socket.id, role: null, turn: false, isPower: true, couple: false}
+        const player = {name: pseudo, socket: socket.id, role: null, isDead: false, isTurn: false, isPower: true, isCouple: false}
 
         hub.players.push(player);
         hub.sockets.push(socket.id);
@@ -372,9 +372,10 @@ io.on('connection', (socket) => {
             name: pseudo,
             socket: socket.id,
             role: null,
-            turn: false,
+            isDead: false,
+            isTurn: false,
             isPower: true,
-            couple: false
+            isCouple: false
         }];
         hub.sockets = [socket.id];
         hub.roles = [],
