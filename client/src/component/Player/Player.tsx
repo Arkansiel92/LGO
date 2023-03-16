@@ -1,7 +1,6 @@
-import { roles } from '../../screen/Game/Game';
 import { socketContext, ExtendedSocket} from "../../context/socket";
 import './Player.css';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 
 interface props {
     name: string,
@@ -20,20 +19,12 @@ interface props {
 function Player(props: props) {
     const socket = useContext<ExtendedSocket>(socketContext);
 
-    const [lover, setLover] = useState<string[]>([]);
-
     function action(target: string) {
-        if (props.name === "Cupidon") {
-            if (!lover.includes(target)) {
-                setLover();
-            }
-        } else {
-            socket.emit('set' + props.name_function, {targetID: target, userID: socket.id});
-        }
+        socket.emit('set' + props.name_function, {targetID: target, userID: socket.id});
     }
 
     return (
-        <div className='card bg-dark m-5'>
+        <div className='card bg-dark p-5'>
             {props.name}
             {
                 props.vote && <button className='btn btn-success'>Voter pour {props.name}</button>
