@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { socketContext, ExtendedSocket} from "../../context/socket";
-import { player } from "../../screen/Game/Game";
+import { player, roles } from "../../screen/Game/Game";
 import Actor from "../Actor/Actor";
 import Card from "../Card/Card";
 import Player from "../Player/Player";
@@ -16,7 +16,7 @@ function Gameboard({players, nbTurn, player, night}: props) {
 
     const [vote, setVote] = useState<boolean>(false);
     const [action, setAction] = useState<boolean>(false);
-    const [roleForActor, setRoleForActor] = useState<string[]>();
+    const [roleForActor, setRoleForActor] = useState<roles[]>();
     const socket = useContext<ExtendedSocket>(socketContext);
 
     socket.on('setIsVote', vote => {
@@ -29,6 +29,7 @@ function Gameboard({players, nbTurn, player, night}: props) {
 
     socket.on('roleForActor', role => {
         setRoleForActor(role);
+        console.log(role);
     })
 
     return (
@@ -36,10 +37,12 @@ function Gameboard({players, nbTurn, player, night}: props) {
             {
                 player && <Card player={player} />
             }
-            <div>
-                {roleForActor && <Actor role={roleForActor} />}
+            <div className="bg-dark">
+                {roleForActor && roleForActor.map((role: roles, index: number) => (
+                    <Actor role={role} />
+                ))}
             </div>
-            {
+            { 
                 night 
                 ? <h4 className="text-start">Période : nuit</h4> 
                 : <h4 className="text-start">Période : jour</h4>

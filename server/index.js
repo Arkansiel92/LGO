@@ -316,6 +316,14 @@ io.on('connection', (socket) => {
         return player;
     }
 
+    function getPlayerByRole(role) {
+        const player = hub.players.find((player) => {
+            return player.role.name === role;
+        })
+
+        return player;
+    }
+
     function beginNight() {
         beginNightOrder.forEach((role) => {
             if (hub.roles.includes(role)) {
@@ -333,21 +341,53 @@ io.on('connection', (socket) => {
         })
 
         if (hub.roles.includes("Comédien")) {
-            const hiddenRole = [];
 
-            roles.forEach((role) => {
-                if (!hub.roles.includes(role) && !role.descriptionInGame) {
-                    hiddenRole.push(role)
+            const player = getPlayerByRole("Comédien");
+
+            if (player.isActor) {
+                player.isActor = false;
+
+                player.role = {
+                    name: "Comédien",
+                    name_function: "Actor",
+                    description: "Avant la partie. Chaque nuit, le comédien peut désigner un des rôles qui n'ont pas été choisi et utiliser le pouvoir correspondant jusqu’à la nuit suivante. Chaque rôle ne peut être utilisé qu'une seule fois et maximum 3 fois dans la partie.",
+                    side: "village",
+                    descriptionInGame: "Vous pouvez choisir un rôle",
+                    max: 1,
+                    img: "card-actor.svg",
                 }
-            })
+            }
 
-            socket.emit("roleForActor", hiddenRole);
+            if (hub.roleActor.length < 3) {
 
-            const player = hub.players.find((player) => {
-                return player.role.name === "Comédien";
-            })
+                const hiddenRole = [];
 
-            actionInGame(player.socket, true)
+                roles.forEach((role) => {
+                    if (!hub.roles.includes(role) && role.descriptionInGame && role.side === "village") {
+                        if (role.name !== "Voleur" && role.name !== "Comédien" && role.name !== "L'Héritier") {
+                            hiddenRole.push(role)
+                        }
+                    }
+                })
+
+                let choiceRole = []
+
+                for (let i = 0; i < 3; i++) {
+                    let index = Math.floor(Math.random() * hiddenRole.length);
+
+                    while (hub.roleActor.includes(hiddenRole[index]) === true) {
+                        index = Math.floor(Math.random() * hiddenRole.length);
+                    }
+
+                    choiceRole.push(hiddenRole[index]);
+
+                    hiddenRole.splice(index, 1);
+                }
+
+                socket.emit("roleForActor", choiceRole);
+            } else {
+                player.isPower = false;
+            }
         }
 
         return;
@@ -479,10 +519,28 @@ io.on('connection', (socket) => {
         return room();
     })
 
-    socket.on('setActor', () => {
+    socket.on('setActor', (role) => {
+        const player = getPlayer(socket.id);
 
+        hub.roleActor.push(role);
+
+        player.isActor = true;
+        player.role = role;
+
+        if (beginNightOrder.includes(role.name)) {
+            actionInGame(socket.id, true);
+        }
+
+        return room();
     })
 
+    socket.on('setServant', ({targetID, userID}) => {
+        const player = getPlayer(userID);
+
+        if (player.isCouple === false) {
+            console.log("Elle n'est pas en couple");
+        }
+    })
 
     socket.on('inGame', ready => {
         hub.inGame = ready;
@@ -592,7 +650,8 @@ io.on('connection', (socket) => {
             isRaven: false,
             isProtected: false,
             isInfected: false,
-            isHair: false
+            isHair: false,
+            isActor: false
         }
 
         hub.players.push(player);
@@ -633,7 +692,8 @@ io.on('connection', (socket) => {
             isRaven: false,
             isProtected: false,
             isInfected: false,
-            isHair: false
+            isHair: false,
+            isActor: false
         }];
         hub.sockets = [socket.id];
         hub.roles = [],
@@ -644,6 +704,7 @@ io.on('connection', (socket) => {
         hub.lover_two = null,
         hub.infected = null,
         hub.hair = null,
+        hub.roleActor = [],
         hub.inGame = false;
 
         return navigate(id);
