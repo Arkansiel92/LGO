@@ -1,41 +1,53 @@
 import { useState, useContext } from "react";
 import { socketContext, ExtendedSocket} from "../../context/socket";
 import { player } from "../../screen/Game/Game";
+import Card from "../Card/Card";
 import Player from "../Player/Player";
 
 interface props {
-    players?: player[]
+    players?: player[],
+    player?: player,
+    nbTurn?: number,
+    night: boolean
 }
 
+function Gameboard({players, nbTurn, player, night}: props) {
 
-function Gameboard({players}: props) {
-
-    const [role, setRole] = useState<string>("");
-    const [night, setNight] = useState<boolean>(false);
+    const [vote, setVote] = useState<boolean>(false);
+    const [action, setAction] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
 
-    socket.on('getRole', role => {
-        setRole(role);
-        console.log(role);
+    socket.on('setIsVote', vote => {
+        setVote(vote);
     })
 
-    socket.on('night', bool => {
-        setNight(bool);
+    socket.on('action', action => {
+        setAction(action);
     })
 
     return (
         <div>
-            <h1>Ton rôle : {role}</h1>
-            {players?.map((player: player, index: number) => (
+            {
+                player && <Card player={player} />
+            }
+            {
+                night 
+                ? <h4 className="text-start">Période : nuit</h4> 
+                : <h4 className="text-start">Période : jour</h4>
+            }
+            <h4 className="text-start">Tour : {nbTurn}</h4>
+            {players?.map((p: player, index: number) => (
                 <Player
-                    name={player.name}
-                    socket={player.socket}
-                    role={player.role}
-                    isDead={player.isDead}
-                    isTurn={player.isTurn}
-                    isPower={player.isPower}
-                    isCouple={player.isCouple}
+                    name_function={player?.role?.name_function}
+                    name={p.name}
+                    socket={p.socket}
+                    isDead={p.isDead}
+                    isTurn={p.isTurn}
+                    isPower={p.isPower}
+                    isCouple={p.isCouple}
                     night={night}
+                    action={action}
+                    vote={vote}
                     key={index} />
             ))}
         </div>

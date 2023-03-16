@@ -1,12 +1,37 @@
 .card-circle {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    margin: 7px;
 }
 
+.card-svg {
+  position: absolute;
+  }
+
+.village {
+  background-color: rgb(29, 68, 33);
+}
+
+.méchant {
+  background-color: rgb(107, 1, 1);
+}
+
+.seul {
+  background-color: #453164;
+}
+
+.div-btn {
+  z-index: 1;
+  position: absolute;
+  width: 10vh;
+}
 
 .btn-delete {
     display: flex;
@@ -16,8 +41,7 @@
     font-size: 16px;
     padding: 0.4em ;
     color: white;
-    background: #ad5389;
-    background: linear-gradient(0deg, rgb(167, 20, 20) 0%, rgb(247, 102, 102) 100%);
+    background: #610c19;
     border: none;
     box-shadow: 0 0.7em 1.5em -0.5em #14a73e98;
     letter-spacing: 0.05em;
@@ -44,8 +68,7 @@ box-shadow: 0 0.5em 1.5em -0.5em #a7141498;
   font-size: 16px;
   padding: 0.4em ;
   color: white;
-  background: #ad5389;
-  background: linear-gradient(0deg, rgba(20,167,62,1) 0%, rgba(102,247,113,1) 100%);
+  background: #117146;
   border: none;
   box-shadow: 0 0.7em 1.5em -0.5em #14a73e98;
   letter-spacing: 0.05em;
@@ -54,6 +77,7 @@ box-shadow: 0 0.5em 1.5em -0.5em #a7141498;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  z-index: 1;
 }
 
 .btn-add:hover {

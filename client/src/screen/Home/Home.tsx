@@ -42,7 +42,7 @@ function Home() {
             <div className="home row container-fluid">
                 <div className="card-game m-auto text-center col">
                     <h1>Loup-Garou en ligne</h1>
-                    <p className='lead'>La nouvelle version du jeu connu comme <i>Les Loups-garous de Thiercelieux</i> est arrivée !</p>
+                    <p className='lead'>La nouvelle version du jeu <i>Les Loups-garous de Thiercelieux</i> est arrivée !</p>
                     <div className="card-img">
                         <img className='card-game1 rounded' src="assets/img/card/card-villager.png" alt="" width={150} />
                         <img className='card-game2 rounded' src="assets/img/card/card-werewolf.png" alt="" width={120} />

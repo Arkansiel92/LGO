@@ -3,10 +3,17 @@ import { socketContext, ExtendedSocket} from "../../context/socket"
 import "./Message.css";
 
 interface message {
-    msg: any
+    socket: string
+    author: string,
+    recipient: string,
+    msg: string
 }
 
-function Message(props: message) {
+interface props {
+    msg: any 
+}
+
+function Message(props: props) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
 

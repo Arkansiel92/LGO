@@ -4,7 +4,8 @@ import Message from "../Message/Message";
 import "./Chat.css";
 
 interface messages {
-    messages?: string[]
+    messages?: string[],
+    night: boolean
 }
 
 function Chat(props: messages) {
@@ -29,8 +30,18 @@ function Chat(props: messages) {
                         key={index} />
                 ))}
             </div>
-            <input type="text" onChange={ (e) => setInput(e.target.value)} value={input} max={150} min={1} placeholder={"Message..."} id="inputChat" className="mt-5 form-control" />
-            <button onClick={sendMessage} className="btn btn-primary mx-1">Envoyer</button>
+            {
+                props.night === false
+                ? <div>
+                    <input type="text" onChange={ (e) => setInput(e.target.value)} value={input} max={150} min={1} placeholder={"Message..."} id="inputChat" className="mt-5 form-control" />
+                    <button onClick={sendMessage} className="btn btn-primary mx-1">Envoyer</button>
+                </div>
+                : <div>
+                <input type="text" disabled max={150} min={1} placeholder={"Impossible d'écrire pendant la nuit..."} id="inputChat" className="mt-5 form-control" />
+                <button disabled className="btn btn-primary mx-1">Envoyer</button>
+                </div>
+            }
+
         </div>
     )
 }
