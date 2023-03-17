@@ -13,6 +13,7 @@ interface props {
     night: boolean,
     action: boolean,
     vote: boolean,
+    wolf: boolean,
     key: number
 }
 
@@ -23,6 +24,10 @@ function Player(props: props) {
         socket.emit('set' + props.name_function, {targetID: target, userID: socket.id});
     }
 
+    function wolf(target: string) {
+        socket.emit('voteWolf', ({targetID: target, userID: socket.id}));
+    }
+
     return (
         <div className='card bg-dark p-5'>
             {props.name}
@@ -31,6 +36,9 @@ function Player(props: props) {
             }
             {
                 props.action && <button onClick={() => {action(props.socket)}} className='btn btn-primary'>Selectionner</button>
+            }
+            {
+                props.wolf && <button onClick={() => {wolf(props.socket)}} className='btn btn-primary'>Selectionner</button>
             }
         </div>
     )
