@@ -1,12 +1,17 @@
 import { useState, useContext } from "react"
 import { socketContext, ExtendedSocket} from "../../context/socket"
+import { message } from "../../screen/Game/Game";
 import Message from "../Message/Message";
 import "./Chat.css";
 
+
+
 interface messages {
-    messages?: string[],
-    night: boolean
+    messages?: message[],
+    night: boolean | undefined
 }
+
+
 
 function Chat(props: messages) {
 

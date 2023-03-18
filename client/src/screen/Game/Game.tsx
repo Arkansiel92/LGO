@@ -23,6 +23,7 @@ export interface player {
     name: string,
     socket: string,
     role: roles | null,
+    isPlayed: boolean,
     isDead: boolean,
     isTurn: boolean,
     isPower: boolean,
@@ -33,13 +34,21 @@ export interface player {
     isInfected: boolean
 }
 
+export interface message {
+    socket: string | null,
+    author: string | null,
+    recipient: string | null,
+    msg: string
+}
+
 export interface room {
     status: string,
     author: string,
     players: player[],
     roles: string[],
     votes: string[],
-    messages: string[],
+    messages: message[],
+    night: boolean,
     nbTurn: number;
     inGame: boolean;
 }
@@ -50,7 +59,6 @@ function Game() {
     const [roles, setRoles] = useState<roles[] | null>(null);
     const [room, setRoom] = useState<room | null>(null);
     const [player, setPlayer] = useState<player>();
-    const [night, setNight] = useState<boolean>(true);
     const [roleScreen, setRoleScreen] = useState(false);
     const [inGame, setInGame] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
@@ -69,10 +77,6 @@ function Game() {
 
     socket.on('inGame', bool => {
         setInGame(bool)
-    })
-
-    socket.on('night', bool => {
-        setNight(bool);
     })
 
     useEffect(() => {
@@ -141,14 +145,14 @@ function Game() {
                             room?.players?.length === room?.roles?.length && inGame === false && socket.id === room?.author && <button className="my-5 btn btn-success btn-lg" onClick={() => {socket.emit('inGame', true)}}>Lancer la partie</button>
                         }
                         </div>
-                        : <Chat messages={room?.messages} night={night} />
+                        : <Chat messages={room?.messages} night={room?.night} />
                     }
                     
                 </div>
                 <div className="col text-center my-5">
                     
                     {
-                        inGame && <Gameboard players={room?.players} nbTurn={room?.nbTurn} player={player} night={night} />
+                        inGame && <Gameboard players={room?.players} nbTurn={room?.nbTurn} player={player} night={room?.night} />
                     }
                 </div>
             </div>

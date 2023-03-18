@@ -38,7 +38,7 @@ function Role({name, description, side, max, img, roleArray, author, inGame}: ro
 
                     <img className="card-svg" src={"/assets/img/role/" + img} width={50} alt="" />
                 { 
-                    name === "Simple villageois" || name === "Loup-garou"
+                    name === "Villageois" || name === "Loup-garou"
                     ? <div className="div-btn">
                         <div>
                             {

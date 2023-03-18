@@ -10,11 +10,10 @@ interface props {
     isTurn: boolean,
     isPower: boolean,
     isCouple: boolean,
-    night: boolean,
+    night: boolean | undefined,
     action: boolean,
     vote: boolean,
     wolf: boolean,
-    key: number
 }
 
 function Player(props: props) {

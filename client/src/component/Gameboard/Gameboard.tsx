@@ -11,7 +11,7 @@ interface props {
     players?: player[],
     player?: player,
     nbTurn?: number,
-    night: boolean
+    night: boolean | undefined
 }
 
 function Gameboard({players, nbTurn, player, night}: props) {
@@ -41,7 +41,6 @@ function Gameboard({players, nbTurn, player, night}: props) {
 
     socket.on('roleForActor', role => {
         setRoleForActor(role);
-        console.log(role);
     })
 
     return (
@@ -54,7 +53,7 @@ function Gameboard({players, nbTurn, player, night}: props) {
             }
             <div className="bg-dark">
                 {roleForActor && roleForActor.map((role: roles, index: number) => (
-                    <Actor role={role} />
+                    <Actor role={role} key={index} />
                 ))}
 
                 {dictator && <Dictator />}
