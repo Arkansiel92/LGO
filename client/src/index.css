@@ -4,10 +4,14 @@
 
     font-family: 'LEMONMILK-Regular';
     src: url('./fonts/LEMONMILK-Regular.otf');
+
+    font-family: 'Corals-Regular';
+    src: url('./fonts/TT\ Corals\ Trial\ Regular.otf');
 }
 
 body {
     background-color: #021927;
     color: #F5F5F5;
-    font-family: 'JosefinSans-Bold', sans-serif;
+    font-family: 'Corals-Regular', sans-serif;
+    font-size: 20px;
 }

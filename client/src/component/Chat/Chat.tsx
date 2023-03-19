@@ -38,7 +38,7 @@ function Chat(props: messages) {
             {
                 props.night === false
                 ? <div>
-                    <input type="text" onChange={ (e) => setInput(e.target.value)} value={input} max={150} min={1} placeholder={"Message..."} id="inputChat" className="mt-5 form-control" />
+                    <input type="text" onChange={ (e) => setInput(e.target.value)} value={input} max={150} min={1} placeholder={"Message au village..."} id="inputChat" className="mt-5 form-control" />
                     <button onClick={sendMessage} className="btn btn-primary mx-1">Envoyer</button>
                 </div>
                 : <div>

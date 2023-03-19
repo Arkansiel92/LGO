@@ -4,6 +4,7 @@ const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const fs = require('fs');
+const { send } = require('process');
 
 app.use(cors());
 
@@ -25,6 +26,7 @@ const roles = [
         name_function: "Villager",
         description: "Le villageois est un personnage qui incarne les habitants d\'un village. Son rôle est de découvrir l\'identité des loups-garous et de les éliminer avant qu\'ils ne tuent tous les villageois.",
         side: "village",
+        step: null,
         descriptionInGame: null,
         max: 100,
         img: "card-villager.svg"
@@ -34,6 +36,7 @@ const roles = [
         name_function: "Werewolf",
         description: "Le loup-garou est un être mi-homme mi-loup qui se transforme la nuit pour tuer les villageois. Il se réunit chaque nuit avec les autres loups-garous pour décider de leur victime.",
         side: "méchant",
+        step: "werewolf",
         descriptionInGame: "Vous pouvez manger un joueur ce soir !",
         max: 100,
         img: "card-werewolf.svg",
@@ -43,6 +46,7 @@ const roles = [
         name_function: "Hunter",
         description: "À sa mort, le chasseur élimine une personne de son choix.",
         side: "village",
+        step: null,
         descriptionInGame: "Vous êtes mort, vous pouvez emporter un joueur avec vous.",
         max: 1,
         img: "card-hunter.svg",
@@ -52,6 +56,7 @@ const roles = [
         name_function: "Cupidon",
         description: "Cupidon est appelé uniquement la première nuit afin d'unir un couple. Il désigne deux noms parmi les joueurs, ces deux joueurs seront Le couple. Si un des deux qui sont en couple meurt l'autre meurt avec son amant.",
         side: "village",
+        step: "start",
         descriptionInGame: "Selectionnez deux joueurs qui seront lié à la vie et à la mort ! Si l'un d'eux meurt, il emporte son amant dans la tombe.",
         max: 1,
         img: "card-cupidon.svg",
@@ -61,6 +66,7 @@ const roles = [
         name_function: "LittleGirl",
         description: "La petite fille est un villageois qui peut se réveiller au moment où les loups garous sont appelés.",
         side: "village",
+        step: null,
         descriptionInGame: "",
         max: 1,
         img: "card-littleGirl.svg",
@@ -70,6 +76,7 @@ const roles = [
         name_function: "Witch",
         description: "La sorcière se réveille la nuit après tout le monde. Elle possède deux potions : une de vie et une de mort. Elle peut choisir de soigner la victime des loups garous. Elle peut également choisir de tuer une personne grâce à sa potion de mort. Elle ne peut utiliser qu'une seule fois chaque potion.",
         side: "village",
+        step: "end",
         descriptionInGame: "Vous avez le droit de vie ou de mort !",
         max: 1,
         img: "card-witch.svg",
@@ -79,6 +86,7 @@ const roles = [
         name_function: "Thief",
         description: "Le voleur est appelé uniquement la première nuit. Il peut décider ou non, d'échanger sa carte avec celle d'un autre joueur. A la suite de ça, le joueur qui a la carte voleur devient un Villageois.",
         side: "village",
+        step: null,
         descriptionInGame: "Pouvoir à usage unique : vous pouvez voler la carte d'un joueur. Cette personne deviendra villageois à la suite de ce vol.",
         max: 1,
         img: "card-thief.svg",
@@ -88,6 +96,7 @@ const roles = [
         name_function: "Psychic",
         description: "Chaque nuit, elle a le pouvoir de regarder la carte d'un joueur.",
         side: "village",
+        step: "start",
         descriptionInGame: "Vous pouvez regarder la carte d'un joueur.",
         max: 1,
         img: "card-psychic.svg",
@@ -97,6 +106,7 @@ const roles = [
         name_function: "OldMan",
         description: "L’ancien possède deux vies durant la nuit. La première fois qu'il doit mourir, il en perd une sans en être averti. Le matin, il se réveille avec les autres, mais dévoile sa carte (la seconde fois qu’il est attaqué par les loups garous alors il meurt normalement). Si l’ancien est chassé du village par le vote des villageois il meurt directement et tous les rôles des villageois perdent leurs pouvoirs.",
         side: "village",
+        step: null,
         descriptionInGame: null,
         max: 1,
         img: "card-oldman.svg",
@@ -106,6 +116,7 @@ const roles = [
         name_function: "Scapegoat",
         description: "En cas d'égalité dans les votes du village, c'est lui qui meurt. Il a la capacité, à sa mort, de décider qui ne pourra pas voter le tour suivant.",
         side: "village",
+        step: null,
         descriptionInGame: null,
         max: 1,
         img: "card-scapegoat.svg",
@@ -115,6 +126,7 @@ const roles = [
         name_function: "Idiot",
         description: "S'il est désigné par le vote du village, il ne meurt pas, mais perd seulement sa capacité à voter.",
         side: "village",
+        step: null,
         descriptionInGame: null,
         max: 1,
         img: "card-idiot.svg",
@@ -124,6 +136,7 @@ const roles = [
         name_function: "Flute",
         description: "Se réveille en dernier. Il peut alors charmer un ou deux joueurs (en fonction du nombre de joueurs) qui deviendront les charmés. Il gagne lorsque tous les joueurs en vie sont charmés.",
         side: "seul",
+        step: "end",
         descriptionInGame: "Vous pouvez charmer un/plusieurs joueur(s)",
         max: 1,
         img: "card-flute.svg",
@@ -133,6 +146,7 @@ const roles = [
         name_function: "Guard",
         description: "Chaque nuit, le garde protège une personne . Cette personne sera protégée et ne pourra donc pas mourir durant la nuit. Le garde ne peut pas protéger la même personne deux nuits de suite.",
         side: "village",
+        step: "start",
         descriptionInGame: "Vous pouvez protéger un joueur (Le garde ne peut pas protéger la même personne deux nuits de suite)",
         max: 1,
         img: "card-gard.svg",
@@ -142,6 +156,7 @@ const roles = [
         name_function: "Raven",
         description: "Le corbeau fait partie du village, il sera appelé chaque nuit et désignera une personne qui recevra automatiquement deux votes de plus contre elle lors du vote de la journée suivante.",
         side: "village",
+        step: "start",
         descriptionInGame: "Vous pouvez choisir un joueur qui se réveillera avec deux votes automatiquement.",
         max: 1,
         img: "card-raven.svg",
@@ -151,6 +166,7 @@ const roles = [
         name_function: "WhiteWerewolf",
         description: "Le loup blanc se réveille la nuit avec les loups, mais son but est de gagner seul. Une nuit sur deux, il se réveille pour tuer une personne de son choix (loup ou villageois).",
         side: "seul",
+        step: "middle",
         descriptionInGame: "Vous pouvez tuer un joueur",
         max: 1,
         img: "card-whiteWerewolf.svg",
@@ -160,6 +176,7 @@ const roles = [
         name_function: "Angel",
         description: "S'il se fait éliminer au premier tour par le Village uniquement, il gagne la partie et le village aussi. Sinon, il devient villageois. S'il se fait éliminer par les loup-garou ou par un autre rôle, il meurt tout simplement.",
         side: "village",
+        step: null,
         descriptionInGame: null,
         max: 1,
         img: "card-angel.svg",
@@ -169,6 +186,7 @@ const roles = [
         name_function: "DogWerewolf",
         description: "La première nuit, il choisit d’être un villageois ou un Loup-garou.",
         side: "méchant",
+        step: null,
         descriptionInGame: "Vous pouvez tuer un joueur",
         max: 1,
         img: "card-dogWolf.svg",
@@ -178,6 +196,7 @@ const roles = [
         name_function: "Actor",
         description: "Avant la partie. Chaque nuit, le comédien peut désigner un des rôles qui n'ont pas été choisi et utiliser le pouvoir correspondant jusqu’à la nuit suivante. Chaque rôle ne peut être utilisé qu'une seule fois et maximum 3 fois dans la partie.",
         side: "village",
+        step: null,
         descriptionInGame: "Vous pouvez choisir un rôle",
         max: 1,
         img: "card-actor.svg",
@@ -187,6 +206,7 @@ const roles = [
         name_function: "Sisters",
         description: "Leur objectif est d'éliminer tous les autres joueurs. Au début de la partie elles connaissent donc leur identité, et peuvent donc avoir confiance en elles. Elles peuvent se concerter en silence. Si l'une d'elle meurt, l'autre ne meurt pas forcément.",
         side: "seul",
+        step: null,
         descriptionInGame: null,
         max: 2,
         img: "card-sisters.svg",
@@ -196,6 +216,7 @@ const roles = [
         name_function: "BigBadWerewolf",
         description: "Son objectif est d'éliminer tout le village. Chaque nuit, il se réunit avec ses compères Loups pour décider d'une victime à éliminer... Tant qu'aucun autre loup n'est mort, il peut, chaque nuit, dévorer une victime supplémentaire.",
         side: "méchant",
+        step: "middle",
         descriptionInGame: "Vous pouvez tuer un joueur",
         max: 1,
         img: "card-bigBadWolf.svg",
@@ -203,8 +224,9 @@ const roles = [
     {
         name: "Gitane",
         name_function: "Gypsy",
-        description: "Pendant la nuit, elle décide si oui ou non elle veut déclencher un évènement. Le pouvoir n'est activable qu'une fois dans la partie",
+        description: "Pendant la nuit, elle décide si oui ou non elle veut déclencher un évènement pour le jour suivant. Le pouvoir n'est activable qu'une fois dans la partie",
         side: "village",
+        step: "start",
         descriptionInGame: "Voulez-vous déclencher un évènement pour la prochaine journée ?",
         max: 1,
         img: "card-gypsy.svg",
@@ -214,6 +236,7 @@ const roles = [
         name_function: "BlackWerewolf",
         description: "Chaque nuit après avoir joué avec les loups il peut décider d'infecter la victime. Elle devient alors Infectée et ne meurt pas. Il ne peut utiliser son pouvoir qu'une fois dans la partie.",
         side: "méchant",
+        step: "middle",
         descriptionInGame: "Vous pouvez tuer un joueur",
         max: 1,
         img: "card-BlackWerewolf.svg",
@@ -223,6 +246,7 @@ const roles = [
         name_function: "Judge",
         description: "Ce pouvoir ne peut être utilisé qu'une fois dans la partie. Après le vote du village, le juge bègue décide si il faut refaire le vote. Dans ce cas, un nouveau vote à lieu, immédiatement et sans débat.",
         side: "village",
+        step: null,
         descriptionInGame: "Voulez-vous déclencher un second vote ?",
         max: 1,
         img: "card-judge.svg",
@@ -232,6 +256,7 @@ const roles = [
         name_function: "Fox",
         description: "La première nuit, le renard flaire 3 joueurs. Si un loup garou est dans ce groupe, il pourra réutiliser son pouvoir la nuit suivante. Sinon, il devient villageois.",
         side: "village",
+        step: "start",
         descriptionInGame: "Vous pouvez flairer 3 joueurs",
         max: 1,
         img: "card-fox.svg",
@@ -241,6 +266,7 @@ const roles = [
         name_function: "Servant",
         description: "Une fois dans la partie, elle peut choisir de prendre le rôle d'un des morts jusqu'à la fin de la partie sauf si elle est en couple, car son amour est plus fort que sa volonté de changer de rôle",
         side: "village",
+        step: "start",
         descriptionInGame: "Voulez-vous prendre le rôle d'un mort ?",
         max: 1,
         img: "card-servant.svg",
@@ -250,6 +276,7 @@ const roles = [
         name_function: "Mercenary",
         description: "Le premier jour, l'objectif du mercenaire est d'éliminer la cible qui lui est attribuée. S'il y parvient, il gagne seul la partie instantanément. Sinon, il devient villageois.",
         side: "seul",
+        step: null,
         descriptionInGame: null,
         max: 1,
         img: "card-mercenary.svg",
@@ -259,6 +286,7 @@ const roles = [
         name_function: "Necromancer",
         description: "Vaincre les loups-garous est son objectif. La nuit, il peut communiquer avec les morts, afin d'en tirer des informations capitales...",
         side: "village",
+        step: null,
         descriptionInGame: "C'est la nuit, vous pouvez communiquer avec les morts",
         max: 1,
         img: "card-necromancer.svg",
@@ -268,6 +296,7 @@ const roles = [
         name_function: "Gravedigger",
         description: "Vaincre les loups-garous est son objectif. À sa mort, le fossoyeur creuse la tombe d'un joueur qu'il choisit et d'un joueur au hasard du camp opposé. Les noms de ces deux joueurs seront annoncés...",
         side: "village",
+        step: null,
         descriptionInGame: "Vous êtes mort, qui voulez-vous cibler ?",
         max: 1,
         img: "card-gravedigger.svg",
@@ -277,6 +306,7 @@ const roles = [
         name_function: "Dictator",
         description: "Vaincre les loups-garous est son objectif. Il peut s'emparer du pouvoir de vote du village une fois dans la partie. S'il exécute un loup-garou, il devient Maire, sinon, il meurt.",
         side: "village",
+        step: "start",
         descriptionInGame: "Voulez-vous faire un coup d'état la prochaine nuit ?",
         max: 1,
         img: "card-dictator.svg",
@@ -286,6 +316,7 @@ const roles = [
         name_function: "Chaperone",
         description: "Son objectif est de vaincre les Loups-Garous. Tant que le Chasseur est en vie, il est protégé contre les attaques des Loups-Garous.",
         side: "village",
+        step: null,
         descriptionInGame: null,
         max: 1,
         img: "card-chaperon.svg",
@@ -295,6 +326,7 @@ const roles = [
         name_function: "Hair",
         description: "Son objectif est de vaincre les Loups-Garous tant qu'il ne reçoit pas de nouveau rôle. La première nuit, il désigne un testataire qui lui léguera son rôle lors de sa mort.",
         side: "village",
+        step: "start",
         descriptionInGame: "Désignez un testataire qui vous léguera son rôle lors dà sa mort",
         max: 1,
         img: "card-heir.svg",
@@ -303,12 +335,12 @@ const roles = [
 
 const eventsGypsy = [
     {
-        name: "Résurrection",
+        name: "Résurrection aveugle",
         description: "Fait revenir un joueur au hasard d'entre les morts."
     },
     {
-        name: "Punition",
-        description: "Tue quelqu'un au hasard en échange de sa propre vie"
+        name: "Punition aveugle",
+        description: "Tue quelqu'un au hasard (y compris vous)"
     }
 ]
 
@@ -318,6 +350,7 @@ const endNightOrder = ['sorcière', 'Joueur de flûte']
 
 io.on('connection', (socket) => {
     let hub = io.sockets.adapter.rooms.get(socket.room);
+    let interval;
 
     function getPlayer(socketID) {
         const player = hub.players.find((player) => {
@@ -335,200 +368,148 @@ io.on('connection', (socket) => {
         return player;
     }
 
-    function getPlayerByNameFunction(role) {
-        const player = hub.players.find((player) => {
-            return player.role.name_function === role;
-        })
+    function order() {
+        if(hub.step === "start") {
+            let dictator = getPlayerByRole("Dictateur");
 
-        return player;
+            if (dictator) {
+                io.to(dictator.socket).emit('dictator', false);
+            }
+
+            return "werewolf";
+
+        } else if (hub.step === "werewolf") {
+
+            return "middle";
+
+        } else if (hub.step === "middle") {
+            let blackWerewolf = getPlayerByRole("Loup noir");
+
+            if (blackWerewolf) {
+                io.to(blackWerewolf.socket).emit('blackWerewolf', false);
+            }
+            
+            return "end";
+
+        } else {
+            return hub.step;
+        }
     }
 
-    function stepBeginNight() {
-        let bool = false;
+    function stepNight() {
+        console.log("----");
+        console.log("ETAPE : " + hub.step);
+        if (hub.step !== "werewolf") {
+            roles.forEach((role) => {
+                if (hub.roles.includes(role.name)) {
+                    console.log(role.name);
+                    const player = getPlayerByRole(role.name);
+                    if (role.step === hub.step) {
+                        if (!player.isDead && player.isPower && !player.isPlayed) {
+                            if (player.role.name === "Dictateur") {
+                                io.to(player.socket).emit('dictator', true)
+                                sendMessage("server", null, "Le dictateur décide si il veut faire un coup d'état.")
+                            }
 
-        beginNightOrder.forEach((role) => {
-            hub.players.forEach((player) => {
-                if(player.role.name === role) {
-                    if (!player.isDead && player.isPower && !player.isPlayed) {
-                        bool = true;
+                            if (player.role.name === "Loup noir") {
+                                io.to(player.socket).emit('blackWerewolf', true)
+                                sendMessage("server", null, "Le loup noir décide si il veut infecter sa victime.")
+                            }
+
+                            if (player.role.name === "Sorcière") {
+                                io.to(player.socket).emit('witch', true)
+                                sendMessage("server", null, "La sorcière décide si elle veut utiliser ses potions.")
+                            }
+
+                            if (player.role.name === "Loup blanc") {
+                                if (hub.nbTurn % 2 === 0) {
+                                    actionInGame(player.socket, true);
+                                    sendMessage("server", null, "Le loup blanc peut manger une personne cette nuit.");
+                                }
+                            }
+
+                            if (player.role.name !== "Dictateur" && player.role.name !== "Comédien" && player.role.name !== "Sorcière" && player.role.name !== "Loup noir" && player.role.name !== "Loup blanc" && player.role.name !== "Grand méchant loup" && player.role.name !== "Gitane") {
+                                actionInGame(player.socket, true);
+                                sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.")
+                            }
+                        }
+                    } else {
+                        actionInGame(player.socket, false);
+
                     }
                 }
             })
-        })
+        } else {
+            sendMessage("server", null, "Les loups garou se réveillent...");
 
-        if (hub.roles.includes("Comédien")) {
+            hub.roles.forEach((role) => {
+                const player = getPlayerByRole(role);
 
-        }
-
-        return bool;
-    }
-
-    function stepEndNight() {
-        let bool = false;
-
-        endNightOrder.forEach((role) => {
-            if (hub.roles.includes(role)) {
-                const player = hub.players.find((player) => {
-                    return player.role.name === role;
-                })
-
-                if (!player.isDead && player.isPower && !player.isPlayed) {
-                    bool = true;
+                if (player.role.side === "méchant" || player.isInfected) {
+                    io.to(player.socket).emit('setWolf', true);
                 }
-            }
-        })
-        
-        if (!bool) {
-            return console.log("Fin de la manche");
-        } 
-    }
-
-    function beginNight() {
-        // vérifier si au moins une personne a un rôle de début de nuit.
-        let begin = false;
-
-        beginNightOrder.forEach((role) => {
-            if (hub.roles.includes(role)) {
-                const player = hub.players.find((player) => {
-                    return player.role.name === role;
-                })
-
-                if (!player.isDead) {
-                    if (player.isPower) {
-                        begin = true;
-                        selfRole = player.role.name;
-                        if (selfRole !== "Dictateur" && selfRole !== "Comédien" && selfRole !== "Sorcière") {
-                            actionInGame(player.socket, true);
-                        }
-                        timeRole(30, player.socket);
-                        sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.")
-                    }
-                }
-            }
-        })
-
-        if (!begin) {
-            console.log('coucou');
-            return setupVoteWolf();
+            });
         }
 
-        if (hub.roles.includes("Dictateur")) {
-            const player = getPlayerByRole("Dictateur");
-
-            hub.dictatorSocket = player.socket;
-
-            io.to(player.socket).emit('dictator', true);
-        }
-
-        return room();
+        return time(30);
     }
 
-    function middleNight() {
-        if (hub.roles.includes("Loup blanc")) {
-            const player = getPlayerByRole('Loup blanc')
-            if (player.isPower) {
-                // Si le tour n'est pas un nombre impair
-                if ((hub.nbTurn % 2) !== 0) {
-                    timeRole(30, player.socket);
-                    actionInGame(player.socket, true);
-                }
-            }
-        }
+    function time(time) {
+        // clear tous les setInterval avant
+        clearInterval(interval);
 
-        if (hub.roles.includes("Loup noir")) {
-            const player = getPlayerByRole('Loup noir')
+        interval = setInterval(() => {
+            io.to(socket.room).emit('counter', time);
 
-            if (player.isPower) {
-                timeRole(30, player.socket);
-                socket.emit('blackWolf', true);
-            }
-        }
-
-        if (hub.roles.includes("Grand méchant loup")) {
-            const player = getPlayerByRole("Grand méchant loup");
-
-            if (player.isPower) {
-                timeRole(30, player.socket);
-                actionInGame(player.socket, true);
-            }
-        }
-    }
-
-    function setupVoteWolf() {
-        hub.players.forEach((player) => {
-            if (!player.isDead) {
-                if (!player.isPlayed) {
-                    if (middleNightOrder.includes(player.role.name) || player.isInfected) {
-                        io.to(player.socket).emit('setWolf', true);
-                        timeWolf(30);
-                    }
-                }
-            }
-        })
-    }
-
-    function endNight() {
-        console.log("fin de soirée");
-
-        hub.players.forEach((player) => {
-            if (!player.isDead) {
-                if (endNightOrder.includes(player.role.name)) {
-                    actionInGame(player.socket, true);
-                    sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.")
-                }
-            }
-        })
-    }
-
-    function timeWolf(time) {
-        const interval = setInterval(() => {
-            time--;
-
-            if (time < 0) {
+            if (time <= 0) {
                 clearInterval(interval);
-                return voteWolf();
+
+                hub.step = order();
+
+                if (hub.step === "middle") {
+                    return voteWolf()
+                } else {
+                    return stepNight();
+                }
             }
-            return io.to(socket.room).emit('counter', time);
+
+            return time--;
         }, 1000)
     }
 
-    function timeRole(time, socketID) {
-        const player = getPlayer(socketID);
+    function timeBySocket(time, player) {
+        clearInterval(interval);
 
-        const interval = setInterval(() => {
+        interval = setInterval(() => {
             io.to(player.socket).emit('counter', time);
 
-            if (time <= 0 || player.isPlayed) {
+            if (time <= 0) {
                 clearInterval(interval);
-                if (time <= 0) {
-                    player.isPlayed = true;
 
-                    if (player.role.name === "Voleur") {
-                        player.isPower = false;
-                        player.role = {
-                            name: "villageois",
-                            name_function: "Villager",
-                            description: "Le villageois est un personnage qui incarne les habitants d\'un village. Son rôle est de découvrir l\'identité des loups-garous et de les éliminer avant qu\'ils ne tuent tous les villageois.",
-                            side: "village",
-                            descriptionInGame: null,
-                            max: 100,
-                            img: "card-villager.svg"
-                        };
+                if (player.role.name === "Voleur") {
+                    player.role = {
+                        name: "Villageois",
+                        name_function: "Villager",
+                        description: "Le villageois est un personnage qui incarne les habitants d\'un village. Son rôle est de découvrir l\'identité des loups-garous et de les éliminer avant qu\'ils ne tuent tous les villageois.",
+                        side: "village",
+                        step: null,
+                        descriptionInGame: null,
+                        max: 100,
+                        img: "card-villager.svg"
+                    };
 
-                        actionInGame(player.socket, false);
-                        room();
-                        
-                        return beginNight();
-                    }
+                    hub.roles.splice(hub.roles.indexOf("Voleur"), 1);
+                    hub.roles.push("Villageois");
 
-                    if (player.role.name === "Dictateur") {
-                        io.to(player.socket).emit('dictator', false);
-                    }
-
-                    actionInGame(player.socket, false);
-
-                    return room();
                 }
+                
+                if (player.role.name === "Comédien") {
+                    io.to(player.socket).emit("roleForActor", []);
+                }
+
+                room();
+
+                return stepNight();
             }
 
             return time--;
@@ -544,22 +525,7 @@ io.on('connection', (socket) => {
     }
 
     function actionInGame(socketID, bool) {
-        const player = getPlayer(socketID);
-
-        if (!bool) {
-            io.to(player.socket).emit('counter', 0);
-        }
-        
-        io.to(player.socket).emit('action', bool);
-
-        room();
-
-        if (!stepBeginNight()) {
-            sendMessage("server", null, "Les loups garou se réveillent...");
-            return setupVoteWolf();
-        }
-
-        // rajouter les autres étapes dans la nuit
+        return io.to(socketID).emit('action', bool);
     }
 
     function sendMessage(author, recipient, msg) {
@@ -571,17 +537,6 @@ io.on('connection', (socket) => {
         })
 
         return room();
-    }
-
-    function isThief(thief) {
-        room();
-
-        if (thief) {
-            timeRole(30, thief.socket);
-            return io.to(thief.socket).emit('action', true);
-        } else {
-            return beginNight();
-        }
     }
 
     function isActor(actor) {
@@ -622,22 +577,18 @@ io.on('connection', (socket) => {
 
         hub.players.forEach((player) => {
             if (!player.isDead) {
-                if (middleNightOrder.includes(player.role.name) || player.isInfected) {
-
+                if (player.role.side === "méchant" || player.isInfected) {
                     io.to(player.socket).emit('setWolf', false);
 
                     votes.push(player.voteWolf);
-
-                    if (player.role.name === "Loup-garou") {
-                        player.isPlayed = true;
-                    }
+                    player.voteWolf = null;
                 }
             }
         })
 
         let playerKilled = "";
         let count = 0;
-        
+
         votes.forEach((vote) => {
             countValue = 0;
             for (let i = 0; i < votes.length; i++) {
@@ -662,30 +613,54 @@ io.on('connection', (socket) => {
                         countValue++;
                     }
                 }
-    
+
                 if (count === countValue) {
                     equality = true;
                 };
             }
         });
-        
 
         if (!equality) {
-            hub.wolf = playerKilled;
+            hub.voteWolf = playerKilled;
         } else {
-            hub.wolf = null;
+            hub.voteWolf = null;
         }
 
-        console.log("Joueur tué : " + hub.wolf);
+            if (hub.protected === hub.voteWolf) {
+                hub.voteWolf = null
+            }
+
+            if (hub.roles.includes("Chasseur") && hub.roles.includes("Le Chaperon Rouge")) {
+                const hunter = getPlayerByRole("Chasseur");
+                const chaperon = getPlayerByRole("Le Chaperon Rouge");
+
+                if (chaperon.socket === hub.voteWolf) {
+                    if (!hunter.isDead) {
+                        hub.voteWolf = null;
+                    }
+                }
+            }
+
+            if (hub.roles.includes("Ancien du village")) {
+                if (hub.oldManLife > 0) {
+                    hub.oldManLife--;
+                    hub.oldManReveal = true;
+
+                    hub.voteWolf = null;
+                }
+            }
+
+
+        console.log("Joueur tué : " + hub.voteWolf);
 
         sendMessage("server", null, "Le vote des loups a pris fin ! Une victime a été sacrifiée...");
 
         room();
 
-        return middleNight();
+        return stepNight();
     }
 
-    socket.on('voteWolf', ({targetID, userID}) => {
+    socket.on('voteWolf', ({ targetID, userID }) => {
         const target = getPlayer(targetID);
         const wolf = getPlayer(userID);
 
@@ -701,32 +676,37 @@ io.on('connection', (socket) => {
     })
 
     // function Role
-    socket.on('setThief', ({targetID, userID}) => {
+    socket.on('setThief', ({ targetID, userID }) => {
         if (targetID === userID) {
-            return sendMessage(null, userID.socket, "Vous ne pouvez pas voler votre carte.");
+            return sendMessage(null, userID, "Vous ne pouvez pas voler votre carte.");
         }
 
         const target = getPlayer(targetID);
         const player = getPlayer(userID);
-        
-        player.isPlayed = true;
-        
+
         // pas necessaire de mettre player.isPower = false car il vole le pouvoir forcément actif d'un joueur
 
         player.role = target.role;
 
+        hub.roles.splice(hub.roles.indexOf("Voleur"), 1);
+
         target.role = {
-            name: "villageois",
+            name: "Villageois",
             name_function: "Villager",
             description: "Le villageois est un personnage qui incarne les habitants d\'un village. Son rôle est de découvrir l\'identité des loups-garous et de les éliminer avant qu\'ils ne tuent tous les villageois.",
             side: "village",
+            step: "",
             descriptionInGame: null,
             max: 100,
             img: "card-villager.svg"
         };
-
-        sendMessage(null, socket.id, "Vous avez volé la carte de " + target.name + ". Il était " + player.role.name + ".")
         
+        hub.roles.push("Villageois");
+
+        sendMessage(null, userID, "Vous avez volé la carte de " + target.name + ". Il était " + player.role.name + ".")
+
+        clearInterval(interval);
+
         actionInGame(userID, false);
         room();
 
@@ -735,13 +715,13 @@ io.on('connection', (socket) => {
 
             return isActor(actor);
         } else {
-            return beginNight();
+            return stepNight();
         }
 
-    })  
+    })
 
-    socket.on('setCupidon', ({targetID, userID}) => {
-        
+    socket.on('setCupidon', ({ targetID, userID }) => {
+
         if (hub.lover_one === targetID) {
             hub.lover_one = null;
             return room();
@@ -752,7 +732,7 @@ io.on('connection', (socket) => {
         } else {
             hub.lover_two = targetID;
         }
-         
+
         if (hub.lover_one && hub.lover_two) {
             const cupidon = getPlayer(userID);
 
@@ -762,25 +742,21 @@ io.on('connection', (socket) => {
 
                 const lover_one = getPlayer(hub.lover_one);
                 const lover_two = getPlayer(hub.lover_two);
-    
+
                 lover_one.isCouple = true;
                 lover_two.isCouple = true;
 
                 sendMessage(null, lover_one.socket, "Vous venez de tomber amoureux de " + lover_two.name);
                 sendMessage(null, lover_two.socket, "Vous venez de tomber amoureux de " + lover_one.name);
-                
+
                 actionInGame(userID, false);
             }
         }
 
-        room();
-
-        if (!stepBeginNight()) {
-            return setupVoteWolf();
-        }
+        return room();
     })
 
-    socket.on('setHair', ({targetID, userID}) => {
+    socket.on('setHair', ({ targetID, userID }) => {
 
         if (targetID === userID) {
             return;
@@ -792,19 +768,15 @@ io.on('connection', (socket) => {
         if (player.isPower) {
             player.isPower = false;
             player.isPlayed = true;
-            
+
             target.isHair = true;
-            
+
             hub.hairRole = target.role;
 
             actionInGame(userID, false);
         }
 
-        room();
-
-        if (!stepBeginNight()) {
-            return setupVoteWolf();
-        }
+        return room();
     })
 
     socket.on('setActor', (role) => {
@@ -815,38 +787,41 @@ io.on('connection', (socket) => {
         actor.isActor = true;
         actor.role = role;
 
-        if (beginNightOrder.includes(role.name)) {
-            if (role.name === "Dictateur") {
-                socket.emit('dictator', true);
-            } else {
-                actionInGame(socket.id, true);
-            }
+        if (hub.roles.includes("Dictateur")) {
+            socket.emit('dictator', true);
         }
 
+        // enlever le component du comédien
         socket.emit("roleForActor", []);
+
+        hub.roles.splice(hub.roles.indexOf("Comédien"), 1);
+        hub.roles.push(role.name);
+
+
+        clearInterval(interval);
 
         room();
 
-        return beginNight();
+        return stepNight();
     })
 
-    socket.on('setPsychic', ({targetID, userID}) => {
+    socket.on('setPsychic', ({ targetID, userID }) => {
         const target = getPlayer(targetID);
         const player = getPlayer(userID);
-        
-        
+
+
         if (targetID === userID) {
             return sendMessage(null, player.socket, "Vous ne pouvez pas voir votre propre carte.");
         }
-        
+
         player.isPlayed = true;
 
-        sendMessage(null, player.socket, "Role de " + target.name + " : " + target.role.name + ".");
+        sendMessage(null, player.socket, target.name + " est " + target.role.name + ".");
 
         return actionInGame(player.socket, false);
     })
 
-    socket.on('setGuard', ({targetID, userID}) => {
+    socket.on('setGuard', ({ targetID, userID }) => {
         const target = getPlayer(targetID);
         const player = getPlayer(userID);
 
@@ -867,24 +842,16 @@ io.on('connection', (socket) => {
     socket.on('setDictator', (action) => {
         socket.emit('dictator', false);
 
-        const dictator = getPlayer(socket.id);
-
         if (action) {
             hub.dictator = action;
         }
 
-        dictator.isPlayed = true;
+        sendMessage(null, socket.id, action ? "Vous avez choisi de faire un coup d'état le prochain tour" : "Vous avez choisi de ne pas faire de coup d'état.");
 
-        sendMessage(null, socket.id, action ? "Vous avez choisi de faire un coup d'état le prochain tour" : "Vous avez choisi de ne pas faire de coup d'état.")
-
-        room();
-
-        if (!stepBeginNight()) {
-            return setupVoteWolf();
-        }
+        return room();
     })
 
-    socket.on('setRaven', ({targetID, userID}) => {
+    socket.on('setRaven', ({ targetID, userID }) => {
         const target = getPlayer(targetID);
         const player = getPlayer(userID);
 
@@ -894,13 +861,13 @@ io.on('connection', (socket) => {
 
         player.isPlayed = true;
 
-        
+
         sendMessage(null, player.socket, target.name + " se réveillera avec deux votes en plus !");
-        
+
         return actionInGame(player.socket, false);
     })
 
-    socket.on('setFox', ({targetID, userID}) => {
+    socket.on('setFox', ({ targetID, userID }) => {
         const target = getPlayer(targetID);
         const player = getPlayer(userID);
 
@@ -945,7 +912,12 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('setGypsy', ({targetID, userID}) => {
+    socket.on('setWhiteWerewolf', ({ targetID, userID }) => {
+        const target = getPlayer(targetID);
+        const player = getPlayer(userID);
+    })
+
+    socket.on('setGypsy', ({ targetID, userID }) => {
         const player = getPlayer(userID);
 
         player.isPlayed = true;
@@ -957,10 +929,11 @@ io.on('connection', (socket) => {
         hub.inGame = ready;
 
         io.to(socket.room).emit('inGame', true);
-        
-        hub.night = true;
 
-        room();
+        hub.night = true;
+        hub.step = "start";
+
+        sendMessage("server", null, "La nuit tombe sur le village...");
 
         // copy array
         let roleArray = [...hub.roles];
@@ -991,11 +964,15 @@ io.on('connection', (socket) => {
 
         hub.nbTurn++;
 
+        room();
+    
         if (hub.roles.includes("Voleur")) {
             const thief = getPlayerByRole("Voleur")
 
-            if (thief.isPower) {
-                return isThief(thief);
+            if (thief) {
+                sendMessage("server", null, "Le voleur décide du joueur à voler.");
+                timeBySocket(30, thief);
+                return actionInGame(thief.socket, true);
             }
         }
 
@@ -1010,12 +987,13 @@ io.on('connection', (socket) => {
 
                 if (actor.isActor) {
                     actor.isActor = false;
-        
+
                     player.role = {
                         name: "Comédien",
                         name_function: "Actor",
                         description: "Avant la partie. Chaque nuit, le comédien peut désigner un des rôles qui n'ont pas été choisi et utiliser le pouvoir correspondant jusqu’à la nuit suivante. Chaque rôle ne peut être utilisé qu'une seule fois et maximum 3 fois dans la partie.",
                         side: "village",
+                        step: null,
                         descriptionInGame: "Vous pouvez choisir un rôle",
                         max: 1,
                         img: "card-actor.svg",
@@ -1026,11 +1004,13 @@ io.on('connection', (socket) => {
             hub.actorSocket = actor.socket;
 
             if (actor.isPower) {
+                timeBySocket(5, actor);
+                sendMessage("server", null, "Le comédien décide du rôle à jouer cette nuit.");
                 return isActor(actor);
             }
         }
 
-        return beginNight();
+        return stepNight();
     })
 
     socket.on('addRole', role => {
@@ -1100,8 +1080,8 @@ io.on('connection', (socket) => {
             name: pseudo,
             socket: socket.id,
             role: null,
-            votes : [],
-            voteWolf : null,
+            votes: [],
+            voteWolf: null,
             isDead: false,
             isPlayed: false,
             isPower: true,
@@ -1140,8 +1120,8 @@ io.on('connection', (socket) => {
         hub.players = [{
             name: pseudo,
             socket: socket.id,
-            votes : [],
-            voteWolf : null,
+            votes: [],
+            voteWolf: null,
             role: null,
             isDead: false,
             isTurn: false,
@@ -1152,23 +1132,26 @@ io.on('connection', (socket) => {
             isActor: false
         }];
         hub.sockets = [socket.id];
-        hub.roles = [],
+        hub.roles = [];
         hub.votes = [''];
         hub.night = false;
-        hub.wolf = null,
+        hub.voteWolf = null;
+        hub.voteWhiteWolf = null;
         hub.messages = [];
         hub.nbTurn = 0;
-        hub.lover_one = null,
-        hub.lover_two = null,
-        hub.infected = null,
-        hub.protected = null,
-        hub.dictator = false,
-        hub.ravenSocket = null,
-        hub.actorSocket = null,
-        hub.dictatorSocket = null;
-        hub.hairRole = null,
-        hub.roleActor = [],
+        hub.oldManLife = 1;
+        hub.oldManReveal = false;
+        hub.lover_one = null;
+        hub.lover_two = null;
+        hub.infected = null;
+        hub.protected = null;
+        hub.dictator = false;
+        hub.ravenSocket = null;
+        hub.actorSocket = null;
+        hub.hairRole = null;
+        hub.roleActor = [];
         hub.inGame = false;
+        hub.step = "start";
 
         return navigate(id);
     })

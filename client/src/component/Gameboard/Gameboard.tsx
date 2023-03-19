@@ -2,10 +2,12 @@ import { useState, useContext } from "react";
 import { socketContext, ExtendedSocket} from "../../context/socket";
 import { player, roles } from "../../screen/Game/Game";
 import Actor from "../Actor/Actor";
+import BlackWerewolf from "../BlackWerewolf/BlackWerewolf";
 import Card from "../Card/Card";
 import Counter from "../Counter/Counter";
 import Dictator from "../Dictator/Dictator";
 import Player from "../Player/Player";
+import Witch from "../Witch/Witch";
 
 interface props {
     players?: player[],
@@ -21,6 +23,8 @@ function Gameboard({players, nbTurn, player, night}: props) {
     const [wolf, setWolf] = useState<boolean>(false);
     const [roleForActor, setRoleForActor] = useState<roles[]>();
     const [dictator, setDictator] = useState<boolean>(false);
+    const [witch, setWitch] = useState<boolean>(false);
+    const [blackWerewolf, setBlackWerewolf] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
 
     socket.on('setIsVote', vote => {
@@ -33,6 +37,14 @@ function Gameboard({players, nbTurn, player, night}: props) {
 
     socket.on('dictator', bool => {
         setDictator(bool);
+    })
+
+    socket.on('witch', bool => {
+        setWitch(bool);
+    })
+
+    socket.on('blackWerewolf', bool => {
+        setBlackWerewolf(bool);
     })
 
     socket.on('action', action => {
@@ -57,6 +69,8 @@ function Gameboard({players, nbTurn, player, night}: props) {
                 ))}
 
                 {dictator && <Dictator />}
+                {witch && <Witch />}
+                {blackWerewolf && <BlackWerewolf />}
             </div>
             <div className="d-flex justify-content-around">
                 {players?.map((p: player, index: number) => (
