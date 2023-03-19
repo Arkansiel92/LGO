@@ -411,20 +411,42 @@ io.on('connection', (socket) => {
                                 sendMessage("server", null, "Le dictateur décide si il veut faire un coup d'état.")
                             }
 
+                            if (player.role.name === "Gitane") {
+                                io.to(player.socket).emit('gypsy', true)
+                                sendMessage("server", null, "La gitane décide si elle veut déclencher un évènement.")
+                            }
+
                             if (player.role.name === "Loup noir") {
-                                io.to(player.socket).emit('blackWerewolf', true)
-                                sendMessage("server", null, "Le loup noir décide si il veut infecter sa victime.")
+                                
+                                if (player.isPower && hub.voteWolf) {
+                                    io.to(player.socket).emit('victim', getPlayer(hub.voteWolf).name);
+                                    io.to(player.socket).emit('blackWerewolf', true)
+                                    sendMessage("server", null, "Le loup noir décide si il veut infecter sa victime.")
+                                }
                             }
 
                             if (player.role.name === "Sorcière") {
-                                io.to(player.socket).emit('witch', true)
-                                sendMessage("server", null, "La sorcière décide si elle veut utiliser ses potions.")
+                                // vérifier qu'il n'y a pas eu d'infection ce tour-ci en vérifiant que le joueur infecté 
+                                // n'est pas le même que celui  qui a reçu le vote
+                                if (player.isPower && hub.voteWolf) {
+
+                                    if (hub.voteWolf === hub.protected || hub.infected === hub.voteWolf) {
+                                        io.to(player.socket).emit('victim', null);
+                                    } else {
+                                        io.to(player.socket).emit('victim', getPlayer(hub.voteWolf).name);
+                                    }
+
+                                    io.to(player.socket).emit('witch', true);
+                                    sendMessage("server", null, "La sorcière décide si elle veut utiliser ses potions.")
+                                }
                             }
 
                             if (player.role.name === "Loup blanc") {
-                                if (hub.nbTurn % 2 === 0) {
-                                    actionInGame(player.socket, true);
-                                    sendMessage("server", null, "Le loup blanc peut manger une personne cette nuit.");
+                                if (player.isPower) {
+                                    if (hub.nbTurn % 2 === 0) {
+                                        actionInGame(player.socket, true);
+                                        sendMessage("server", null, "Le loup blanc peut manger une personne cette nuit.");
+                                    }
                                 }
                             }
 
@@ -445,7 +467,7 @@ io.on('connection', (socket) => {
             hub.roles.forEach((role) => {
                 const player = getPlayerByRole(role);
 
-                if (player.role.side === "méchant" || player.isInfected) {
+                if (player.role.side === "méchant" || player.isInfected || player.role.name === "Loup blanc") {
                     io.to(player.socket).emit('setWolf', true);
                 }
             });
@@ -577,7 +599,7 @@ io.on('connection', (socket) => {
 
         hub.players.forEach((player) => {
             if (!player.isDead) {
-                if (player.role.side === "méchant" || player.isInfected) {
+                if (player.role.side === "méchant" || player.isInfected || player.role.name === "Loup blanc") {
                     io.to(player.socket).emit('setWolf', false);
 
                     votes.push(player.voteWolf);
@@ -626,29 +648,29 @@ io.on('connection', (socket) => {
             hub.voteWolf = null;
         }
 
-            if (hub.protected === hub.voteWolf) {
-                hub.voteWolf = null
-            }
+            // if (hub.protected === hub.voteWolf) {
+            //     hub.voteWolf = null
+            // }
 
-            if (hub.roles.includes("Chasseur") && hub.roles.includes("Le Chaperon Rouge")) {
-                const hunter = getPlayerByRole("Chasseur");
-                const chaperon = getPlayerByRole("Le Chaperon Rouge");
+            // if (hub.roles.includes("Chasseur") && hub.roles.includes("Le Chaperon Rouge")) {
+            //     const hunter = getPlayerByRole("Chasseur");
+            //     const chaperon = getPlayerByRole("Le Chaperon Rouge");
 
-                if (chaperon.socket === hub.voteWolf) {
-                    if (!hunter.isDead) {
-                        hub.voteWolf = null;
-                    }
-                }
-            }
+            //     if (chaperon.socket === hub.voteWolf) {
+            //         if (!hunter.isDead) {
+            //             hub.voteWolf = null;
+            //         }
+            //     }
+            // }
 
-            if (hub.roles.includes("Ancien du village")) {
-                if (hub.oldManLife > 0) {
-                    hub.oldManLife--;
-                    hub.oldManReveal = true;
+            // if (hub.roles.includes("Ancien du village")) {
+            //     if (hub.oldManLife > 0) {
+            //         hub.oldManLife--;
+            //         hub.oldManReveal = true;
 
-                    hub.voteWolf = null;
-                }
-            }
+            //         hub.voteWolf = null;
+            //     }
+            // }
 
 
         console.log("Joueur tué : " + hub.voteWolf);
@@ -673,6 +695,10 @@ io.on('connection', (socket) => {
         }
 
         return room();
+    })
+
+    socket.on('getEvents', () => {
+        socket.emit('setEvents', eventsGypsy);
     })
 
     // function Role
@@ -914,15 +940,67 @@ io.on('connection', (socket) => {
 
     socket.on('setWhiteWerewolf', ({ targetID, userID }) => {
         const target = getPlayer(targetID);
-        const player = getPlayer(userID);
+
+        hub.voteWhiteWolf = target.socket;
+
+        room();
+
+        return actionInGame(player.socket, false);
     })
 
-    socket.on('setGypsy', ({ targetID, userID }) => {
+    socket.on('setBlackWerewolf', (bool) => {
+        socket.emit('blackWerewolf', false)
+
+        if (bool) {
+            hub.infected = hub.voteWolf;
+            hub.voteWolf = null;
+            getPlayer(socket.id).isPower = false;
+            sendMessage("server", hub.infected, "Vous avez été infecté par le loup noir !");
+        }
+
+        return room();
+    })
+
+    socket.on('setWitchChoice', (bool) => {
+        socket.emit('witch', false);
+
+        if (bool) {
+            hub.voteWolf = null;
+            getPlayer(socket.id).healthPotion = false;
+        } else {
+            actionInGame(socket.id, true);
+        }
+    })
+
+    socket.on('setWitch', ({targetID, userID}) => {
+        const target = getPlayer(targetID);
         const player = getPlayer(userID);
 
-        player.isPlayed = true;
+        player.deathPotion = false;
 
-        actionInGame(player.socket, false);
+        hub.witchVictim = target.socket;
+
+        sendMessage("server", player.socket, "Vous avez décider de tuer " + target.name);
+
+        room();
+
+        return actionInGame(socket.id, false);
+    })
+
+    socket.on('setGypsy', (choice) => {
+        const player = getPlayer(socket.id);
+        let eventChoice;
+        player.isPower = false;
+
+        eventsGypsy.forEach((event) => {
+            if (event.name === choice) {
+                eventChoice = event;
+            }
+        })
+
+        hub.event = eventChoice;
+
+        return socket.emit('gypsy', false);
     })
 
     socket.on('inGame', ready => {
@@ -1088,7 +1166,9 @@ io.on('connection', (socket) => {
             isCouple: false,
             isCharmed: false,
             isHair: false,
-            isActor: false
+            isActor: false,
+            healthPotion: true,
+            deathPotion: true
         }
 
         hub.players.push(player);
@@ -1129,14 +1209,18 @@ io.on('connection', (socket) => {
             isCouple: false,
             isCharmed: false,
             isHair: false,
-            isActor: false
+            isActor: false,
+            healthPotion: true,
+            deathPotion: true
         }];
         hub.sockets = [socket.id];
         hub.roles = [];
         hub.votes = [''];
+        hub.event = null;
         hub.night = false;
         hub.voteWolf = null;
         hub.voteWhiteWolf = null;
+        hub.witchVictim = null;
         hub.messages = [];
         hub.nbTurn = 0;
         hub.oldManLife = 1;

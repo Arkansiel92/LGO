@@ -6,6 +6,7 @@ import BlackWerewolf from "../BlackWerewolf/BlackWerewolf";
 import Card from "../Card/Card";
 import Counter from "../Counter/Counter";
 import Dictator from "../Dictator/Dictator";
+import Gypsy from "../Gypsy/Gypsy";
 import Player from "../Player/Player";
 import Witch from "../Witch/Witch";
 
@@ -13,6 +14,7 @@ interface props {
     players?: player[],
     player?: player,
     nbTurn?: number,
+    victim?: string,
     night: boolean | undefined
 }
 
@@ -22,8 +24,10 @@ function Gameboard({players, nbTurn, player, night}: props) {
     const [action, setAction] = useState<boolean>(false);
     const [wolf, setWolf] = useState<boolean>(false);
     const [roleForActor, setRoleForActor] = useState<roles[]>();
+    const [gypsy, setGypsy] = useState<boolean>(false);
     const [dictator, setDictator] = useState<boolean>(false);
     const [witch, setWitch] = useState<boolean>(false);
+    const [victim, setVictim] = useState<string | null>(null);
     const [blackWerewolf, setBlackWerewolf] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
 
@@ -33,6 +37,10 @@ function Gameboard({players, nbTurn, player, night}: props) {
 
     socket.on('setWolf', bool => {
         setWolf(bool);
+    })
+
+    socket.on('gypsy', bool => {
+        setGypsy(bool);
     })
 
     socket.on('dictator', bool => {
@@ -45,6 +53,10 @@ function Gameboard({players, nbTurn, player, night}: props) {
 
     socket.on('blackWerewolf', bool => {
         setBlackWerewolf(bool);
+    })
+
+    socket.on('victim', victim => {
+        setVictim(victim);
     })
 
     socket.on('action', action => {
@@ -69,8 +81,9 @@ function Gameboard({players, nbTurn, player, night}: props) {
                 ))}
 
                 {dictator && <Dictator />}
-                {witch && <Witch />}
-                {blackWerewolf && <BlackWerewolf />}
+                {witch && <Witch vote={victim} />}
+                {blackWerewolf && <BlackWerewolf vote={victim} />}
+                {gypsy && <Gypsy />}
             </div>
             <div className="d-flex justify-content-around">
                 {players?.map((p: player, index: number) => (

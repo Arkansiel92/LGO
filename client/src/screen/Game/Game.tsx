@@ -31,7 +31,9 @@ export interface player {
     isCharmed: boolean,
     isRaven: boolean,
     isProtected: boolean,
-    isInfected: boolean
+    isInfected: boolean,
+    healthPotion: boolean,
+    deathPotion: boolean
 }
 
 export interface message {
@@ -50,6 +52,7 @@ export interface room {
     messages: message[],
     night: boolean,
     nbTurn: number;
+    voteWolf: string,
     inGame: boolean;
 }
 
@@ -152,7 +155,7 @@ function Game() {
                 <div className="col text-center my-5">
                     
                     {
-                        inGame && <Gameboard players={room?.players} nbTurn={room?.nbTurn} player={player} night={room?.night} />
+                        inGame && <Gameboard players={room?.players} nbTurn={room?.nbTurn} player={player} night={room?.night} victim={room?.voteWolf} />
                     }
                 </div>
             </div>
