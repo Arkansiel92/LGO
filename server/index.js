@@ -391,12 +391,20 @@ io.on('connection', (socket) => {
             
             return "end";
 
+        } else if (hub.step === "end") {
+            return "day";
         } else {
             return hub.step;
         }
     }
 
     function stepNight() {
+        if(hub.step === "day") {
+            return day();
+        }
+
+        let check = false;
+
         console.log("----");
         console.log("ETAPE : " + hub.step);
         if (hub.step !== "werewolf") {
@@ -407,25 +415,31 @@ io.on('connection', (socket) => {
                     if (role.step === hub.step) {
                         if (!player.isDead && player.isPower && !player.isPlayed) {
                             if (player.role.name === "Dictateur") {
+                                check = true;
                                 io.to(player.socket).emit('dictator', true)
                                 sendMessage("server", null, "Le dictateur décide si il veut faire un coup d'état.")
                             }
 
                             if (player.role.name === "Gitane") {
+                                check = true;
                                 io.to(player.socket).emit('gypsy', true)
                                 sendMessage("server", null, "La gitane décide si elle veut déclencher un évènement.")
                             }
 
                             if (player.role.name === "Loup noir") {
-                                
                                 if (player.isPower && hub.voteWolf) {
-                                    io.to(player.socket).emit('victim', getPlayer(hub.voteWolf).name);
-                                    io.to(player.socket).emit('blackWerewolf', true)
-                                    sendMessage("server", null, "Le loup noir décide si il veut infecter sa victime.")
+                                    const target = getPlayer(hub.voteWolf);
+                                    if (target.role.side !== "méchant" && target.role.name !== "Loup blanc") {
+                                        check = true;
+                                        io.to(player.socket).emit('victim', target.name);
+                                        io.to(player.socket).emit('blackWerewolf', true)
+                                        sendMessage("server", null, "Le loup noir décide si il veut infecter sa victime.")
+                                    }
                                 }
                             }
 
                             if (player.role.name === "Sorcière") {
+                                check = true;
                                 // vérifier qu'il n'y a pas eu d'infection ce tour-ci en vérifiant que le joueur infecté 
                                 // n'est pas le même que celui  qui a reçu le vote
                                 if (player.isPower && hub.voteWolf) {
@@ -442,6 +456,7 @@ io.on('connection', (socket) => {
                             }
 
                             if (player.role.name === "Loup blanc") {
+                                check = true;
                                 if (player.isPower) {
                                     if (hub.nbTurn % 2 === 0) {
                                         actionInGame(player.socket, true);
@@ -451,6 +466,7 @@ io.on('connection', (socket) => {
                             }
 
                             if (player.role.name !== "Dictateur" && player.role.name !== "Comédien" && player.role.name !== "Sorcière" && player.role.name !== "Loup noir" && player.role.name !== "Loup blanc" && player.role.name !== "Grand méchant loup" && player.role.name !== "Gitane") {
+                                check = true;
                                 actionInGame(player.socket, true);
                                 sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.")
                             }
@@ -468,12 +484,36 @@ io.on('connection', (socket) => {
                 const player = getPlayerByRole(role);
 
                 if (player.role.side === "méchant" || player.isInfected || player.role.name === "Loup blanc") {
+                    check = true;
                     io.to(player.socket).emit('setWolf', true);
                 }
             });
         }
 
-        return time(30);
+        if (check) {
+            return time(30);
+        } else {
+            hub.step = order();
+            return stepNight();
+        }
+    }
+
+    function day() {
+        hub.night = false;
+        
+        if (hub.voteWolf) {
+            const target = getPlayer(hub.voteWolf);
+
+            target.isDead = true;
+
+            sendMessage("server", null, "Le jour se lève sans " + target.name + " qui était " + target.role.name)
+        } else {
+            sendMessage("server", null, "Le jour se lève sans et personne n'est mort cette nuit !")
+        }
+
+        time(120);
+
+        return room();
     }
 
     function time(time) {
@@ -485,6 +525,11 @@ io.on('connection', (socket) => {
 
             if (time <= 0) {
                 clearInterval(interval);
+
+                if (hub.step === "day") {
+                    hub.step = "start"
+                    return stepNight();
+                }
 
                 hub.step = order();
 

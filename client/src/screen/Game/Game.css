@@ -13,9 +13,10 @@
     background-repeat: no-repeat;
 }
 
-.user-role {
+.id-room {
+    cursor: pointer;
     background-color: rgb(0, 0, 0, 0.3);
     padding: 8px 18px;
-    border-radius: 999px;
+    border-radius: 100px;
     
 }

@@ -1,14 +1,15 @@
-.messageRole {
-    background-color: rgba(63, 35, 69, 0.3);
+
+.message-container {
     border-radius: 100px;
 }
 
-.messageUser {
-    background-color: rgb(0, 0, 0, 0.3);
-    border-radius: 100px;
+.message-container:hover {
+    background-color: rgb(71, 71, 71, 0.3);
+    transition: 0.2s all;
 }
 
-.messageServer {
-    background-color: rgb(0, 0, 0, 0.3);
-    border-radius: 100px;
+.author {
+    font-size: 15px;
 }
+
+

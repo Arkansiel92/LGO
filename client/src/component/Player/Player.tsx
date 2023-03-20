@@ -28,17 +28,22 @@ function Player(props: props) {
     }
 
     return (
-        <div className='card bg-dark p-5'>
-            {props.name}
-            {
-                props.vote && <button className='btn btn-success'>Voter pour {props.name}</button>
+        <div>
+            {!props.isDead &&
+            <div className='card bg-dark p-5'>
+                {props.name}
+                {
+                    props.vote && <button className='btn btn-success'>Voter pour {props.name}</button>
+                }
+                {
+                    props.action && <button onClick={() => {action(props.socket)}} className='btn btn-primary'>Selectionner</button>
+                }
+                {
+                    props.wolf && <button onClick={() => {wolf(props.socket)}} className='btn btn-primary'>Selectionner</button>
+                }
+            </div>
             }
-            {
-                props.action && <button onClick={() => {action(props.socket)}} className='btn btn-primary'>Selectionner</button>
-            }
-            {
-                props.wolf && <button onClick={() => {wolf(props.socket)}} className='btn btn-primary'>Selectionner</button>
-            }
+
         </div>
     )
 }

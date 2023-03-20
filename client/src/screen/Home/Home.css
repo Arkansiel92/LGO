@@ -99,13 +99,13 @@
 }
 
 .btn-home {
-    background: #5E5DF0;
+    background: #f0ba5d;
     border-radius: 999px;
-    box-shadow: #5E5DF0 0 10px 20px -10px;
+    box-shadow: #d69a33 0 10px 20px -10px;
     box-sizing: border-box;
-    color: #FFFFFF;
+    color: #000000;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     line-height: 24px;
     opacity: 1;
@@ -120,16 +120,17 @@
 }
 
 .btn-home:hover {
-    background: #dedef3;
-    color: #5E5DF0;
+    background: #fbc871;
+    color: #000000;
+    transition: 0.3s all;
 }
 
 .btn-home-active {
-    background: #dedef3;
+    background: #fbc871;
     border-radius: 999px;
-    box-shadow: #5E5DF0 0 10px 20px -10px;
+    box-shadow: #d69a33 0 10px 20px -10px;
     box-sizing: border-box;
-    color: #5E5DF0;
+    color: #000000;
     cursor: pointer;
     font-size: 16px;
     font-weight: 700;
