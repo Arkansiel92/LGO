@@ -59,12 +59,12 @@ function Home() {
                     <div className="my-5 d-flex justify-content-around">
                         {
                             card === "create"
-                                ? <button className="btn-home-active">Créer une partie</button>
+                                ? <button className="btn-home">Créer une partie</button>
                                 : <button className="btn-home" onClick={() => { setCard('create') }}>Créer une partie</button>
                         }
                         {
                             card === "join"
-                                ? <button className="btn-home-active">Rejoindre</button>
+                                ? <button className="btn-home">Rejoindre</button>
                                 : <button className="btn-home" onClick={() => { setCard('join') }}>Rejoindre</button>
                         }
                     </div>
@@ -101,6 +101,7 @@ function Home() {
                     }
                 </div>
             </div>
+
 
         </div>
     )

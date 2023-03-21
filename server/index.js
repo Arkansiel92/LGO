@@ -508,7 +508,7 @@ io.on('connection', (socket) => {
 
             sendMessage("server", null, "Le jour se lève sans " + target.name + " qui était " + target.role.name)
         } else {
-            sendMessage("server", null, "Le jour se lève sans et personne n'est mort cette nuit !")
+            sendMessage("server", null, "Le jour se lève et personne n'est mort cette nuit !")
         }
 
         time(120);

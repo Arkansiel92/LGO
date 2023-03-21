@@ -20,10 +20,10 @@ function Message(props: props) {
                 </div>
             }
             {
-                props.msg.author === "server" &&  <div className="message m-2 py-2 px-4"><i>{props.msg.msg}</i></div>
+                props.msg.author === "server" &&  <div className="message-container m-2 py-2 px-4"><i>{props.msg.msg}</i></div>
             }
             {
-                props.msg.recipient === socket.id && <div className="message m-2 py-2 px-4"><i>{props.msg.msg}</i></div>
+                props.msg.recipient === socket.id && <div className="message-container m-2 py-2 px-4"><i>{props.msg.msg}</i></div>
             }
         </div>
 

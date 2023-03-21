@@ -17,23 +17,72 @@
 
 .village {
   background-color: rgb(29, 68, 33);
+  box-shadow: rgb(32, 79, 36) 0px 0px 12px;
 }
 
 .méchant {
   background-color: rgb(107, 1, 1);
+  box-shadow: rgba(70, 4, 4, 1) 0px 0px 12px;
 }
 
 .seul {
   background-color: #453164;
+  box-shadow: #453164 0px 0px 12px;
 }
 
 .div-btn {
   z-index: 1;
   position: absolute;
-  width: 10vh;
+  margin-left: 90px;
+}
+
+.div-btn-role {
+  z-index: 1;
+  position: absolute;
+  margin-left: 80px;
+}
+
+.btn-add {
+  background: #117146;
+  border-radius: 100px;
+  border: none;
 }
 
 .btn-delete {
+  background: #711111;
+  border-radius: 100px;
+  border: none;
+}
+
+.btn-role-0 {
+  background: #117146;
+  border-radius: 100px;
+  border: none;
+  transition: all 0.1s ease-out;
+}
+
+.btn-role-1 {
+  background: #711111;
+  border-radius: 100px;
+  border: none;
+  transform: rotate(60deg);
+  transition: all 0.1s ease-out;
+}
+
+.btn-role:hover {
+  background: #117146;
+  border-radius: 100px;
+  border: none;
+  box-shadow: #117146 0px 0px 12px;
+}
+
+.btn-role:active {
+  background: #711111;
+  border-radius: 100px;
+  border: none;
+}
+
+/* .btn-delete {
     display: flex;
     align-items: center;
     font-family: inherit;
@@ -86,4 +135,4 @@ box-shadow: 0 0.5em 1.5em -0.5em #a7141498;
 
 .btn-add:active {
   box-shadow: 0 0.3em 1em -0.5em #14a73e98;
-}
+} */

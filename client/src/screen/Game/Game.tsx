@@ -97,15 +97,17 @@ function Game() {
             <div className="row">
                 <div className="col-md-3 bg-dark sidebar">
                     <div className="my-3 d-flex justify-content-around">
-                        <div className='user-role d-flex justify-content-around align-items-center'>
+                        <div className='d-flex justify-content-around align-items-center'>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="7" cy="2.5" r="2" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><path d="M10.5,8a3.5,3.5,0,0,0-7,0V9.5H5l.5,4h3l.5-4h1.5Z" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
                             <div className='mx-2'>
                                 {room?.roles?.length} / {room?.players?.length}
                             </div>
                         </div>
-                        <div className="id-room d-flex justify-content-around align-item-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
-                            <span className='mx-2'>{id}</span>
+                        <div className="d-flex justify-content-around align-items-center id-room">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                            <span className='mx-2'>
+                                {id}
+                            </span>
                         </div>
                         <div>
                             {
