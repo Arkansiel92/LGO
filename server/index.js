@@ -144,7 +144,7 @@ const roles = [
     {
         name: "Garde",
         name_function: "Guard",
-        description: "Chaque nuit, le garde protège une personne . Cette personne sera protégée et ne pourra donc pas mourir durant la nuit. Le garde ne peut pas protéger la même personne deux nuits de suite.",
+        description: "Chaque nuit, le garde protège une personne. Cette personne sera protégée et ne pourra donc pas mourir durant la nuit. Le garde ne peut pas protéger la même personne deux nuits de suite.",
         side: "village",
         step: "start",
         descriptionInGame: "Vous pouvez protéger un joueur (Le garde ne peut pas protéger la même personne deux nuits de suite)",
@@ -365,6 +365,8 @@ io.on('connection', (socket) => {
     }
 
     function order() {
+        io.to(socket.room).emit('hunter', false);
+
         if(hub.step === "start") {
             let dictator = getPlayerByRole("Dictateur");
 
@@ -388,7 +390,18 @@ io.on('connection', (socket) => {
             return "end";
 
         } else if (hub.step === "end") {
+            let witch = getPlayerByRole("Sorcière");
+
+            if (witch) {
+                io.to(witch.socket).emit('witch', false);
+            }
+
             return "day";
+        } else if (hub.step === "day") {
+            hub.night = true;
+            hub.nbTurn++;
+ 
+            return "start";
         } else {
             return hub.step;
         }
@@ -519,16 +532,6 @@ io.on('connection', (socket) => {
             }
         }
         
-        if (hub.voteWolf) {
-            const target = getPlayer(hub.voteWolf);
-
-            target.isDead = true;
-
-            sendMessage("server", null, "Le jour se lève sans " + target.name + " qui était " + target.role.name)
-        } else {
-            sendMessage("server", null, "Le jour se lève et personne n'est mort cette nuit !")
-        }
-
         if (hub.event) {
             sendMessage("server", null, "La gitane a décidé de déclencher l'évènement " + hub.event.name + ". " + hub.event.description);
 
@@ -546,6 +549,21 @@ io.on('connection', (socket) => {
 
             hub.ravenSocket = null;
         }
+
+        if (hub.voteWolf) {
+            const target = getPlayer(hub.voteWolf);
+
+            target.isDead = true;
+
+            sendMessage("server", null, "Le jour se lève sans " + target.name + " qui était " + target.role.name);
+
+            if (target.role.name === "Chasseur") {
+                return io.to(target.socket).emit('hunter', true);
+            }
+        } else {
+            sendMessage("server", null, "Le jour se lève et personne n'est mort cette nuit !")
+        }
+
 
         //time(120);
 
@@ -691,9 +709,6 @@ io.on('connection', (socket) => {
             }
         });
 
-        console.log("count : " + count);
-        console.log(target);
-
         if (target) {
             if (target.isHair) {
                 let player = getPlayerByRole("L'Héritier");
@@ -704,13 +719,16 @@ io.on('connection', (socket) => {
 
             sendMessage("server", null,"Le village a décidé d'exclure " + target.name + " qui était " + target.role.name);
             target.isDead = true;
+
+            if (target.role.name === "Chasseur") {
+                return io.to(target.socket).emit('hunter', true);
+            }
+
         } else {
             sendMessage("server", null, "Personne n'a été exclu du village.");
         }
         
-        hub.night = true;
-        hub.nbTurn++;
-        hub.step = "start";
+        hub.step = order();
         return stepNight();
     }
 
@@ -1205,13 +1223,13 @@ io.on('connection', (socket) => {
 
     socket.on('addRole', role => {
 
-        if (role === "Renard" && hub.players.length < 4) {
-            return;
-        }
+        // if (role === "Renard" && hub.players.length < 4) {
+        //     return;
+        // }
 
-        if (role === "Deux soeurs" && hub.players.length < 4) {
-            return;
-        }
+        // if (role === "Deux soeurs" && hub.players.length < 4) {
+        //     return;
+        // }
 
         const roleObject = roles.find((roleObject) => {
             return roleObject.name === role;
