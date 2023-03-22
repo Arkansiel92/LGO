@@ -44,7 +44,7 @@ function Home() {
                     <h1>Loup-Garou en ligne</h1>
                     <p className='lead'>La nouvelle version du jeu <i>Les Loups-garous de Thiercelieux</i> est arrivée !</p>
                 </div>
-                <div className="div-form rounded p-3 m-5 col-4">
+                <div className="div-form rounded m-auto col-4">
                     <div className="my-5 d-flex justify-content-around">
                         {
                             card === "create"

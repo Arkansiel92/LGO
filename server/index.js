@@ -344,10 +344,6 @@ const eventsGypsy = [
     }
 ]
 
-const beginNightOrder = ['Cupidon', 'L\'Héritier', 'Voyante', 'Garde', 'Corbeau', 'Renard', 'Gitane', 'Servante Dévouée', 'Dictateur']
-const middleNightOrder = ['Loup noir', 'Grand méchant loup', 'Loup blanc']
-const endNightOrder = ['sorcière', 'Joueur de flûte']
-
 io.on('connection', (socket) => {
     let hub = io.sockets.adapter.rooms.get(socket.room);
     let interval;
@@ -405,12 +401,10 @@ io.on('connection', (socket) => {
 
         let check = false;
 
-        console.log("----");
         console.log("ETAPE : " + hub.step);
         if (hub.step !== "werewolf") {
             roles.forEach((role) => {
                 if (hub.roles.includes(role.name)) {
-                    console.log(role.name);
                     const player = getPlayerByRole(role.name);
                     if (role.step === hub.step) {
                         if (!player.isDead && player.isPower && !player.isPlayed) {
@@ -442,9 +436,9 @@ io.on('connection', (socket) => {
                                 check = true;
                                 // vérifier qu'il n'y a pas eu d'infection ce tour-ci en vérifiant que le joueur infecté 
                                 // n'est pas le même que celui  qui a reçu le vote
-                                if (player.isPower && hub.voteWolf) {
+                                if (player.isPower) {
 
-                                    if (hub.voteWolf === hub.protected || hub.infected === hub.voteWolf) {
+                                    if (hub.voteWolf === hub.protected || hub.infected === hub.voteWolf || hub.voteWolf === null) {
                                         io.to(player.socket).emit('victim', null);
                                     } else {
                                         io.to(player.socket).emit('victim', getPlayer(hub.voteWolf).name);
@@ -500,6 +494,30 @@ io.on('connection', (socket) => {
 
     function day() {
         hub.night = false;
+
+        if (hub.protected === hub.voteWolf) {
+            hub.voteWolf = null
+            hub.protected = null;
+        }
+
+        if (hub.roles.includes("Chasseur") && hub.roles.includes("Le Chaperon Rouge")) {
+            let hunter = getPlayerByRole("Chasseur");
+            let chaperon = getPlayerByRole("Le Chaperon Rouge");
+
+            if (chaperon.socket === hub.voteWolf) {
+                if (!hunter.isDead) {
+                    hub.voteWolf = null;
+                }
+            }
+        }
+
+        if (hub.roles.includes("Ancien du village")) {
+            if (hub.oldManLife > 0) {
+                hub.oldManLife--;
+
+                hub.voteWolf = null;
+            }
+        }
         
         if (hub.voteWolf) {
             const target = getPlayer(hub.voteWolf);
@@ -511,7 +529,27 @@ io.on('connection', (socket) => {
             sendMessage("server", null, "Le jour se lève et personne n'est mort cette nuit !")
         }
 
-        time(120);
+        if (hub.event) {
+            sendMessage("server", null, "La gitane a décidé de déclencher l'évènement " + hub.event.name + ". " + hub.event.description);
+
+            hub.event = null;
+        }
+
+        if (!hub.oldManReveal && hub.oldManLife === 0) {
+            sendMessage("server", null, getPlayerByRole("Ancien du village").name + " est mort cette nuit. Son rôle d'ancien du village lui permet d'esquiver une mort certaine pour cette nuit seulement.");
+            
+            hub.oldManReveal = true;
+        }
+
+        if (hub.ravenSocket) {
+            sendMessage("server", null, getPlayer(hub.ravenSocket).name + " a reçu la visite du corbeau cette nuit, il a deux votes en plus pour cette journée.");
+
+            hub.ravenSocket = null;
+        }
+
+        //time(120);
+
+        time(10);
 
         return room();
     }
@@ -526,9 +564,10 @@ io.on('connection', (socket) => {
             if (time <= 0) {
                 clearInterval(interval);
 
+                console.log('coucou');
+
                 if (hub.step === "day") {
-                    hub.step = "start"
-                    return stepNight();
+                    return voteVillagers();
                 }
 
                 hub.step = order();
@@ -639,6 +678,42 @@ io.on('connection', (socket) => {
         }
     }
 
+    function voteVillagers() {
+        let target = null;
+        let count = 0;
+
+        hub.players.forEach((player) => {
+            if (!player.isDead) {
+                if (player.votes.length > count) {
+                    target = player;
+                    count = player.votes.length;
+                }
+            }
+        });
+
+        console.log("count : " + count);
+        console.log(target);
+
+        if (target) {
+            if (target.isHair) {
+                let player = getPlayerByRole("L'Héritier");
+
+                player.role = target.role;
+                player.isPower = target.isPower;
+            }
+
+            sendMessage("server", null,"Le village a décidé d'exclure " + target.name + " qui était " + target.role.name);
+            target.isDead = true;
+        } else {
+            sendMessage("server", null, "Personne n'a été exclu du village.");
+        }
+        
+        hub.night = true;
+        hub.nbTurn++;
+        hub.step = "start";
+        return stepNight();
+    }
+
     function voteWolf() {
         const votes = [];
 
@@ -693,39 +768,29 @@ io.on('connection', (socket) => {
             hub.voteWolf = null;
         }
 
-            // if (hub.protected === hub.voteWolf) {
-            //     hub.voteWolf = null
-            // }
-
-            // if (hub.roles.includes("Chasseur") && hub.roles.includes("Le Chaperon Rouge")) {
-            //     const hunter = getPlayerByRole("Chasseur");
-            //     const chaperon = getPlayerByRole("Le Chaperon Rouge");
-
-            //     if (chaperon.socket === hub.voteWolf) {
-            //         if (!hunter.isDead) {
-            //             hub.voteWolf = null;
-            //         }
-            //     }
-            // }
-
-            // if (hub.roles.includes("Ancien du village")) {
-            //     if (hub.oldManLife > 0) {
-            //         hub.oldManLife--;
-            //         hub.oldManReveal = true;
-
-            //         hub.voteWolf = null;
-            //     }
-            // }
-
-
         console.log("Joueur tué : " + hub.voteWolf);
-
-        sendMessage("server", null, "Le vote des loups a pris fin ! Une victime a été sacrifiée...");
 
         room();
 
         return stepNight();
     }
+
+    socket.on('voteVillage', ({targetID, userID}) => {
+        const target = getPlayer(targetID);
+        const villager = getPlayer(userID);
+
+        if (targetID === villager.vote) {
+            villager.vote = null;
+            let index = target.votes.indexOf(villager.socket);
+            target.votes.splice(index, 1);
+            return;
+        } else {
+            villager.vote = targetID;
+            target.votes.push(villager.socket);
+            sendMessage("server", null, villager.name + " a voté pour " + target.name + " !");
+        };
+
+    })
 
     socket.on('voteWolf', ({ targetID, userID }) => {
         const target = getPlayer(targetID);
@@ -830,13 +895,14 @@ io.on('connection', (socket) => {
     socket.on('setHair', ({ targetID, userID }) => {
 
         if (targetID === userID) {
-            return;
+            return sendMessage(null, socket.id, "Vous ne pouvez pas hériter de vous-même.");
         }
 
         const target = getPlayer(targetID);
         const player = getPlayer(userID);
 
         if (player.isPower) {
+
             player.isPower = false;
             player.isPlayed = true;
 
@@ -845,6 +911,8 @@ io.on('connection', (socket) => {
             hub.hairRole = target.role;
 
             actionInGame(userID, false);
+
+            sendMessage(null, socket.id, "Vous recevrez les pouvoirs de " + target.name + " à sa mort.")
         }
 
         return room();
@@ -926,12 +994,11 @@ io.on('connection', (socket) => {
         const target = getPlayer(targetID);
         const player = getPlayer(userID);
 
-        target.votes.push(['Corbeau', 'Corbeau']);
+        target.votes.push('Corbeau', 'Corbeau');
 
         hub.ravenSocket = target.socket;
 
         player.isPlayed = true;
-
 
         sendMessage(null, player.socket, target.name + " se réveillera avec deux votes en plus !");
 
@@ -1203,6 +1270,7 @@ io.on('connection', (socket) => {
             name: pseudo,
             socket: socket.id,
             role: null,
+            vote: null,
             votes: [],
             voteWolf: null,
             isDead: false,
@@ -1245,6 +1313,7 @@ io.on('connection', (socket) => {
         hub.players = [{
             name: pseudo,
             socket: socket.id,
+            vote: null,
             votes: [],
             voteWolf: null,
             role: null,

@@ -27,6 +27,10 @@ function Player(props: props) {
         socket.emit('voteWolf', ({targetID: target, userID: socket.id}));
     }
 
+    function villager(target: string) {
+        socket.emit('voteVillage', ({targetID: target, userID: socket.id}));
+    }
+
     return (
         <div>
             {!props.isDead &&
@@ -34,6 +38,9 @@ function Player(props: props) {
                 {props.name}
                 {
                     props.vote && <button className='btn btn-success'>Voter pour {props.name}</button>
+                }
+                {
+                    !props.night && <button onClick={() => {villager(props.socket)}} className="btn btn-primary">Vote pour exclure du village</button>
                 }
                 {
                     props.action && <button onClick={() => {action(props.socket)}} className='btn btn-primary'>Selectionner</button>

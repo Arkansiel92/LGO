@@ -6,7 +6,7 @@ interface props {
 
 function Card(props: props) {
     return (
-        <div className="bg-dark mb-5">
+        <div className="my-3">
             <div className="d-flex justify-content-around">
                 <div>
                     Role : {props?.player.role?.name}

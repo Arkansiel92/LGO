@@ -103,12 +103,22 @@ function Game() {
                                 {room?.roles?.length} / {room?.players?.length}
                             </div>
                         </div>
-                        <div className="d-flex justify-content-around align-items-center id-room">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
-                            <span className='mx-2'>
-                                {id}
-                            </span>
-                        </div>
+                        {
+                            room?.night 
+                            ? <div className="d-flex justify-content-around align-items-center id-room">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><path d="M12,10.48A6.55,6.55,0,0,1,6.46.5a6.55,6.55,0,0,0,1,13A6.46,6.46,0,0,0,13,10.39,6.79,6.79,0,0,1,12,10.48Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                <span className='mx-2'>
+                                    Nuit
+                                </span>
+                            </div>
+                            : <div className="d-flex justify-content-around align-items-center id-room">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="7" cy="7" r="2.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+                                <span className='mx-2'>
+                                    Jour
+                                </span>
+                            </div>
+                        }
+
                         <div>
                             {
                                 roleScreen
@@ -147,15 +157,24 @@ function Game() {
                                         inGame={inGame}
                                         key={index} />
                                 ))}
-                                {
-                                    room?.players?.length === room?.roles?.length && inGame === false && socket.id === room?.author && <button className="my-5 btn btn-success btn-lg" onClick={() => { socket.emit('inGame', true) }}>Lancer la partie</button>
-                                }
                             </div>
                             : <Chat messages={room?.messages} night={room?.night} />
                     }
 
                 </div>
-                <div className="col text-center my-5">
+                <div className="col text-center">
+                    {
+                        !inGame && 
+                        <div className='id-room my-5 p-3 w-50 m-auto'>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                            <span className='mx-2'>
+                                {id}
+                            </span>
+                        </div> 
+                    }
+                    {
+                        room?.players?.length === room?.roles?.length && inGame === false && socket.id === room?.author && <button className="btn btn-success btn-lg" onClick={() => { socket.emit('inGame', true) }}>Lancer la partie</button>
+                    }
 
                     {
                         inGame && <Gameboard players={room?.players} nbTurn={room?.nbTurn} player={player} night={room?.night} victim={room?.voteWolf} />

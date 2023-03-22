@@ -69,12 +69,11 @@ function Gameboard({players, nbTurn, player, night}: props) {
 
     return (
         <div>
-            {<Counter />}
-            <h4 className="text-start">{night ? "Période : nuit" : "Période : jour" }</h4>
-            <h4 className="text-start">Tour : {nbTurn}</h4>
             {
                 player && <Card player={player} />
             }
+            {<Counter />}
+            <h4 className="text-start">Tour : {nbTurn}</h4>
             <div className="bg-dark">
                 {roleForActor && roleForActor.map((role: roles, index: number) => (
                     <Actor role={role} key={index} />
