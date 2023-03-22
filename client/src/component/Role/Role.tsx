@@ -80,10 +80,8 @@ function Role({name, name_function, description, side, max, img, roleArray, auth
                             : <div>
                                 {
                                     author === socket.id && 
-                                    <div>
-                                        <button className={`mx-1 btn-role-${nbRole}`} onClick={() => {setRole(name)}}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><path d="M13.5,6.5a1,1,0,0,0-1-1h-4v-4a1,1,0,0,0-1-1h-1a1,1,0,0,0-1,1v4h-4a1,1,0,0,0-1,1v1a1,1,0,0,0,1,1h4v4a1,1,0,0,0,1,1h1a1,1,0,0,0,1-1v-4h4a1,1,0,0,0,1-1Z" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></path></svg>    
-                                        </button>
+                                    <div className="form-check form-switch">
+                                        <input onClick={() => {setRole(name)}} className="form-check-input" type="checkbox" id="flexSwitchCheckDefault"></input>
                                     </div>
                                 }
                             </div>

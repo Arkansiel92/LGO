@@ -17,19 +17,19 @@
 
 .village {
   background-color: rgb(29, 68, 33);
-  box-shadow: rgb(32, 79, 36) 0px 0px 12px;
+  box-shadow: rgb(32, 79, 36) 0px 0px 8px;
   border-radius: 8px;
 }
 
 .méchant {
   background-color: rgb(107, 1, 1);
-  box-shadow: rgba(70, 4, 4, 1) 0px 0px 12px;
+  box-shadow: rgba(70, 4, 4, 1) 0px 0px 8px;
   border-radius: 8px;
 }
 
 .seul {
   background-color: #453164;
-  box-shadow: #453164 0px 0px 12px;
+  box-shadow: #453164 0px 0px 8px;
   border-radius: 8px;
 }
 
@@ -68,7 +68,6 @@
   background: #580d0d;
   border-radius: 100px;
   border: none;
-  transform: rotate(60deg);
   transition: all 0.1s ease-out;
 }
 

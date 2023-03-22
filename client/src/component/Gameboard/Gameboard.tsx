@@ -7,6 +7,7 @@ import Card from "../Card/Card";
 import Counter from "../Counter/Counter";
 import Dictator from "../Dictator/Dictator";
 import Gypsy from "../Gypsy/Gypsy";
+import Hunter from "../Hunter/Hunter";
 import Player from "../Player/Player";
 import Witch from "../Witch/Witch";
 
@@ -27,6 +28,7 @@ function Gameboard({players, nbTurn, player, night}: props) {
     const [gypsy, setGypsy] = useState<boolean>(false);
     const [dictator, setDictator] = useState<boolean>(false);
     const [witch, setWitch] = useState<boolean>(false);
+    const [hunter, setHunter] = useState<boolean>(false);
     const [victim, setVictim] = useState<string | null>(null);
     const [blackWerewolf, setBlackWerewolf] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
@@ -37,6 +39,10 @@ function Gameboard({players, nbTurn, player, night}: props) {
 
     socket.on('setWolf', bool => {
         setWolf(bool);
+    })
+
+    socket.on('hunter', bool => {
+        setHunter(bool);
     })
 
     socket.on('gypsy', bool => {
@@ -83,6 +89,7 @@ function Gameboard({players, nbTurn, player, night}: props) {
                 {witch && <Witch vote={victim} />}
                 {blackWerewolf && <BlackWerewolf vote={victim} />}
                 {gypsy && <Gypsy />}
+                {hunter && <Hunter />}
             </div>
             <div className="d-flex justify-content-around">
                 {players?.map((p: player, index: number) => (
