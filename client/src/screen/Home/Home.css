@@ -2,6 +2,10 @@
     height: 100vh;
 }
 
+.div-form {
+    background: rgba(41, 41, 41, 0.6);
+}
+
 .home {
     position: absolute;
     width: 100%;
@@ -10,95 +14,8 @@
     left: 0;
 }
 
-@keyframes falling {
-    0% {
-        opacity: 0;
-        top: -20%;
-        transform: rotate(0deg);
-    }
 
-    20% {
-        transform: rotate(45deg);
-        opacity: 1;
-    }
 
-    40% {
-        transform: rotate(60deg);
-    }
-
-    60% {
-        transform: rotate(90deg);
-    }
-
-    80% {
-        transform: rotate(120deg);
-    }
-
-    100% {
-        top: 110%;
-        transform: rotate(180deg);
-    }
-}
-
-.card-game1 {
-    position: fixed;
-    animation: falling 6s linear infinite;
-}
-
-.card-game2 {
-    position: fixed;
-    left: 3%;
-    animation: falling 6s linear infinite;
-    animation-delay: 1s;
-}
-
-.card-game3 {
-    position: fixed;
-    left: 10%;
-    animation: falling 6s linear infinite;
-    animation-delay: 2s;
-}
-
-.card-game4 {
-    position: fixed;
-    left: 30%;
-    animation: falling 6s linear infinite;
-    animation-delay: 3s;
-}
-
-.card-game5 {
-    position: fixed;
-    left: 40%;
-    animation: falling 6s linear infinite;
-    animation-delay: 2s;
-}
-
-.card-game6 {
-    position: fixed;
-    left: 60%;
-    animation: falling 6s linear infinite;
-    animation-delay: 4s;
-}
-
-.card-game7 {
-    transform: scale(2) rotateY(180deg);
-    filter: blur(2px);
-    position: fixed;
-    left: 13%;
-    animation: falling 6s linear infinite;
-    animation-delay: 2.5s;
-}
-
-.card-game8 {
-    transform: scale(2) rotateY(180deg);
-    filter: blur(2px);
-    position: fixed;
-    left: 5%;
-    animation: falling 6s linear infinite;
-    animation-delay: 4s;
-}
-
-/* CSS */
 .btn-home {
   align-items: center;
   background-color: #0A66C2;

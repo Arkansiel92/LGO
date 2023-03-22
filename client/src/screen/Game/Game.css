@@ -7,6 +7,12 @@
     min-height: 100%;
 }
 
+.container-roles {
+    height: 80vh;
+    min-height: 85%;
+    overflow-y: auto;
+}
+
 .card-game {
     background-size: cover;
     background-position: center;

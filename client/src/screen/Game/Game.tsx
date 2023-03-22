@@ -133,11 +133,11 @@ function Game() {
                     </div>
                     {
                         roleScreen
-                            ? <div className="my-5 row container">
-                                <h2 className='text-center'>Rôles</h2>
+                            ? <div className="container-roles my-5 container">
                                 {roles?.map((role: roles, index: number) => (
                                     <Role
                                         name={role.name}
+                                        name_function={role.name_function}
                                         description={role.description}
                                         side={role.side}
                                         max={role.max}

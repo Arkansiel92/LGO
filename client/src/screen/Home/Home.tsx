@@ -39,23 +39,12 @@ function Home() {
             {
                 alert && <div className='container text-center alert alert-danger'>{alert}</div>
             }
-            <div className="home row container-fluid">
+            <div className="home row">
                 <div className="card-game m-auto text-center col">
                     <h1>Loup-Garou en ligne</h1>
                     <p className='lead'>La nouvelle version du jeu <i>Les Loups-garous de Thiercelieux</i> est arrivée !</p>
-                    <div className="card-img">
-                        <img className='card-game1 rounded' src="assets/img/card/card-villager.png" alt="" width={150} />
-                        <img className='card-game2 rounded' src="assets/img/card/card-werewolf.png" alt="" width={120} />
-                        <img className='card-game3 rounded' src="assets/img/card/card-angel.png" alt="" width={80} />
-                        <img className='card-game4 rounded' src="assets/img/card/card-witch.png" alt="" width={100} />
-                        <img className='card-game5 rounded' src="assets/img/card/card-blackWerewolf.png" alt="" width={60} />
-                        <img className='card-game6 rounded' src="assets/img/card/card-judge.png" alt="" width={80} />
-
-                        <img className='card-game7 rounded' src="assets/img/card/card-gard.png" alt="" width={50} />
-                        <img className='card-game8 rounded' src="assets/img/card/card-fox.png" alt="" width={60} />
-                    </div>
                 </div>
-                <div className="form-game m-auto col-4">
+                <div className="div-form rounded p-3 m-5 col-4">
                     <div className="my-5 d-flex justify-content-around">
                         {
                             card === "create"
