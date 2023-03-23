@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import Action from '../../component/Action/Action';
 import Chat from '../../component/Chat/Chat';
 import Gameboard from '../../component/Gameboard/Gameboard';
 import Role from '../../component/Role/Role';
@@ -14,6 +15,7 @@ export interface roles {
     name: string,
     name_function: string,
     description: string,
+    descriptionInGame: string,
     side: string,
     img: string,
     max: number

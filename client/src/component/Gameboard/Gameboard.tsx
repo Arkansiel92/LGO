@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { socketContext, ExtendedSocket} from "../../context/socket";
 import { player, roles } from "../../screen/Game/Game";
+import Action from "../Action/Action";
 import Actor from "../Actor/Actor";
 import BlackWerewolf from "../BlackWerewolf/BlackWerewolf";
 import Card from "../Card/Card";
@@ -20,10 +21,17 @@ interface props {
     night: boolean | undefined
 }
 
+export interface action {
+    name: string,
+    descriptionInGame: string,
+    response: boolean
+}
+
 function Gameboard({players, nbTurn, player, night, selfDead}: props) {
 
     const [vote, setVote] = useState<boolean>(false);
-    const [action, setAction] = useState<boolean>(false);
+    const [action, setAction] = useState<action>();
+    const [actionRole, setActionRole] = useState<boolean>(false);
     const [wolf, setWolf] = useState<boolean>(false);
     const [roleForActor, setRoleForActor] = useState<roles[]>();
     const [gypsy, setGypsy] = useState<boolean>(false);
@@ -33,6 +41,11 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
     const [victim, setVictim] = useState<string | null>(null);
     const [blackWerewolf, setBlackWerewolf] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
+
+    socket.on('action', (data) => {
+        console.log(data);
+        setAction(data);
+    })
 
     socket.on('setIsVote', vote => {
         setVote(vote);
@@ -67,7 +80,7 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
     })
 
     socket.on('action', action => {
-        setAction(action);
+        setActionRole(action);
     })
 
     socket.on('roleForActor', role => {
@@ -91,6 +104,7 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
                 {blackWerewolf && <BlackWerewolf vote={victim} />}
                 {gypsy && <Gypsy />}
                 {hunter && <Hunter />}
+                {action && <Action props={action} />}
             </div>
             <div className="d-flex justify-content-around">
                 {players?.map((p: player, index: number) => (
@@ -105,7 +119,7 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
                         isCouple={p.isCouple}
                         wolf={wolf}
                         night={night}
-                        action={action}
+                        actionRole={actionRole}
                         vote={vote}
                         key={index} />
                 ))}

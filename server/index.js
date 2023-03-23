@@ -397,8 +397,8 @@ io.on('connection', (socket) => {
 
             return "day";
         } else if (hub.step === "day") {
-            hub.night = true;
-            hub.nbTurn++;
+              
+            resetTurn();
  
             return "start";
         } else {
@@ -565,8 +565,6 @@ io.on('connection', (socket) => {
             sendMessage("server", null, "Le jour se lève et personne n'est mort cette nuit !")
         }
 
-        resetTurn();
-
         //time(120);
 
         time(10);
@@ -575,6 +573,9 @@ io.on('connection', (socket) => {
     }
 
     function resetTurn() {
+        hub.night = true;
+        hub.nbTurn++;
+
         hub.votes = [''];
         hub.voteWolf = null;
         hub.voteWhiteWolf = null;
@@ -1210,6 +1211,7 @@ io.on('connection', (socket) => {
             if (thief) {
                 sendMessage("server", null, "Le voleur décide du joueur à voler.");
                 timeBySocket(30, thief);
+                io.to(thief.socket).emit('action', {name: thief.role.name, descriptionInGame: thief.role.descriptionInGame, response: false})
                 return actionInGame(thief.socket, true);
             }
         }
