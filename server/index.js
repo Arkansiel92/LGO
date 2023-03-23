@@ -329,7 +329,7 @@ const roles = [
         step: "start",
         descriptionInGame: "Désignez un testataire qui vous léguera son rôle lors dà sa mort",
         max: 1,
-        img: "card-heir.svg",
+        img: "card-hair.svg",
     },
 ]
 

@@ -31,12 +31,12 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: black;
-    animation: transition 1s linear forwards;
+    background: #161314;
+    animation: transition 0.5s linear forwards;
 }
 
 @keyframes transition {
-    80% {
+    10% {
         height: 100%;
     }
 

@@ -65,7 +65,6 @@ function Game() {
     })
 
     const { id } = useParams<Params>();
-    const [loading, setLoading] = useState<boolean>(true);
     const [roles, setRoles] = useState<roles[] | null>(null);
     const [room, setRoom] = useState<room | null>(null);
     const [player, setPlayer] = useState<player>();
@@ -90,17 +89,6 @@ function Game() {
     })
 
     useEffect(() => {
-        const onPageLoad = () => {
-            console.log("coucou");
-            setLoading(false);
-        }
-
-        // Check if the page has already loaded
-        if (document.readyState === 'complete') {
-            onPageLoad();
-        } else {
-            window.addEventListener('load', onPageLoad);
-        }
 
         if (!roles) {
             socket.emit('getRoles');
@@ -110,15 +98,12 @@ function Game() {
             socket.emit('getRoom');
         }
 
-        // Remove the event listener when component unmounts
-        return () => window.removeEventListener('load', onPageLoad);
     }, [socket, roles, room])
 
     return (
         <div id="container">
-            {
-                loading && <div id="loader"></div>
-            }
+            <div id="loader"></div>
+
             <div className="game-screen container-fluid">
                 <div className="row">
                     <div className="col-md-3 bg-dark sidebar">
@@ -132,13 +117,13 @@ function Game() {
                             {
                                 room?.night
                                     ? <div className="d-flex justify-content-around align-items-center id-room">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><path d="M12,10.48A6.55,6.55,0,0,1,6.46.5a6.55,6.55,0,0,0,1,13A6.46,6.46,0,0,0,13,10.39,6.79,6.79,0,0,1,12,10.48Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><path d="M12,10.48A6.55,6.55,0,0,1,6.46.5a6.55,6.55,0,0,0,1,13A6.46,6.46,0,0,0,13,10.39,6.79,6.79,0,0,1,12,10.48Z" fill="none" stroke="#ffffff" stroke-linecap="round" strokeLinejoin="round"></path></svg>
                                         <span className='mx-2'>
                                             Nuit
                                         </span>
                                     </div>
                                     : <div className="d-flex justify-content-around align-items-center id-room">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="7" cy="7" r="2.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="7" cy="7" r="2.5" fill="none" stroke="#ffffff" stroke-linecap="round" strokeLinejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke="#ffffff" stroke-linecap="round" strokeLinejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke="#ffffff" stroke-linecap="round" strokeLinejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke="#ffffff" stroke-linecap="round" strokeLinejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke="#ffffff" stroke-linecap="round" strokeLinejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke="#ffffff" stroke-linecap="round" strokeLinejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke="#ffffff" stroke-linecap="round" strokeLinejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke="#ffffff" stroke-linecap="round" strokeLinejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke="#ffffff" stroke-linecap="round" strokeLinejoin="round"></line></g></svg>
                                         <span className='mx-2'>
                                             Jour
                                         </span>
@@ -192,7 +177,7 @@ function Game() {
                         {
                             !inGame &&
                             <div className='id-room my-5 p-3 w-50 m-auto'>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" stroke-linecap="round" strokeLinejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" stroke-linecap="round" strokeLinejoin="round"></path></g></svg>
                                 <span className='mx-2'>
                                     {id}
                                 </span>

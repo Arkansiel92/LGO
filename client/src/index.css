@@ -10,10 +10,11 @@
 }
 
 body {
-    background-color: #021927;
     color: #F5F5F5;
     font-family: 'Corals-Regular', sans-serif;
     font-size: 18px;
+    background: #1b2b3d;
+
 }
 
 ::-webkit-scrollbar {

@@ -1,20 +1,33 @@
 .gameScreen {
-    height: 100vh;
+  height: 100%;
 }
 
-.div-form {
-    background: rgba(41, 41, 41, 0.6);
+#loader-home {
+  position: absolute;
+  width: 100%;
+  height: 0%;
+  background: #161314;
+  animation: transition-home 0.5s linear forwards;
+  z-index: 1;
+}
+
+@keyframes transition-home {
+  10% {
+    height: 0%;
+  }
+
+  100% {
+    height: 100%;
+  }
 }
 
 .home {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
-
-
 
 .btn-home {
   align-items: center;
@@ -46,7 +59,7 @@
 }
 
 .btn-home:hover,
-.btn-home:focus { 
+.btn-home:focus {
   background-color: #16437E;
   color: #ffffff;
 }
@@ -56,8 +69,48 @@
   color: rgb(255, 255, 255, .7);
 }
 
-.btn-home:disabled { 
+.btn-home:disabled {
   cursor: not-allowed;
   background: rgba(0, 0, 0, .08);
   color: rgba(0, 0, 0, .3);
+}
+
+.img-bg {
+  position: relative;
+  z-index: 0;
+  animation: move 6s ease infinite;
+}
+
+.card-circle {
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-color: #09223b;
+}
+
+@keyframes move {
+	0% {
+		transform: translateY(0);
+	}
+
+	20% {
+		transform: translateY(-8px);
+	}
+
+	40% {
+		transform: translateY(0px);
+	}
+
+	60% {
+		transform: translateY(8px);
+	}
+
+	80% {
+		transform: translateY(4px);
+	}
+
+	100% {
+		transform: translateY(0);
+	}
 }
