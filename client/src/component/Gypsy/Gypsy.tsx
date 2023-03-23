@@ -15,7 +15,6 @@ function Gypsy() {
 
     socket.on('setEvents', events => {
         setEvents(events);
-        console.log(events);
     })
 
     useEffect(() => {

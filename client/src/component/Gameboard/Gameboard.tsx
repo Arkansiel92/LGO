@@ -30,8 +30,8 @@ export interface action {
 function Gameboard({players, nbTurn, player, night, selfDead}: props) {
 
     const [vote, setVote] = useState<boolean>(false);
-    const [action, setAction] = useState<action>();
-    const [actionRole, setActionRole] = useState<boolean>(false);
+    const [actionByRole, setActionByRole] = useState<action | null>(null);
+    const [action, setAction] = useState<boolean>(false);
     const [wolf, setWolf] = useState<boolean>(false);
     const [roleForActor, setRoleForActor] = useState<roles[]>();
     const [gypsy, setGypsy] = useState<boolean>(false);
@@ -42,9 +42,8 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
     const [blackWerewolf, setBlackWerewolf] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
 
-    socket.on('action', (data) => {
-        console.log(data);
-        setAction(data);
+    socket.on('actionByRole', (data) => {
+        setActionByRole(data);        
     })
 
     socket.on('setIsVote', vote => {
@@ -79,8 +78,8 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
         setVictim(victim);
     })
 
-    socket.on('action', action => {
-        setActionRole(action);
+    socket.on('actionRole', action => {
+        setAction(action);
     })
 
     socket.on('roleForActor', role => {
@@ -104,7 +103,7 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
                 {blackWerewolf && <BlackWerewolf vote={victim} />}
                 {gypsy && <Gypsy />}
                 {hunter && <Hunter />}
-                {action && <Action props={action} />}
+                {actionByRole && <Action name={actionByRole?.name} descriptionInGame={actionByRole?.descriptionInGame} response={actionByRole?.response} />}
             </div>
             <div className="d-flex justify-content-around">
                 {players?.map((p: player, index: number) => (
@@ -119,7 +118,7 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
                         isCouple={p.isCouple}
                         wolf={wolf}
                         night={night}
-                        actionRole={actionRole}
+                        action={action}
                         vote={vote}
                         key={index} />
                 ))}

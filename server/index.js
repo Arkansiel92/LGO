@@ -1211,7 +1211,7 @@ io.on('connection', (socket) => {
             if (thief) {
                 sendMessage("server", null, "Le voleur décide du joueur à voler.");
                 timeBySocket(30, thief);
-                io.to(thief.socket).emit('action', {name: thief.role.name, descriptionInGame: thief.role.descriptionInGame, response: false})
+                io.to(thief.socket).emit('actionByRole', {name: thief.role.name, descriptionInGame: thief.role.descriptionInGame, response: false})
                 return actionInGame(thief.socket, true);
             }
         }
