@@ -14,6 +14,7 @@ interface props {
     action: boolean,
     vote: boolean,
     wolf: boolean,
+    selfDead: boolean | undefined
 }
 
 function Player(props: props) {
@@ -40,7 +41,7 @@ function Player(props: props) {
                     props.vote && <button className='btn btn-success'>Voter pour {props.name}</button>
                 }
                 {
-                    !props.night && <button onClick={() => {villager(props.socket)}} className="btn btn-primary">Vote pour exclure du village</button>
+                    !props.night && !props.selfDead && <button onClick={() => {villager(props.socket)}} className="btn btn-primary">Vote pour exclure du village</button>
                 }
                 {
                     props.action && <button onClick={() => {action(props.socket)}} className='btn btn-primary'>Selectionner</button>

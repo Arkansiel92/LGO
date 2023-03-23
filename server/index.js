@@ -4,7 +4,6 @@ const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const fs = require('fs');
-const { send } = require('process');
 
 app.use(cors());
 
@@ -558,18 +557,35 @@ io.on('connection', (socket) => {
             sendMessage("server", null, "Le jour se lève sans " + target.name + " qui était " + target.role.name);
 
             if (target.role.name === "Chasseur") {
+                console.log("Chasseur mort");
+                timeBySocket(30, target);
                 return io.to(target.socket).emit('hunter', true);
             }
         } else {
             sendMessage("server", null, "Le jour se lève et personne n'est mort cette nuit !")
         }
 
+        resetTurn();
 
         //time(120);
 
         time(10);
 
         return room();
+    }
+
+    function resetTurn() {
+        hub.votes = [''];
+        hub.voteWolf = null;
+        hub.voteWhiteWolf = null;
+        hub.witchVictim = null;
+        hub.infected = null;
+        hub.protected = null;
+        hub.dictator = false;
+        hub.ravenSocket = null;
+        hub.actorSocket = null;
+
+        return;
     }
 
     function time(time) {
@@ -581,8 +597,6 @@ io.on('connection', (socket) => {
 
             if (time <= 0) {
                 clearInterval(interval);
-
-                console.log('coucou');
 
                 if (hub.step === "day") {
                     return voteVillagers();
@@ -629,6 +643,10 @@ io.on('connection', (socket) => {
                 
                 if (player.role.name === "Comédien") {
                     io.to(player.socket).emit("roleForActor", []);
+                }
+
+                if (player.role.name === "Chasseur") {
+                    io.to(player.socket).emit("hunter", false);
                 }
 
                 room();
@@ -721,6 +739,7 @@ io.on('connection', (socket) => {
             target.isDead = true;
 
             if (target.role.name === "Chasseur") {
+                timeBySocket(30, target);
                 return io.to(target.socket).emit('hunter', true);
             }
 
@@ -872,6 +891,17 @@ io.on('connection', (socket) => {
             return stepNight();
         }
 
+    })
+
+    socket.on('setHunter', ({targetID, userID}) => {
+        let target = getPlayer(targetID);
+        let player = getPlayer(userID);
+
+        target.isDead = true;
+        
+        sendMessage('server', null, "Le chasseur a décidé d'éliminer " + target.name + " qui était " + target.role.name + ".");
+
+        return room();
     })
 
     socket.on('setCupidon', ({ targetID, userID }) => {

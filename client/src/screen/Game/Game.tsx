@@ -188,7 +188,7 @@ function Game() {
                         }
 
                         {
-                            inGame && <Gameboard players={room?.players} nbTurn={room?.nbTurn} player={player} night={room?.night} victim={room?.voteWolf} />
+                            inGame && <Gameboard players={room?.players} nbTurn={room?.nbTurn} player={player} night={room?.night} selfDead={player?.isDead} victim={room?.voteWolf} />
                         }
                     </div>
                 </div>

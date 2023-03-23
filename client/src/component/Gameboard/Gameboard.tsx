@@ -16,10 +16,11 @@ interface props {
     player?: player,
     nbTurn?: number,
     victim?: string,
+    selfDead: boolean | undefined,
     night: boolean | undefined
 }
 
-function Gameboard({players, nbTurn, player, night}: props) {
+function Gameboard({players, nbTurn, player, night, selfDead}: props) {
 
     const [vote, setVote] = useState<boolean>(false);
     const [action, setAction] = useState<boolean>(false);
@@ -94,6 +95,7 @@ function Gameboard({players, nbTurn, player, night}: props) {
             <div className="d-flex justify-content-around">
                 {players?.map((p: player, index: number) => (
                     <Player
+                        selfDead={selfDead}
                         name_function={player?.role?.name_function}
                         name={p.name}
                         socket={p.socket}
