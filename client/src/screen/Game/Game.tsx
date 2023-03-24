@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Chat from '../../component/Chat/Chat';
 import Gameboard from '../../component/Gameboard/Gameboard';
+import Map from '../../component/Map/Map';
 import Role from '../../component/Role/Role';
 import { socketContext, ExtendedSocket } from '../../context/socket';
 import './Game.css';
@@ -43,6 +44,7 @@ export interface message {
     author: string | null,
     recipient: string | null,
     msg: string,
+    isDead: boolean,
     sister: boolean,
     loved: boolean
 }
@@ -186,6 +188,7 @@ function Game() {
                         {
                             inGame && <Gameboard players={room?.players} nbTurn={room?.nbTurn} player={player} night={room?.night} selfDead={player?.isDead} victim={room?.voteWolf} />
                         }
+                        {/* <Map /> */}
                     </div>
                 </div>
             </div>

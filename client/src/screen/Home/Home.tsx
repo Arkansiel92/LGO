@@ -42,13 +42,14 @@ function Home() {
             {
                 loading && <div id="loader-home"></div>
             }
-            <div className=''>
+            <div>
                 <Navbar />
                 {
                     alert && <div className='container text-center alert alert-danger'>{alert}</div>
                 }
-                <img className='img-bg m-5' src="/assets/img/moon.png" alt="" width={150} />
+                <img className='moon m-5' src="/assets/img/moon.svg" alt="" width={250} />
                 <div className="home d-flex flex-column">
+                    <h1 className='text-center mt-5 fw-bold'>La Malédiction de Thiercelieux</h1>
                     <div className="m-auto w-50">
                         <div className="mt-5 d-flex justify-content-around">
                             {
@@ -116,6 +117,7 @@ function Home() {
                             Arkansiel © - 2023. <a target={'_blank'} rel="noreferrer" href="https://discord.gg/J6wefxT4">Discord MyouTwitch</a>
                         </span>
                     </footer>
+                    <img className='forest' src="assets/img/forest.svg" alt="" />
                 </div>
             </div>
         </div>

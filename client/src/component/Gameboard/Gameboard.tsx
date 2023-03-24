@@ -4,7 +4,6 @@ import { player, roles } from "../../screen/Game/Game";
 import Action from "../Action/Action";
 import Card from "../Card/Card";
 import Counter from "../Counter/Counter";
-import Hunter from "../Hunter/Hunter";
 import Player from "../Player/Player";
 
 interface props {
@@ -41,7 +40,6 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
     const [actionByRole, setActionByRole] = useState<action | null>(null);
     const [action, setAction] = useState<boolean>(false);
     const [wolf, setWolf] = useState<boolean>(false);
-    const [hunter, setHunter] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
 
     socket.on('actionByRole', (data) => {
@@ -65,7 +63,6 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
             {<Counter />}
             {player && <Card player={player} />}
             <h4 className="text-start">Tour : {nbTurn}</h4>
-            {hunter && <Hunter />}
             {actionByRole && <Action 
                 name={actionByRole?.name} 
                 name_function={actionByRole?.name_function}

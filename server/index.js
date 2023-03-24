@@ -655,6 +655,7 @@ io.on('connection', (socket) => {
             author: author,
             recipient: recipient,
             msg: msg,
+            isDead : getPlayer(socket.id).isDead,
             loved: loved,
             sister: sister
         })
