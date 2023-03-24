@@ -1,5 +1,22 @@
 #action {
+	position: absolute;
+	top: 150%;
+	left: 35%;
+	transform: translate(-50%, -50%);
+	max-width: 400px;
+	max-height: 400px;
     animation: entrance 1s ease 0s 1 normal forwards;
+    z-index: 1;
+}
+
+#actionDown {
+	position: absolute;
+	top: 150%;
+	left: 35%;
+	transform: translate(-50%, -50%);
+	max-width: 400px;
+	max-height: 400px;
+    animation: entrance 1s ease 0s 1 normal reverse;
     z-index: 1;
 }
 

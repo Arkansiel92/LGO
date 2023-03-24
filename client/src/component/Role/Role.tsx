@@ -12,11 +12,10 @@ interface role {
     img: string,
     roleArray: string[] | undefined,
     author: string | undefined,
-    inGame: boolean,
-    key: number
+    inGame: boolean
 }
 
-function Role({name, name_function, description, side, max, img, roleArray, author, inGame, key}: role) {
+function Role({name, name_function, description, side, max, img, roleArray, author, inGame}: role) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
 

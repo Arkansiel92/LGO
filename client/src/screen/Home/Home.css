@@ -78,7 +78,7 @@
 .img-bg {
   position: relative;
   z-index: 0;
-  animation: move 6s ease infinite;
+  animation: move 6s linear infinite;
 }
 
 .card-circle {
@@ -95,7 +95,7 @@
 	}
 
 	20% {
-		transform: translateY(-8px);
+		transform: translateY(-16px);
 	}
 
 	40% {
@@ -103,11 +103,11 @@
 	}
 
 	60% {
-		transform: translateY(8px);
+		transform: translateY(16px);
 	}
 
 	80% {
-		transform: translateY(4px);
+		transform: translateY(8px);
 	}
 
 	100% {

@@ -2,15 +2,10 @@ import { useState, useContext } from "react";
 import { socketContext, ExtendedSocket} from "../../context/socket";
 import { player, roles } from "../../screen/Game/Game";
 import Action from "../Action/Action";
-import Actor from "../Actor/Actor";
-import BlackWerewolf from "../BlackWerewolf/BlackWerewolf";
 import Card from "../Card/Card";
 import Counter from "../Counter/Counter";
-import Dictator from "../Dictator/Dictator";
-import Gypsy from "../Gypsy/Gypsy";
 import Hunter from "../Hunter/Hunter";
 import Player from "../Player/Player";
-import Witch from "../Witch/Witch";
 
 interface props {
     players?: player[],
@@ -21,10 +16,23 @@ interface props {
     night: boolean | undefined
 }
 
+interface event {
+    name: string,
+    description: string
+}
+
 export interface action {
     name: string,
+    name_function?: string,
     descriptionInGame: string,
-    response: boolean
+    response: boolean,
+    victim? : string,
+    actorRoles?: roles[],
+    gypsy? : event[],
+    witch? : {
+        potion: boolean,
+        death: boolean
+    }
 }
 
 function Gameboard({players, nbTurn, player, night, selfDead}: props) {
@@ -33,13 +41,7 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
     const [actionByRole, setActionByRole] = useState<action | null>(null);
     const [action, setAction] = useState<boolean>(false);
     const [wolf, setWolf] = useState<boolean>(false);
-    const [roleForActor, setRoleForActor] = useState<roles[]>();
-    const [gypsy, setGypsy] = useState<boolean>(false);
-    const [dictator, setDictator] = useState<boolean>(false);
-    const [witch, setWitch] = useState<boolean>(false);
     const [hunter, setHunter] = useState<boolean>(false);
-    const [victim, setVictim] = useState<string | null>(null);
-    const [blackWerewolf, setBlackWerewolf] = useState<boolean>(false);
     const socket = useContext<ExtendedSocket>(socketContext);
 
     socket.on('actionByRole', (data) => {
@@ -54,58 +56,26 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
         setWolf(bool);
     })
 
-    socket.on('hunter', bool => {
-        setHunter(bool);
-    })
-
-    socket.on('gypsy', bool => {
-        setGypsy(bool);
-    })
-
-    socket.on('dictator', bool => {
-        setDictator(bool);
-    })
-
-    socket.on('witch', bool => {
-        setWitch(bool);
-    })
-
-    socket.on('blackWerewolf', bool => {
-        setBlackWerewolf(bool);
-    })
-
-    socket.on('victim', victim => {
-        setVictim(victim);
-    })
-
-    socket.on('actionRole', action => {
+    socket.on('action', action => {
         setAction(action);
     })
 
-    socket.on('roleForActor', role => {
-        setRoleForActor(role);
-    })
-
     return (
-        <div>
-            {
-                player && <Card player={player} />
-            }
+        <div className="position-relative">
             {<Counter />}
+            {player && <Card player={player} />}
             <h4 className="text-start">Tour : {nbTurn}</h4>
-            <div className="bg-dark">
-                {roleForActor && roleForActor.map((role: roles, index: number) => (
-                    <Actor role={role} key={index} />
-                ))}
+            {hunter && <Hunter />}
+            {actionByRole && <Action 
+                name={actionByRole?.name} 
+                name_function={actionByRole?.name_function}
+                descriptionInGame={actionByRole?.descriptionInGame} 
+                response={actionByRole?.response} 
+                victim={actionByRole?.victim}
+                actorRoles={actionByRole?.actorRoles}
+                gypsy={actionByRole?.gypsy} />}
 
-                {dictator && <Dictator />}
-                {witch && <Witch vote={victim} />}
-                {blackWerewolf && <BlackWerewolf vote={victim} />}
-                {gypsy && <Gypsy />}
-                {hunter && <Hunter />}
-                {actionByRole && <Action name={actionByRole?.name} descriptionInGame={actionByRole?.descriptionInGame} response={actionByRole?.response} />}
-            </div>
-            <div className="d-flex justify-content-around">
+            <div className="d-flex justify-content-around m-5">
                 {players?.map((p: player, index: number) => (
                     <Player
                         selfDead={selfDead}

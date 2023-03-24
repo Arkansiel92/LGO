@@ -8,6 +8,8 @@ import "./Chat.css";
 
 interface messages {
     messages?: message[],
+    loved: boolean | undefined,
+    sister: boolean | undefined,
     night: boolean | undefined
 }
 
@@ -16,12 +18,14 @@ interface messages {
 function Chat(props: messages) {
 
     const [input, setInput] = useState<string>("");
+    const [sister, setSister] = useState<boolean>(false);
+    const [lover, setLover] = useState<boolean>(false);
 
     const socket = useContext<ExtendedSocket>(socketContext);
 
     const sendMessage = () => {
         if (input !== "" && input.length < 120) {
-            socket.emit('setMessage', input)
+            socket.emit('setMessage', {msg: input, sister: sister, lover: lover})
             setInput("");
         }
     }
@@ -45,11 +49,13 @@ function Chat(props: messages) {
                 {props.messages?.map((msg, index: number) => (
                     <Message 
                         msg={msg}
+                        loved={lover}
+                        sister={sister}
                         key={index} />
                 ))}
             </div>
             {
-                props.night === false
+                !props.night || sister || lover
                 ? <div>
                     <input type="text" onChange={ (e) => setInput(e.target.value) } value={input} max={150} min={1} placeholder={"Message au village..."} id="inputChat" className="mt-5 form-control" />
                 </div>
@@ -57,7 +63,18 @@ function Chat(props: messages) {
                 <input type="text" disabled max={150} min={1} placeholder={"Impossible d'écrire pendant la nuit..."} id="inputChat" className="mt-5 form-control" />
                 </div>
             }
-
+            {
+                props.loved && 
+                <div className="form-check form-switch">
+                    <input className="form-check-input" onChange={() => {setLover(!lover)}} type="checkbox" id="flexSwitchCheckDefault" />
+                </div>
+            }
+            {
+                props.sister && 
+                <div className="form-check form-switch">
+                    <input className="form-check-input" onChange={() => {setSister(!sister)}} type="checkbox" id="flexSwitchCheckDefault" />
+                </div>
+            }
         </div>
     )
 }

@@ -16,7 +16,7 @@ function Actor({role}: props) {
     }
 
     return (
-        <div className="my-3 ">
+        <div className="col">
             <p><strong>{role.name}</strong> : {role.description}</p>
             <button className="btn btn-primary mb-3" onClick={() => sendRole(role)}>Prendre le rôle</button>
         </div>

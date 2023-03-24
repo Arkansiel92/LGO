@@ -29,6 +29,7 @@ export interface player {
     isTurn: boolean,
     isPower: boolean,
     isCouple: boolean,
+    isSister: boolean,
     isCharmed: boolean,
     isRaven: boolean,
     isProtected: boolean,
@@ -41,7 +42,9 @@ export interface message {
     socket: string | null,
     author: string | null,
     recipient: string | null,
-    msg: string
+    msg: string,
+    sister: boolean,
+    loved: boolean
 }
 
 export interface room {
@@ -123,7 +126,6 @@ function Game() {
                                         </span>
                                     </div>
                             }
-
                             <div>
                                 {
                                     roleScreen
@@ -163,7 +165,7 @@ function Game() {
                                             key={index} />
                                     ))}
                                 </div>
-                                : <Chat messages={room?.messages} night={room?.night} />
+                                : <Chat messages={room?.messages} sister={player?.isSister} loved={player?.isCouple} night={room?.night} />
                         }
 
                     </div>
