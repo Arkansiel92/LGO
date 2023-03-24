@@ -53,18 +53,15 @@ function Chat(props: messages) {
                 ))}
             </div>
             {
-                !props.night || sister || lover &&
+                !props.night || sister || lover ?
                 <div>
-                    <input type="text" onChange={ (e) => setInput(e.target.value) } value={input} max={150} min={1} placeholder={"Message au village..."} id="inputChat" className="mt-5 form-control" />
+                    <input type="text" onChange={ (e) => setInput(e.target.value) } value={input} max={150} min={1} placeholder={"Envoyez un message..."} id="inputChat" className="mt-5 form-control" />
                 </div>
-            }
-            {                
-                props.night &&
+                :
                 <div>
                 <input type="text" disabled max={150} min={1} placeholder={"Impossible d'écrire pendant la nuit..."} id="inputChat" className="mt-5 form-control" />
                 </div>
             }
-            
             {
                 props.loved && 
                 <div className="form-check form-switch">
