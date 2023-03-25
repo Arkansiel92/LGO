@@ -18,7 +18,7 @@ function Message(props: props) {
                 !props.msg.sister && !props.msg.loved && !props.sister && !props.loved ?
                 <div>
                     {
-                        props.msg.author !== "server" && props.msg.recipient === null && 
+                        props.msg.author !== "server" && props.msg.recipient === null && !props.msg.isDead &&
                         <div className="message-container chat px-4">
                             <span className="author fw-bold">{props.msg.author}</span> 
                             <div className="message">{props.msg.msg}</div>
@@ -29,6 +29,13 @@ function Message(props: props) {
                     }
                     {
                         props.msg.recipient === socket.id && <div className="message-container role m-2 py-2 px-4"><i>{props.msg.msg}</i></div>
+                    }
+                    {
+                        props.msg.isDead && props.msg.author !== "server" && 
+                        <div className="message-container chat px-4">
+                            <span className="author-dead fw-bold">{props.msg.author}</span> 
+                            <div className="dead">{props.msg.msg}</div>
+                        </div>
                     }
                 </div>
                 :

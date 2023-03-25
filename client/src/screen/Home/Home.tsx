@@ -17,7 +17,7 @@ function Home() {
         setLoading(true);
         setTimeout(() => {
             navigate(id);
-        }, 2000)
+        }, 1500)
     })
 
     socket.on('alert', (msg: string) => {
@@ -47,7 +47,7 @@ function Home() {
                 {
                     alert && <div className='container text-center alert alert-danger'>{alert}</div>
                 }
-                <img className='moon m-5' src="/assets/img/moon.svg" alt="" width={250} />
+                <img className='moon' src="/assets/img/moon.svg" alt="" width={250} />
                 <div className="home d-flex flex-column">
                     <h1 className='text-center mt-5 fw-bold'>La Malédiction de Thiercelieux</h1>
                     <div className="m-auto w-50">
