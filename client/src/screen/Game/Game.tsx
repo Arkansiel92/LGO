@@ -26,6 +26,7 @@ export interface player {
     socket: string,
     role: roles | null,
     isPlayed: boolean,
+    isVote: boolean,
     isDead: boolean,
     isTurn: boolean,
     isPower: boolean,
@@ -186,7 +187,7 @@ function Game() {
                         }
 
                         {
-                            inGame && <Gameboard players={room?.players} nbTurn={room?.nbTurn} player={player} night={room?.night} selfDead={player?.isDead} victim={room?.voteWolf} />
+                            inGame && <Gameboard players={room?.players} nbTurn={room?.nbTurn} player={player} night={room?.night} selfDead={player?.isDead} selfVote={player?.isVote} victim={room?.voteWolf} />
                         }
                         {/* <Map /> */}
                     </div>

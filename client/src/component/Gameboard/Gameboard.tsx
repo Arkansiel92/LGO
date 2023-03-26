@@ -12,6 +12,7 @@ interface props {
     nbTurn?: number,
     victim?: string,
     selfDead: boolean | undefined,
+    selfVote: boolean | undefined,
     night: boolean | undefined
 }
 
@@ -34,7 +35,7 @@ export interface action {
     }
 }
 
-function Gameboard({players, nbTurn, player, night, selfDead}: props) {
+function Gameboard({players, nbTurn, player, night, selfDead, selfVote}: props) {
 
     const [vote, setVote] = useState<boolean>(false);
     const [actionByRole, setActionByRole] = useState<action | null>(null);
@@ -76,6 +77,7 @@ function Gameboard({players, nbTurn, player, night, selfDead}: props) {
                 {players?.map((p: player, index: number) => (
                     <Player
                         selfDead={selfDead}
+                        selfVote={selfVote}
                         name_function={player?.role?.name_function}
                         name={p.name}
                         socket={p.socket}
