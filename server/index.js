@@ -389,6 +389,10 @@ io.on('connection', (socket) => {
         return room();
     }
 
+    function finishedByMercenary(mercenary) {
+        return sendMessage("server", null, "Le joueur expulsé était la cible de " + mercenary.name + " qui était Mercenaire. Il gagne la partie.");
+    }
+
     function order() {
         if (hub.step === "start") {
 
@@ -521,9 +525,25 @@ io.on('connection', (socket) => {
             player.vote = null;
             player.votes = [];
         });
-
-
+        
         hub.night = false;
+
+        if (hub.nbTurn === 1) {
+            if (hub.roles.includes("Mercenaire")) {
+                let mercenary = getPlayerByRole("Mercenaire");
+                
+                let socket = null;
+
+                while (socket === null || socket === mercenary.socket) {
+                    socket = hub.sockets[Math.floor(Math.random() * hub.sockets.length)];
+                }
+
+                let target = getPlayer(socket);
+                hub.mercenaryTarget = target.socket;
+
+                sendMessage(null, mercenary.socket, "Votre cible est " + target.name + ". Si vous parvenez à l'éliminer ce jour-ci, vous gagnez la partie.", false, false);
+            }
+        }
 
         if (hub.protected === hub.voteWolf) {
             hub.voteWolf = null
@@ -583,6 +603,11 @@ io.on('connection', (socket) => {
             }
         } else {
             sendMessage("server", null, "Le jour se lève et personne n'est mort cette nuit !");
+        }
+
+        
+        if (hub.nbTurn === 2) {
+            sendMessage("server", null, "Election du maire !", false, false);
         }
 
         //time(120);
@@ -701,21 +726,29 @@ io.on('connection', (socket) => {
         });
 
         if (target && !equality) {
+            if (target.role.name !== "Idiot du village") {
+                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name, false, false);
+                target.isDead = true;
+                hub.roles.splice(hub.roles.indexOf(target.role.name), 1);
+            } else {
+                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " (" + target.role.name + "). Le village a pitié de lui et décide de le laisser en vie, mais en échange il perd son droit de vote.", false, false);
+                target.isVote = false;
+            }
+
+            if (target.socket === hub.mercenaryTarget && hub.nbTurn === 1) {
+                return finishedByMercenary(getPlayerByRole("Mercenaire"));
+            }
+
             if (target.isHair) {
                 let player = getPlayerByRole("L'Héritier");
 
                 player.role = target.role;
                 player.isPower = target.isPower;
 
-                sendMessage(null, player.socket, "Votre héritier est mort, vous héritez de ses pouvoirs et du rôle de " + target.role + ".", false, false);
-            }
+                hub.roles.splice(hub.roles.indexOf("L'Héritier"), 1);
+                hub.roles.push(target.role.name);
 
-            if (target.role.name !== "Idiot du village") {
-                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name, false, false);
-                target.isDead = true;
-            } else {
-                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " (" + target.role.name + "). Le village a pitié de lui et décide de le laisser en vie, mais en échange il perd son droit de vote.", false, false);
-                target.isVote = false;
+                sendMessage(null, player.socket, "Votre héritier est mort, vous héritez de ses pouvoirs et du rôle de " + target.role.name + ".", false, false);
             }
 
             if (target.role.name === "Chasseur") {
@@ -977,21 +1010,17 @@ io.on('connection', (socket) => {
 
     socket.on('setHair', ({ targetID, userID }) => {
 
-        if (targetID === userID) {
+        if (targetID === socket.id) {
             return sendMessage(null, socket.id, "Vous ne pouvez pas hériter de vous-même.", false, false);
         }
 
         const target = getPlayer(targetID);
-        const player = getPlayer(userID);
+        const player = getPlayer(socket.id);
 
         if (player.isPower) {
 
             player.isPower = false;
-            player.isPlayed = true;
-
             target.isHair = true;
-
-            hub.hairRole = target.role;
 
             actionInGame(userID, false);
 
@@ -1492,7 +1521,7 @@ io.on('connection', (socket) => {
         hub.dictator = false;
         hub.ravenSocket = null;
         hub.actorSocket = null;
-        hub.hairRole = null;
+        hub.mercenaryTarget = null;
         hub.roleActor = [];
         hub.inGame = false;
         hub.step = "start";
