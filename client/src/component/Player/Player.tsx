@@ -1,6 +1,6 @@
 import { socketContext, ExtendedSocket} from "../../context/socket";
-import './Player.css';
 import { useContext } from 'react';
+import './Player.css';
 
 interface props {
     name: string,
@@ -22,15 +22,15 @@ function Player(props: props) {
     const socket = useContext<ExtendedSocket>(socketContext);
 
     function action(target: string) {
-        socket.emit('set' + props.name_function, {targetID: target, userID: socket.id});
+        socket.emit('set' + props.name_function, target);
     }
 
     function wolf(target: string) {
-        socket.emit('voteWolf', ({targetID: target, userID: socket.id}));
+        socket.emit('voteWolf', target);
     }
 
     function villager(target: string) {
-        socket.emit('voteVillage', ({targetID: target, userID: socket.id}));
+        socket.emit('voteVillage', target);
     }
 
     return (
