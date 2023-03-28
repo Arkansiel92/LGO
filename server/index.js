@@ -1437,13 +1437,13 @@ io.on('connection', (socket) => {
 
     socket.on('addRole', role => {
 
-        if (role === "Renard" && hub.players.length < 4) {
-            return;
-        }
+        // if (role === "Renard" && hub.players.length < 4) {
+        //     return;
+        // }
 
-        if (role === "Deux soeurs" && hub.players.length < 4) {
-            return;
-        }
+        // if (role === "Deux soeurs" && hub.players.length < 4) {
+        //     return;
+        // }
 
         const roleObject = roles.find((roleObject) => {
             return roleObject.name === role;

@@ -6,14 +6,14 @@ import "./Chat.css";
 
 
 
-interface messages {
+interface props {
     messages?: message[],
     loved: boolean | undefined,
     sister: boolean | undefined,
     night: boolean | undefined
 }
 
-function Chat(props: messages) {
+function Chat(props: props) {
 
     const [input, setInput] = useState<string>("");
     const [sister, setSister] = useState<boolean>(false);
@@ -31,14 +31,14 @@ function Chat(props: messages) {
     useEffect(() => {
         const listener = (event: any) => {
             if (event.code === "Enter" || event.code === "NumpadEnter") {
-              event.preventDefault();
-              sendMessage();
+                event.preventDefault();
+                sendMessage();
             }
-          };
-          document.addEventListener("keydown", listener);
-          return () => {
-            document.removeEventListener("keydown", listener);
-          };
+        };
+        document.addEventListener("keydown", listener);
+        return () => {
+        document.removeEventListener("keydown", listener);
+        };
     })
     
     return (
