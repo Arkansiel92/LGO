@@ -29,16 +29,16 @@ function Chat(props: props) {
     }
 
     useEffect(() => {
-        const listener = (event: any) => {
-            if (event.code === "Enter" || event.code === "NumpadEnter") {
-                event.preventDefault();
-                sendMessage();
-            }
-        };
-        document.addEventListener("keydown", listener);
-        return () => {
-        document.removeEventListener("keydown", listener);
-        };
+        // const listener = (event: any) => {
+        //     if (event.code === "Enter" || event.code === "NumpadEnter") {
+        //         event.preventDefault();
+        //         sendMessage();
+        //     }
+        // };
+        // document.addEventListener("keydown", listener);
+        // return () => {
+        // document.removeEventListener("keydown", listener);
+        // };
     })
     
     return (

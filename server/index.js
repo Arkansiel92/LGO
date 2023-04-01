@@ -4,6 +4,7 @@ const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const fs = require('fs');
+const tmx = require('tmx-parser');
 
 app.use(cors());
 
@@ -18,6 +19,20 @@ const io = new Server(server, {
         method: ["GET", "POST"]
     }
 });
+
+let map = null;
+
+function loadMap() {
+  return new Promise((resolve, reject) => {
+    tmx.parseFile('./assets/map1.tmx', function(err, loadedMap) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(loadedMap);
+      }
+    });
+  });
+}
 
 const roles = [
     {
@@ -343,9 +358,67 @@ const eventsGypsy = [
     }
 ]
 
+const TICK_RATE = 30;
+const SPEED = 7;
+const inputsMap = {};
+
 io.on('connection', (socket) => {
     let hub = io.sockets.adapter.rooms.get(socket.room);
     let interval;
+
+    io.emit('map', )
+
+    function tick() {
+        if (hub && hub.players.length > 0) {
+            for (const player of hub.players) {
+                const inputs = inputsMap[player.socket];
+                if (inputs.up) {
+                    if (player.frameX > 0) {
+                        player.frameX--
+                    } else {
+                        player.frameX = 7;
+                    }
+
+                    player.frameY = 1;
+                    player.y -= SPEED;
+                } else if (inputs.down) {
+                    if (player.frameX < 7) {
+                        player.frameX++
+                    } else {
+                        player.frameX = 0;
+                    }
+
+                    player.frameY = 0;
+                    player.y += SPEED;
+                }
+
+                if (inputs.left) {
+                    if (player.frameX > 0) {
+                        player.frameX--
+                    } else {
+                        player.frameX = 7;
+                    }
+
+                    player.frameY = 1;
+                    player.x -= SPEED;
+                } else if (inputs.right) {
+                    if (player.frameX < 7) {
+                        player.frameX++
+                    } else {
+                        player.frameX = 0;
+                    }
+
+                    player.frameY = 0;
+                    player.x += SPEED;
+                } else if (!inputs.right && !inputs.left && !inputs.up && !inputs.down) {
+                    player.frameX = 0;
+                }
+            }
+
+
+            return room();
+        }
+    }
 
     function getPlayer(socketID) {
         const player = hub.players.find((player) => {
@@ -554,8 +627,6 @@ io.on('connection', (socket) => {
             target.isDead = true;
         }
 
-        console.log(target.name, target.isDead);
-
         room();
 
         return sendMessage("server", null, "l'évènement a été déclenché avec succès.", false, false);
@@ -565,7 +636,7 @@ io.on('connection', (socket) => {
         if (hub.nbTurn === 1) {
             if (hub.roles.includes("Mercenaire")) {
                 let mercenary = getPlayerByRole("Mercenaire");
-                
+
                 let socket = null;
 
                 while (socket === null || socket === mercenary.socket) {
@@ -657,7 +728,7 @@ io.on('connection', (socket) => {
             player.vote = null;
             player.votes = [];
         });
-        
+
         hub.night = false;
 
         //time(120);
@@ -789,7 +860,7 @@ io.on('connection', (socket) => {
                     }
                 }
             }
-            
+
             if (target.role.name !== "Idiot du village") {
                 sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name, false, false);
                 target.isDead = true;
@@ -939,7 +1010,7 @@ io.on('connection', (socket) => {
     }
 
     socket.on('clearIntervals', () => {
-        clearInterval(interval); 
+        clearInterval(interval);
         console.log("clear des intervals : " + socket.id);
     })
 
@@ -1530,28 +1601,44 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on("setMessage", ({ msg, sister, lover }) => {
-        return sendMessage(socket.name, null, msg, sister, lover);
+    socket.on('setMap', () => {
+        loadMap().then((map) => {
+            console.log(map);
+
+            const layer = map.layer[0];
+            const tiles = layer.tiles;
+
+            const map2D = new Array(map.height).fill('').map(() => new Array(map.height));
+
+            //console.log(map2D);
+            //socket.emit('setMap', map);
+          }).catch((err) => {
+            console.error(err);
+          });
     })
+
+    socket.on("setMessage", ({ msg, sister, lover }) => sendMessage(socket.name, null, msg, sister, lover));
 
     socket.on('getRoles', () => io.to(socket.id).emit('getRoles', roles));
 
     socket.on('getRoom', () => io.to(socket.id).emit('getRoom', hub));
 
     socket.on('join', ({ id, pseudo }) => {
-        hub = io.sockets.adapter.rooms.get(id);
-
-        if (!hub) {
+        if (!io.sockets.adapter.rooms.get(id)) {
             return socket.emit('alert', 'Ce lobby n\'existe pas !');
         }
 
-        if (hub.inGame) {
+        if (io.sockets.adapter.rooms.get(id).inGame) {
             return socket.emit('alert', 'La partie a déjà démarré !');
         }
 
         const player = {
             name: pseudo,
             socket: socket.id,
+            x: 500,
+            y: 500,
+            frameX: 0,
+            frameY: 0,
             vote: null,
             votes: [],
             voteWolf: null,
@@ -1569,6 +1656,14 @@ io.on('connection', (socket) => {
             deathPotion: true
         }
 
+        inputsMap[socket.id] = {
+            up: false,
+            down: false,
+            left: false,
+            right: false
+        }
+        
+        hub = io.sockets.adapter.rooms.get(id);
         hub.players.push(player);
         hub.sockets.push(socket.id);
         hub.votes.push('');
@@ -1582,6 +1677,7 @@ io.on('connection', (socket) => {
             msg: pseudo.toLowerCase() === "xprolive" || pseudo.toLowerCase() === "prolive" | pseudo.toLowerCase() === "alexis" ? pseudo + " vient d'arriver dans la partie ! (il sera loup-garou à la prochaine partie)" : pseudo + " vient d'arriver dans la partie !"
         })
 
+
         room();
         return navigate(id);
     })
@@ -1591,6 +1687,13 @@ io.on('connection', (socket) => {
         socket.room = id;
         socket.join(id);
 
+        inputsMap[socket.id] = {
+            up: false,
+            down: false,
+            left: false,
+            right: false
+        }
+
         hub = io.sockets.adapter.rooms.get(id);
 
         hub.private = true;
@@ -1598,6 +1701,10 @@ io.on('connection', (socket) => {
         hub.players = [{
             name: pseudo,
             socket: socket.id,
+            x: 500,
+            y: 500,
+            frameX: 0,
+            frameY: 0,
             vote: null,
             votes: [],
             voteWolf: null,
@@ -1614,6 +1721,7 @@ io.on('connection', (socket) => {
             healthPotion: true,
             deathPotion: true
         }];
+        hub.inputsMap = {};
         hub.sockets = [socket.id];
         hub.roles = [];
         hub.votes = [''];
@@ -1639,6 +1747,10 @@ io.on('connection', (socket) => {
         hub.step = "start";
 
         return navigate(id);
+    })
+
+    socket.on('inputs', inputs => {
+        inputsMap[socket.id] = inputs;
     })
 
     socket.on('clear', () => {
@@ -1680,6 +1792,8 @@ io.on('connection', (socket) => {
             return room();
         }
     })
+
+    setInterval(tick, 1000 / TICK_RATE);
 })
 
 server.listen(3001, () => {

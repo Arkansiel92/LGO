@@ -5,6 +5,9 @@ import ManagementRoom from '../../component/ManagementRoom/ManagementRoom';
 import Map from '../../component/Map/Map';
 import { socketContext, ExtendedSocket } from '../../context/socket';
 import './Game.css';
+import Player from '../../component/Player/Player';
+import PlayerB from '../../component/PlayerB/PlayerB';
+import Topbar from '../../component/Topbar/Topbar';
 
 type Params = {
     id: string
@@ -23,6 +26,10 @@ export interface roles {
 export interface player {
     name: string,
     socket: string,
+    x: number,
+    y: number,
+    frameX: number,
+    frameY: number,
     role: roles | null,
     isPlayed: boolean,
     isVote: boolean,
@@ -83,7 +90,6 @@ function Game() {
     })
 
     useEffect(() => {
-
         if (!room) {
             socket.emit('getRoom');
         }
@@ -94,11 +100,23 @@ function Game() {
         <div id="container">
             <div id="loader"></div>
 
-            <div className="game-screen container-fluid">
-                <div className="row">
-                    <ManagementRoom room={room} player={player} inGame={inGame} sideBar={sideBar}/>
+            <Topbar 
+            room={room}
+            player={player}/>
+
+            <ManagementRoom room={room} player={player} inGame={inGame} sideBar={sideBar}/>
+
+            <Map room={room} />
+            {room?.players?.map((p: player, index: number) => (
+            <PlayerB
+                player={p}
+                key={index} />
+            ))}
+
+            <div className="game-screen ">
+                <div className="container-fluid">
                     <div className="col text-center">
-                        <button onClick={() => {setSideBar(!sideBar)}} className=''>Sidebar</button>
+                        <button className="btn btn-info mt-5" onClick={() => {setSideBar(!sideBar)}}>Rôles & Messages</button>
                         {
                             !inGame &&
                             <div>
@@ -125,7 +143,6 @@ function Game() {
                                 selfVote={player?.isVote} 
                                 victim={room?.voteWolf} />
                         }
-                        {/* <Map /> */}
                     </div>
                 </div>
             </div>
