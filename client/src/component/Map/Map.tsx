@@ -49,17 +49,19 @@ function Map({room}: props) {
 
         if (room && loadMap) {
           for (const player of room.players) {
-            ctx.drawImage(
-              spritePlayer,
-              32 * player.frameX,
-              32 * player.frameY,
-              32,
-              32,
-              player.x,
-              player.y,
-              64,
-              64
-            );
+            if (!player.isDead) {
+              ctx.drawImage(
+                spritePlayer,
+                32 * player.frameX,
+                32 * player.frameY,
+                32,
+                32,
+                player.x,
+                player.y,
+                64,
+                64
+              );
+            }
           }
         }
 
@@ -101,13 +103,12 @@ function Map({room}: props) {
         }
       };
 
-      document.addEventListener("keydown", handleKeyDown);
-      document.addEventListener("keyup", handleKeyUp);
+      // document.addEventListener("keydown", handleKeyDown);
+      // document.addEventListener("keyup", handleKeyUp);
 
       return () => {
-        document.removeEventListener("keydown", handleKeyDown);
-        document.removeEventListener("keyup", handleKeyUp);
-        socket.off("inputs");
+        // document.removeEventListener("keydown", handleKeyDown);
+        // document.removeEventListener("keyup", handleKeyUp);
       };
     }
   }, [socket, room, loadMap]);
@@ -116,7 +117,7 @@ function Map({room}: props) {
     map.onload = () => {
       setLoadMap(true);
     };
-  }, []);
+  }, [map]);
 
   return (
       <canvas id="map" ref={canvasRef}></canvas>

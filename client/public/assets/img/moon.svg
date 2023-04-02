@@ -11,7 +11,7 @@
 	.st5{opacity:0.3;}
 	.st6{fill:none;}
 	.st7{fill:#FFFFFF;}
-	.st8{fill:none;stroke:#FFFFFF;stroke-width:0;strokeLinecap:round;stroke-linejoin:round;}
+	.st8{fill:none;stroke:#FFFFFF;stroke-width:0;strokeLinecap:round;strokeLinejoin:round;}
 	.st9{opacity:0.4;}
 	.st10{display:inline;fill:#ACA0F2;}
 	.st11{display:inline;fill:#7554DD;}

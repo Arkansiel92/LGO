@@ -2,7 +2,7 @@
 	position: absolute;
 	top: 150%;
 	left: 35%;
-	transform: translate(-50%, -50%);
+	transform: translateY(-50%);
 	max-width: 400px;
 	max-height: 400px;
     animation: entrance 1s ease 0s 1 normal forwards;

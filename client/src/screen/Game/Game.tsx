@@ -6,8 +6,8 @@ import Map from '../../component/Map/Map';
 import { socketContext, ExtendedSocket } from '../../context/socket';
 import './Game.css';
 import Player from '../../component/Player/Player';
-import PlayerB from '../../component/PlayerB/PlayerB';
 import Topbar from '../../component/Topbar/Topbar';
+import BoxRole from '../../component/BoxRole/BoxRole';
 
 type Params = {
     id: string
@@ -69,24 +69,35 @@ export interface room {
     inGame: boolean;
 }
 
+export interface boxRole {
+    description: string
+}
+
 function Game() {
     const { id } = useParams<Params>();
     const [room, setRoom] = useState<room | null>(null);
     const [player, setPlayer] = useState<player>();
+    const [boxRole, setBoxRole] = useState<boxRole>();
     const [inGame, setInGame] = useState<boolean>(false);
     const [sideBar, setSideBar] = useState<boolean>(true);
     const socket = useContext<ExtendedSocket>(socketContext);
 
     socket.on('getRoom', room => {
         setRoom(room);
+
         const player = room?.players.find((player: player) => {
             return player.socket === socket.id
         })
+
         setPlayer(player);
     })
 
     socket.on('inGame', bool => {
         setInGame(bool)
+    })
+
+    socket.on('boxRole', box => {
+        setBoxRole(box);
     })
 
     useEffect(() => {
@@ -100,23 +111,28 @@ function Game() {
         <div id="container">
             <div id="loader"></div>
 
-            <Topbar 
-            room={room}
-            player={player}/>
+            <Topbar room={room} player={player}/>
+
+            {boxRole && <BoxRole description={boxRole.description} />}
 
             <ManagementRoom room={room} player={player} inGame={inGame} sideBar={sideBar}/>
 
             <Map room={room} />
+
             {room?.players?.map((p: player, index: number) => (
-            <PlayerB
+            <Player
                 player={p}
+                role_function={player?.role?.name_function}
+                night={room?.night}
                 key={index} />
             ))}
 
             <div className="game-screen ">
                 <div className="container-fluid">
-                    <div className="col text-center">
+                    <div className="text-end">
                         <button className="btn btn-info mt-5" onClick={() => {setSideBar(!sideBar)}}>Rôles & Messages</button>
+                    </div>
+                    <div className="col text-center">
                         {
                             !inGame &&
                             <div>

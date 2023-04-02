@@ -68,26 +68,6 @@ function Gameboard({players, nbTurn, player, night, selfDead, selfVote}: props) 
                 victim={actionByRole?.victim}
                 actorRoles={actionByRole?.actorRoles}
                 gypsy={actionByRole?.gypsy} />}
-
-            <div className="d-flex justify-content-around m-5">
-                {players?.map((p: player, index: number) => (
-                    <Player
-                        selfDead={selfDead}
-                        selfVote={selfVote}
-                        name_function={player?.role?.name_function}
-                        name={p.name}
-                        socket={p.socket}
-                        isDead={p.isDead}
-                        isTurn={p.isTurn}
-                        isPower={p.isPower}
-                        isCouple={p.isCouple}
-                        wolf={wolf}
-                        night={night}
-                        action={action}
-                        vote={vote}
-                        key={index} />
-                ))}
-            </div>
         </div>
     )
 };

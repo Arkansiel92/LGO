@@ -1,60 +1,46 @@
-import { socketContext, ExtendedSocket} from "../../context/socket";
-import { useContext } from 'react';
-import './Player.css';
+import { CSSProperties, useContext } from 'react';
+import { player } from "../../screen/Game/Game";
+import { ExtendedSocket, socketContext } from '../../context/socket';
+import "./Player.css";
 
-interface props {
-    name: string,
-    name_function: string | undefined,
-    socket: string,
-    isDead: boolean,
-    isTurn: boolean,
-    isPower: boolean,
-    isCouple: boolean,
-    night: boolean | undefined,
-    action: boolean,
-    vote: boolean,
-    wolf: boolean,
-    selfDead: boolean | undefined,
-    selfVote: boolean | undefined
+interface props{
+    player: player,
+    role_function: string | undefined
+    night: boolean
 }
 
-function Player(props: props) {
+
+function Player({player, role_function, night}: props) {
+
     const socket = useContext<ExtendedSocket>(socketContext);
 
-    function action(target: string) {
-        socket.emit('set' + props.name_function, target);
+    const style: CSSProperties = {
+        display: 'inline-block',
+        position: 'absolute',
+        left: player.x,
+        top: player.y - 10,
+        fontSize: "15px",
+        cursor:'pointer'
     }
 
-    function wolf(target: string) {
-        socket.emit('voteWolf', target);
-    }
-
-    function villager(target: string) {
-        socket.emit('voteVillage', target);
+    const handleSubmit = () => {
+        if (night) {
+            socket.emit('set' + role_function, player.socket);
+        } else {
+            socket.emit('voteVillage', player.socket);
+        }
     }
 
     return (
         <div>
-            {!props.isDead &&
-            <div className='card bg-dark p-5'>
-                {props.name}
-                {
-                    props.vote && <button className='btn btn-success'>Voter pour {props.name}</button>
-                }
-                {
-                    !props.night && !props.selfDead && props.selfVote && <button onClick={() => {villager(props.socket)}} className="btn btn-primary">Vote pour exclure du village</button>
-                }
-                {
-                    props.action && <button onClick={() => {action(props.socket)}} className='btn btn-primary'>Selectionner</button>
-                }
-                {
-                    props.wolf && <button onClick={() => {wolf(props.socket)}} className='btn btn-primary'>Selectionner</button>
-                }
+        {
+        !player.isDead && 
+            <div style={style} onClick={handleSubmit} className="bg-dark rounded p-1" id="player-banner">
+                {player.name}
             </div>
-            }
-
+        }
         </div>
     )
-}
+};
 
 export default Player;

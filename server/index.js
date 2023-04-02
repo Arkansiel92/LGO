@@ -161,7 +161,7 @@ const roles = [
         description: "Chaque nuit, le garde protège une personne. Cette personne sera protégée et ne pourra donc pas mourir durant la nuit. Le garde ne peut pas protéger la même personne deux nuits de suite.",
         side: "village",
         step: "start",
-        descriptionInGame: "Vous pouvez protéger un joueur (Le garde ne peut pas protéger la même personne deux nuits de suite)",
+        descriptionInGame: "Vous pouvez protéger un joueur. ",
         max: 1,
         img: "card-gard.svg",
     },
@@ -450,6 +450,10 @@ io.on('connection', (socket) => {
         return io.to(socketID).emit('action', bool);
     }
 
+    function boxRole(socketID, box) {
+        return io.to(socketID).emit('boxRole', box);
+    }
+
     function navigate(id) {
         return io.to(socket.id).emit('navigate', id);
     }
@@ -481,6 +485,11 @@ io.on('connection', (socket) => {
     }
 
     function order() {
+        io.to(socket.room).emit('actionByRole', null);
+        boxRole(socket.room, null);
+        actionInGame(socket.room, false);
+
+
         if (hub.step === "start") {
 
             return "werewolf";
@@ -573,16 +582,14 @@ io.on('connection', (socket) => {
                                     }
                                 }
                             }
-
+                            
                             if (player.role.name !== "Dictateur" && player.role.name !== "Comédien" && player.role.name !== "Sorcière" && player.role.name !== "Loup noir" && player.role.name !== "Loup blanc" && player.role.name !== "Grand méchant loup" && player.role.name !== "Gitane" && player.role.name !== "Chien-loup") {
                                 check = true;
                                 actionInGame(player.socket, true);
+                                boxRole(player.socket, {description: player.role.descriptionInGame});
                                 sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.")
                             }
                         }
-                    } else {
-                        io.to(player.socket).emit('actionByRole', null);
-                        actionInGame(player.socket, false);
                     }
                 }
             })
@@ -732,6 +739,8 @@ io.on('connection', (socket) => {
         hub.night = false;
 
         //time(120);
+
+        boxRole(socket.room, {description: 'Vous pouvez voter pour exclure un joueur.'});
 
         time(10);
 
@@ -1635,7 +1644,7 @@ io.on('connection', (socket) => {
         const player = {
             name: pseudo,
             socket: socket.id,
-            x: 500,
+            x: 700,
             y: 500,
             frameX: 0,
             frameY: 0,
@@ -1701,7 +1710,7 @@ io.on('connection', (socket) => {
         hub.players = [{
             name: pseudo,
             socket: socket.id,
-            x: 500,
+            x: 700,
             y: 500,
             frameX: 0,
             frameY: 0,
@@ -1793,7 +1802,7 @@ io.on('connection', (socket) => {
         }
     })
 
-    setInterval(tick, 1000 / TICK_RATE);
+    //setInterval(tick, 1000 / TICK_RATE);
 })
 
 server.listen(3001, () => {
