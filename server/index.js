@@ -448,6 +448,10 @@ io.on('connection', (socket) => {
     //     }
     // }
 
+    function getRandomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
     function getPlayer(socketID) {
         const player = hub.players.find((player) => {
             return player.socket === socketID;
@@ -694,6 +698,7 @@ io.on('connection', (socket) => {
     }
 
     function day() {
+        console.log(hub);
         if (hub.nbTurn === 1) {
             if (hub.roles.includes("Mercenaire")) {
                 let mercenary = getPlayerByRole("Mercenaire");
@@ -1148,10 +1153,6 @@ io.on('connection', (socket) => {
         return room();
     });
 
-    socket.on('getEvents', () => {
-        socket.emit('setEvents', eventsGypsy);
-    })
-
     // function Role
     socket.on('setThief', (targetID) => {
         if (targetID === socket.id) {
@@ -1186,18 +1187,9 @@ io.on('connection', (socket) => {
 
         clearInterval(interval);
 
-        io.to(socket.id).emit('actionByRole', null);
-        actionInGame(socket.id, false);
-
         room();
-
-        if (hub.roles.includes("Comédien")) {
-            const actor = getPlayerByRole("Comédien");
-
-            return isActor(actor);
-        } else {
-            return stepNight();
-        }
+        
+        return stepNight();
 
     })
 
@@ -1473,13 +1465,14 @@ io.on('connection', (socket) => {
 
     socket.on('setGypsy', (choice) => {
         const player = getPlayer(socket.id);
-        let eventChoice;
 
         player.isPower = false;
 
         hub.event = eventsGypsy.find((event) => {
             return event.name === choice
         })
+
+        console.log();
 
         sendMessage(
             null,
@@ -1489,11 +1482,7 @@ io.on('connection', (socket) => {
             false
         )
 
-        hub.event = eventChoice;
-
-
-
-        return socket.emit('actionByRole', null);
+        return room();
     })
 
     socket.on('setDogWerewolf', bool => {
@@ -1647,41 +1636,6 @@ io.on('connection', (socket) => {
             }
         }
 
-        // if (hub.roles.includes("Comédien")) {
-        //     const actor = getPlayerByRole("Comédien")
-
-        //     if (!actor) {
-
-        //         const actor = hub.players.find((player) => {
-        //             return player.socket === hub.actorSocket;
-        //         })
-
-        //         if (actor.isActor) {
-        //             actor.isActor = false;
-
-        //             player.role = {
-        //                 name: "Comédien",
-        //                 name_function: "Actor",
-        //                 description: "Avant la partie. Chaque nuit, le comédien peut désigner un des rôles qui n'ont pas été choisi et utiliser le pouvoir correspondant jusqu’à la nuit suivante. Chaque rôle ne peut être utilisé qu'une seule fois et maximum 3 fois dans la partie.",
-        //                 side: "village",
-        //                 step: null,
-        //                 descriptionInGame: "Vous pouvez choisir un rôle",
-        //                 max: 1,
-        //                 needVictim: false,
-        //                 img: "card-actor.svg",
-        //             }
-        //         }
-        //     }
-
-        //     hub.actorSocket = actor.socket;
-
-        //     if (actor.isPower) {
-        //         timeBySocket(30, actor);
-        //         sendMessage("server", null, "Le comédien décide du rôle à jouer cette nuit.", false, false);
-        //         return isActor(actor);
-        //     }
-        // }
-
         return stepNight();
     })
 
@@ -1763,8 +1717,8 @@ io.on('connection', (socket) => {
         const player = {
             name: pseudo,
             socket: socket.id,
-            x: 700,
-            y: 500,
+            x: getRandomNumber(500, 700),
+            y: getRandomNumber(400, 600),
             frameX: 0,
             frameY: 0,
             vote: null,
@@ -1828,8 +1782,8 @@ io.on('connection', (socket) => {
         hub.players = [{
             name: pseudo,
             socket: socket.id,
-            x: 700,
-            y: 500,
+            x: getRandomNumber(500, 1200),
+            y: getRandomNumber(400, 600),
             frameX: 0,
             frameY: 0,
             vote: null,
@@ -1881,9 +1835,7 @@ io.on('connection', (socket) => {
 
     socket.on('clear', () => {
         if (hub) {
-            const index = hub.sockets.indexOf(socket.id);
-
-            hub.sockets.splice(index, 1);
+            hub.sockets.splice(hub.sockets.indexOf(socket.id), 1);
 
             hub.players.forEach((player, index) => {
                 if (player.socket === socket.id) {
@@ -1893,17 +1845,15 @@ io.on('connection', (socket) => {
                 }
             })
 
-            sendMessage("server", null, socket.name + " vient de quitter la partie !", false, false);
-
             return room();
         }
+
+        hub = null;
     })
 
     socket.on('disconnect', () => {
         if (hub) {
-            const index = hub.sockets.indexOf(socket.id);
-
-            hub.sockets.splice(index, 1);
+            hub.sockets.splice(hub.sockets.indexOf(socket.id), 1);
 
             hub.players.forEach((player, index) => {
                 if (player.socket === socket.id) {
@@ -1913,10 +1863,10 @@ io.on('connection', (socket) => {
                 }
             })
 
-            sendMessage("server", null, socket.name + " vient de quitter la partie !", false, false);
-
             return room();
         }
+
+        hub = null;
     })
 
     //setInterval(tick, 1000 / TICK_RATE);
