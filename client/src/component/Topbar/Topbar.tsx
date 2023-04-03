@@ -36,7 +36,7 @@ function Topbar({ room, player }: props) {
                 {
                     player?.role
                         ? <span> {player?.role.name}</span>
-                        : <span> non défini</span>
+                        : <span> aucun rôle</span>
                 }
             </div>
         </div>

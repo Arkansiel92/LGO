@@ -4,7 +4,7 @@
 }
 
 .message-container:hover {
-    background-color: rgb(71, 71, 71, 0.3);
+    background-color: rgb(71, 71, 71, 0.6);
     transition: 0.2s all;
 }
 
@@ -13,12 +13,12 @@
 }
 
 .server {
-    color: rgb(226, 194, 147);
+    color: rgb(236, 233, 226);
     font-size: 15px;
 }
 
 .role {
-    color: rgb(148, 50, 222);
+    color: rgb(238, 243, 185);
 }
 
 .author-dead {

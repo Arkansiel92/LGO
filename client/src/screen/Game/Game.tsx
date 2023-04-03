@@ -31,7 +31,6 @@ export interface player {
     frameX: number,
     frameY: number,
     role: roles | null,
-    isPlayed: boolean,
     isVote: boolean,
     isDead: boolean,
     isTurn: boolean,
@@ -66,11 +65,18 @@ export interface room {
     night: boolean,
     nbTurn: number;
     voteWolf: string,
-    inGame: boolean;
+    inGame: boolean
+    step: string
 }
 
-export interface boxRole {
+interface boxRole {
     description: string
+    role: string
+    victim: string | null
+    health?: boolean
+    death?: boolean
+    setYes?: boolean
+    setNo?: boolean
 }
 
 function Game() {
@@ -98,13 +104,15 @@ function Game() {
 
     socket.on('boxRole', box => {
         setBoxRole(box);
+
+        console.log(box);
+        
     })
 
     useEffect(() => {
         if (!room) {
             socket.emit('getRoom');
         }
-
     }, [socket, room])
 
     return (
@@ -113,7 +121,15 @@ function Game() {
 
             <Topbar room={room} player={player}/>
 
-            {boxRole && <BoxRole description={boxRole.description} />}
+            {boxRole && <BoxRole 
+                description={boxRole.description} 
+                victim={boxRole.victim}
+                name_function={player?.role?.name_function} 
+                role={boxRole.role} 
+                health={boxRole.health}
+                death={boxRole.death}
+                setYes={boxRole.setYes}
+                setNo={boxRole.setNo} />}
 
             <ManagementRoom room={room} player={player} inGame={inGame} sideBar={sideBar}/>
 
@@ -123,7 +139,8 @@ function Game() {
             <Player
                 player={p}
                 role_function={player?.role?.name_function}
-                night={room?.night}
+                isTurn={player?.isTurn}
+                step={room?.step}
                 key={index} />
             ))}
 

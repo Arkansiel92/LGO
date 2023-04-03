@@ -6,11 +6,12 @@ import "./Player.css";
 interface props{
     player: player,
     role_function: string | undefined
-    night: boolean
+    isTurn: boolean | undefined
+    step: string
 }
 
 
-function Player({player, role_function, night}: props) {
+function Player({player, role_function, isTurn, step}: props) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
 
@@ -20,14 +21,22 @@ function Player({player, role_function, night}: props) {
         left: player.x,
         top: player.y - 10,
         fontSize: "15px",
-        cursor:'pointer'
+        cursor: isTurn ? 'pointer' : 'default'
     }
 
     const handleSubmit = () => {
-        if (night) {
-            socket.emit('set' + role_function, player.socket);
-        } else {
-            socket.emit('voteVillage', player.socket);
+        if (isTurn) {
+            if (step !== "werewolf" && step !== "day") {
+                socket.emit('set' + role_function, player.socket);
+            } 
+            
+            if (step === "day") {
+                socket.emit('voteVillage', player.socket);
+            }
+
+            if (step === "werewolf") {
+                socket.emit('voteWolf', player.socket);
+            }
         }
     }
 

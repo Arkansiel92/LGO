@@ -40,6 +40,7 @@ function Gameboard({players, nbTurn, player, night, selfDead, selfVote}: props) 
     const [actionByRole, setActionByRole] = useState<action | null>(null);
     const [action, setAction] = useState<boolean>(false);
     const [wolf, setWolf] = useState<boolean>(false);
+    
     const socket = useContext<ExtendedSocket>(socketContext);
 
     socket.on('actionByRole', (data) => {
@@ -60,14 +61,14 @@ function Gameboard({players, nbTurn, player, night, selfDead, selfVote}: props) 
 
     return (
         <div className="position-relative">
-            {actionByRole && <Action 
+            {/* {actionByRole && <Action 
                 name={actionByRole?.name} 
                 name_function={actionByRole?.name_function}
                 descriptionInGame={actionByRole?.descriptionInGame} 
                 response={actionByRole?.response} 
                 victim={actionByRole?.victim}
                 actorRoles={actionByRole?.actorRoles}
-                gypsy={actionByRole?.gypsy} />}
+                gypsy={actionByRole?.gypsy} />} */}
         </div>
     )
 };
