@@ -1,6 +1,7 @@
 import { roles } from "../../screen/Game/Game";
 import { socketContext, ExtendedSocket} from "../../context/socket"
 import { useContext } from "react"
+import "./Actor.css";
 
 
 interface props {
@@ -16,9 +17,9 @@ function Actor({role}: props) {
     }
 
     return (
-        <div className="col">
-            <p><strong>{role.name}</strong> : {role.description}</p>
-            <button className="btn btn-primary mb-3" onClick={() => sendRole(role)}>Prendre le rôle</button>
+        <div className="col actor-role" onClick={() => sendRole(role)}>
+            <h3>{role.name}</h3>
+            <p>{role.description}</p>
         </div>
     )
 }

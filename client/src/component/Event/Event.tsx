@@ -16,9 +16,9 @@ function Event({name, description}: event) {
     }
 
     return (
-        <div className='col'>
-            <p><strong>{name}</strong> : {description}</p>
-            <button onClick={() => {sendGypsy(name)}} className='btn btn-primary'>Choisir</button>
+        <div className='col event-gypsy' onClick={() => {sendGypsy(name)}}>
+            <h3>{name}</h3>
+            <p>{description}</p>
         </div>
     )
 }

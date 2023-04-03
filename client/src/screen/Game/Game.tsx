@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Gameboard from '../../component/Gameboard/Gameboard';
 import ManagementRoom from '../../component/ManagementRoom/ManagementRoom';
 import Map from '../../component/Map/Map';
 import { socketContext, ExtendedSocket } from '../../context/socket';
@@ -8,6 +7,7 @@ import './Game.css';
 import Player from '../../component/Player/Player';
 import Topbar from '../../component/Topbar/Topbar';
 import BoxRole from '../../component/BoxRole/BoxRole';
+import { event } from '../../component/Event/Event';
 
 type Params = {
     id: string
@@ -77,6 +77,8 @@ interface boxRole {
     death?: boolean
     setYes?: boolean
     setNo?: boolean
+    eventsGypsy?: event[]
+    actor?: roles[]
 }
 
 function Game() {
@@ -129,7 +131,9 @@ function Game() {
                 health={boxRole.health}
                 death={boxRole.death}
                 setYes={boxRole.setYes}
-                setNo={boxRole.setNo} />}
+                setNo={boxRole.setNo} 
+                eventsGypsy={boxRole.eventsGypsy}
+                actor={boxRole.actor} />}
 
             <ManagementRoom room={room} player={player} inGame={inGame} sideBar={sideBar}/>
 
@@ -164,17 +168,6 @@ function Game() {
                                     <button className="btn btn-success btn-lg" onClick={() => { socket.emit('inGame', true) }}>Lancer la partie</button>
                                 }
                             </div>
-                        }
-                        {
-                            inGame && 
-                            <Gameboard 
-                                players={room?.players} 
-                                nbTurn={room?.nbTurn} 
-                                player={player} 
-                                night={room?.night} 
-                                selfDead={player?.isDead} 
-                                selfVote={player?.isVote} 
-                                victim={room?.voteWolf} />
                         }
                     </div>
                 </div>
