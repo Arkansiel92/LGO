@@ -24,7 +24,7 @@ function Role({ name, name_function, description, side, max, img, roleArray, aut
     }).length
 
     function setRole(name: string) {
-
+        
         if (nbRole !== max) {
             socket.emit('addRole', name);
         } else {

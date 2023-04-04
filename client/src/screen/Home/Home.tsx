@@ -13,6 +13,12 @@ function Home() {
     const [alert, setAlert] = useState<string>('');
     const [card, setCard] = useState<string>('create');
 
+
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    
+    const id = params['id']
+    
     socket.on('navigate', (id: string) => {
         setLoading(true);
         setTimeout(() => {
@@ -32,10 +38,15 @@ function Home() {
     const join = () => {
         socket.emit('join', { id: room, pseudo: pseudo });
     }
-
+    
     useEffect(() => {
         socket.emit('clear');
-    }, [socket])
+
+        if (id) {
+            setCard('join');
+            setRoom(id);
+        }
+    }, [socket, id])
 
     return (
         <div>
@@ -51,16 +62,16 @@ function Home() {
                 <div className="home d-flex flex-column">
                     <h1 className='text-center mt-5 fw-bold'>La Malédiction de Thiercelieux</h1>
                     <div className="m-auto w-50">
-                        <div className="mt-5 d-flex justify-content-around">
+                        <div className="mt-5">
                             {
                                 card === "create"
-                                    ? <button className="btn-home">Créer une partie</button>
-                                    : <button className="btn-home" onClick={() => { setCard('create') }}>Créer une partie</button>
+                                    ? <button className="btn-home mx-1">Créer une partie</button>
+                                    : <button className="btn-home mx-1" onClick={() => { setCard('create') }}>Créer une partie</button>
                             }
                             {
                                 card === "join"
-                                    ? <button className="btn-home">Rejoindre</button>
-                                    : <button className="btn-home" onClick={() => { setCard('join') }}>Rejoindre</button>
+                                    ? <button className="btn-home mx-1">Rejoindre</button>
+                                    : <button className="btn-home mx-1" onClick={() => { setCard('join') }}>Rejoindre</button>
                             }
                         </div>
                         {

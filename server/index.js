@@ -576,7 +576,6 @@ io.on('connection', (socket) => {
 
             if (hub.event) {
                 triggerEvent();
-                hub.event = null;
             }
 
             resetTurn();
@@ -1645,7 +1644,7 @@ io.on('connection', (socket) => {
         //     return;
         // }
 
-        // if (role === "Deux soeurs" && hub.players.length < 4) {
+        // if (role === "Deux soeurs" && hub.players.length < 2) {
         //     return;
         // }
 
@@ -1660,7 +1659,7 @@ io.on('connection', (socket) => {
         if (nbrRole < roleObject.max) {
 
             if (role === "Deux soeurs") {
-                hub.roles = hub.roles.push('Deux soeurs', 'Deux soeurs');
+                hub.roles = hub.roles.concat(['Deux soeurs', 'Deux soeurs']);
             } else {
                 hub.roles.push(role);
             }

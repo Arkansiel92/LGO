@@ -106,14 +106,16 @@ function Game() {
 
     socket.on('boxRole', box => {
         setBoxRole(box);
-
-        console.log(box);
         
     })
 
     useEffect(() => {
         if (!room) {
             socket.emit('getRoom');
+        }
+
+        return () => {
+            socket.off('getRoom');
         }
     }, [socket, room])
 
@@ -157,10 +159,10 @@ function Game() {
                         {
                             !inGame &&
                             <div>
-                                <div className='id-room my-5 p-3 w-50 m-auto'>
+                                <div onClick={() => {navigator.clipboard.writeText(window.location.host + "?id=" + id)}} className='id-room my-5 p-3 w-50 m-auto'>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
                                     <span className='mx-2'>
-                                        {id}
+                                        {window.location.host}?id={id}
                                     </span>
                                 </div>
                                 {
