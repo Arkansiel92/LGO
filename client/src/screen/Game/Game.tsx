@@ -113,10 +113,6 @@ function Game() {
         if (!room) {
             socket.emit('getRoom');
         }
-
-        return () => {
-            socket.off('getRoom');
-        }
     }, [socket, room])
 
     return (
