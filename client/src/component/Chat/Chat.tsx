@@ -4,8 +4,6 @@ import { message } from "../../screen/Game/Game";
 import Message from "../Message/Message";
 import "./Chat.css";
 
-
-
 interface props {
     messages?: message[],
     loved: boolean | undefined,
@@ -23,7 +21,18 @@ function Chat(props: props) {
 
     const sendMessage = () => {
         if (input !== "" && input.length < 120) {
-            socket.emit('setMessage', {msg: input, sister: sister, lover: lover})
+
+            let type = null;
+
+            if (sister) {
+                type = "sister";
+            } else if (lover) {
+                type = "lover"
+            } else {
+                type = "chat";
+            }
+
+            socket.emit('setMessage', {msg: input, type: type })
             setInput("");
         }
     }

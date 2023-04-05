@@ -49,10 +49,9 @@ export interface message {
     socket: string | null,
     author: string | null,
     recipient: string | null,
+    type: string,
     msg: string,
     isDead: boolean,
-    sister: boolean,
-    loved: boolean
 }
 
 export interface room {

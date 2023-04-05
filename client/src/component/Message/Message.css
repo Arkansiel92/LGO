@@ -2,6 +2,8 @@
 .message-container {
     border-radius: 100px;
     margin: 10px;
+    padding: 5px;
+    cursor: default;
 }
 
 .message-container:hover {
@@ -19,7 +21,7 @@
 }
 
 .role {
-    color: rgb(238, 243, 185);
+    color: rgb(255, 255, 255);
 }
 
 .author-dead {
