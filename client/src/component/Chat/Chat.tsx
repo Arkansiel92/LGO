@@ -1,13 +1,12 @@
 import { useState, useContext, useEffect } from "react"
 import { socketContext, ExtendedSocket} from "../../context/socket"
-import { message } from "../../screen/Game/Game";
+import { message, player } from "../../screen/Game/Game";
 import Message from "../Message/Message";
 import "./Chat.css";
 
 interface props {
     messages?: message[],
-    loved: boolean | undefined,
-    sister: boolean | undefined,
+    player: player | undefined,
     night: boolean | undefined
 }
 
@@ -20,20 +19,22 @@ function Chat(props: props) {
     const socket = useContext<ExtendedSocket>(socketContext);
 
     const sendMessage = () => {
-        if (input !== "" && input.length < 120) {
-
-            let type = null;
-
-            if (sister) {
-                type = "sister";
-            } else if (lover) {
-                type = "lover"
-            } else {
-                type = "chat";
+        if (!props.night || sister || lover) {
+            if (input !== "" && input.length < 120) {
+    
+                let type = null;
+    
+                if (sister) {
+                    type = "sister";
+                } else if (lover) {
+                    type = "lover"
+                } else {
+                    type = "chat";
+                }
+    
+                socket.emit('setMessage', {msg: input, type: type })
+                setInput("");
             }
-
-            socket.emit('setMessage', {msg: input, type: type })
-            setInput("");
         }
     }
 
@@ -58,22 +59,24 @@ function Chat(props: props) {
                         msg={msg}
                         loved={lover}
                         sister={sister}
+                        selfIsDead={props.player?.isDead}
+                        selfRole={props.player?.role?.name}
                         key={index} />
                 ))}
             </div>
             {
-                !props.night || sister || lover 
+                !props.night || props.player?.role?.name === "Nécromancien" || props.player?.isDead || sister || lover
                 ? <input type="text" onChange={ (e) => setInput(e.target.value) } value={input} max={150} min={1} placeholder={"Envoyez un message..."} className="mt-2" id="input-chat"/>
                 : <input type="text" disabled max={150} min={1} placeholder={"Impossible d'écrire pendant la nuit..."} className="mt-2" id="input-chat"/>
             }
             {
-                props.loved && 
+                props.player?.isCouple && 
                 <div className="form-check form-switch">
                     <input className="form-check-input" onChange={() => {setLover(!lover)}} type="checkbox" id="flexSwitchCheckDefault" />
                 </div>
             }
             {
-                props.sister && 
+                props.player?.isSister && 
                 <div className="form-check form-switch">
                     <input className="form-check-input" onChange={() => {setSister(!sister)}} type="checkbox" id="flexSwitchCheckDefault" />
                 </div>

@@ -20,6 +20,10 @@
     font-size: 15px;
 }
 
+.join {
+    font-style: italic;
+}
+
 .role {
     color: rgb(255, 255, 255);
 }

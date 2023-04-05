@@ -70,7 +70,7 @@ function ManagementRoom({room, player, inGame, sideBar}: props) {
                                 key={index} />
                         ))}
                     </div>
-                    : <Chat messages={room?.messages} sister={player?.isSister} loved={player?.isCouple} night={room?.night} />
+                    : <Chat messages={room?.messages} player={player} night={room?.night} />
             }
 
         </div>

@@ -515,9 +515,13 @@ io.on('connection', (socket) => {
         return io.to(socketID).emit('boxRole', box);
     }
 
-    function setIsTurn(bool) {
+    function setIsTurnRoom(bool) {
         hub.players.forEach((player) => {
-            player.isTurn = bool;
+            if (!player.isDead) {
+                player.isTurn = bool;
+            } else {
+                player.isTurn = false;
+            }
         })
 
         return room();
@@ -532,13 +536,15 @@ io.on('connection', (socket) => {
     }
 
     function sendMessage(type, recipient, msg) {
+        let player = getPlayer(socket.id)
+
         hub.messages.push({
             socket: socket.id,
-            author: getPlayer(socket.id).name,
+            author: type === "chat" ? player.name : null,
             type: type,
             recipient: recipient,
             msg: msg,
-            isDead: getPlayer(socket.id).isDead,
+            isDead: type === "chat" ? player.isDead : null,
         })
 
         return room();
@@ -554,7 +560,7 @@ io.on('connection', (socket) => {
 
     function order() {
         boxRole(socket.room, null);
-        setIsTurn(false);
+        setIsTurnRoom(false);
 
         if (hub.step === "start") {
 
@@ -662,7 +668,7 @@ io.on('connection', (socket) => {
         room();
 
         if (check) {
-            return time(10);
+            return time(30);
         } else {
             hub.step = order();
             return stepNight();
@@ -813,9 +819,11 @@ io.on('connection', (socket) => {
 
         //time(120);
 
+        setIsTurnRoom(true)
+
         boxRole(socket.room, { description: 'Vous pouvez voter pour exclure un joueur.' });
 
-        time(10);
+        time(120);
 
         return room();
     }
@@ -985,9 +993,8 @@ io.on('connection', (socket) => {
             if (target.role.name !== "Idiot du village") {
                 sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name);
                 target.isDead = true;
-                hub.roles.splice(hub.roles.indexOf(target.role.name), 1);
             } else {
-                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " (" + target.role.name + "). Le village a pitié de lui et décide de le laisser en vie, mais en échange il perd son droit de vote.");
+                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " (" + target.role.name + "). Cependant le village a pitié de lui et décide de le laisser en vie, mais en échange il perd son droit de vote.");
                 target.isVote = false;
             }
 
@@ -1249,10 +1256,10 @@ io.on('connection', (socket) => {
                 lover_one.isCouple = true;
                 lover_two.isCouple = true;
 
-                sendMessage("love", lover_one.socket, "Vous venez de tomber amoureux de " + lover_two.name + ". Vous avez un chat à disposition pour parler avec l'être aimé.");
-                sendMessage("love", lover_two.socket, "Vous venez de tomber amoureux de " + lover_one.name + ". Vous avez un chat à disposition pour parler avec l'être aimé.");
+                sendMessage("role", lover_one.socket, "Vous venez de tomber amoureux de " + lover_two.name + ". Vous avez un chat à disposition pour parler avec l'être aimé.");
+                sendMessage("role", lover_two.socket, "Vous venez de tomber amoureux de " + lover_one.name + ". Vous avez un chat à disposition pour parler avec l'être aimé.");
 
-                actionInGame(socket.id, false);
+                sendMessage('love', null, "Un chat est disponible pour parler entre vous à l'abri des regards !");
             }
         }
 
@@ -1588,8 +1595,6 @@ io.on('connection', (socket) => {
     })
 
     socket.on('setGravedigger', targetID => {
-        actionInGame(socket.id, false);
-
         let target = getPlayer(targetID);
 
         let randomPlayer = getRandomPlayer();
@@ -1600,7 +1605,7 @@ io.on('connection', (socket) => {
 
         room()
 
-        return sendMessage("server", null, "Un loup se cache parmis " + target.name + " et " + randomPlayer.name);
+        return sendMessage("server", null, "Un loup se cache entre " + target.name + " et " + randomPlayer.name + ".");
     })
 
     socket.on('inGame', ready => {
@@ -1643,8 +1648,11 @@ io.on('connection', (socket) => {
             hub.sockets.forEach(player => {
                 if (getPlayer(player).role.name === "Deux soeurs") {
                     getPlayer(player).isSister = true;
+                    sendMessage("role", player.socket, "Vous avez le rôle Soeur, vous avez un chat disponible pour parler à votre frangine.");
                 }
             })
+
+            sendMessage('sister', null, "Un chat est disponible pour parler entre vous à l'abri des regards !");
         }
 
         resetTurn();
@@ -1848,6 +1856,8 @@ io.on('connection', (socket) => {
         hub.roleActor = [];
         hub.inGame = false;
         hub.step = "start";
+
+        sendMessage('server', null, "Le jeu est en bêta-test. Merci de report les bugs/améliorations sur le discord. Coeur sur vous et votre famille. (Myou est loup-garou)");
 
         return navigate(id);
     })
