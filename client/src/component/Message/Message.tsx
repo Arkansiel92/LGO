@@ -64,10 +64,10 @@ function Message(props: props) {
                 (props.sister === false && props.loved === false && props.msg.type !== "love" && props.msg.type !== "sister") &&
                 <div>
                     {
-                        (props.msg.recipient === socket.id && !props.msg.isDead || props.msg.recipient === null && !props.msg.isDead) &&
+                        ((props.msg.recipient === socket.id && !props.msg.isDead) || (props.msg.recipient === null && !props.msg.isDead)) &&
                         <div className={`message-container ${props.msg.type} px-4`}>
                             {
-                                props.msg.type === "chat" && <span className="author fw-bold">{props.msg.author}</span>
+                                props.msg.author && <span className="author fw-bold">{props.msg.author}</span>
                             }
                             <div className="message d-flex align-items-center">
                                 {
@@ -103,8 +103,8 @@ function Message(props: props) {
                 </div>
             }
             {
-                props.loved && props.msg.type === "love" &&
-                <div className="className={`message-container ${props.msg.type} px-4`}">
+                (props.loved && props.msg.type === "love") &&
+                <div className={`message-container ${props.msg.type} px-4`}>
                     <div className="message d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M.58,4.31C1.09,1.85,4.12,0,7,3.27c4.11-4.71,8.5,1.13,5.52,4.14L7,12.5l-3.23-3" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path><polyline points="0.5 7 3 7 4.5 5 6.5 8.5 8 6.5 9.5 6.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></polyline></g></svg>
                         <span className="mx-2">{props.msg.msg}</span>
@@ -112,7 +112,7 @@ function Message(props: props) {
                 </div>
             }
             {
-                props.sister && props.msg.type === "sister" &&
+                (props.sister && props.msg.type === "sister") &&
                 <div className={`message-container ${props.msg.type} px-4`}>
                     {
                         props.msg.author && <span className="author fw-bold">{props.msg.author}</span>

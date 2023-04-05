@@ -71,7 +71,7 @@ const roles = [
     {
         name: "Cupidon",
         name_function: "Cupidon",
-        description: "Cupidon est appelé uniquement la première nuit afin d'unir un couple. Il désigne deux noms parmi les joueurs, ces deux joueurs seront Le couple. Si un des deux qui sont en couple meurt l'autre meurt avec son amant.",
+        description: "Cupidon est appelé uniquement la première nuit afin d'unir un couple. Il désigne deux noms parmi les joueurs, ces deux joueurs seront Le couple. Si un des deux meurt l'autre meurt avec son amant. Ils peuvent se concerter en silence",
         side: "village",
         step: "start",
         descriptionInGame: "Selectionnez deux joueurs qui seront lié à la vie et à la mort ! Si l'un d'eux meurt, il emporte son amant dans la tombe.",
@@ -93,7 +93,7 @@ const roles = [
     {
         name: "Sorcière",
         name_function: "Witch",
-        description: "La sorcière se réveille la nuit après tout le monde. Elle possède deux potions : une de vie et une de mort. Elle peut choisir de soigner la victime des loups garous. Elle peut également choisir de tuer une personne grâce à sa potion de mort. Elle ne peut utiliser qu'une seule fois chaque potion.",
+        description: "La sorcière se réveille la nuit. Elle possède deux potions : une de vie et une de mort. Elle peut choisir de soigner la victime des loups garous. Elle peut également choisir de tuer une personne grâce à sa potion de mort. Elle ne peut utiliser qu'une seule fois chaque potion.",
         side: "village",
         step: "end",
         descriptionInGame: "Voulez-vous utiliser vos potions cette nuit ?",
@@ -225,7 +225,7 @@ const roles = [
     {
         name: "Comédien",
         name_function: "Actor",
-        description: "Avant la partie. Chaque nuit, le comédien peut désigner un des rôles qui n'ont pas été choisi et utiliser le pouvoir correspondant jusqu’à la nuit suivante. Chaque rôle ne peut être utilisé qu'une seule fois et maximum 3 fois dans la partie.",
+        description: "Chaque nuit, le comédien peut désigner un des rôles qui n'ont pas été choisi et utiliser le pouvoir correspondant jusqu’à la nuit suivante. Chaque rôle ne peut être utilisé qu'une seule fois et maximum 3 fois dans la partie.",
         side: "village",
         step: "start",
         descriptionInGame: "Vous pouvez choisir un rôle",
@@ -236,7 +236,7 @@ const roles = [
     {
         name: "Deux soeurs",
         name_function: "Sisters",
-        description: "Leur objectif est d'éliminer tous les autres joueurs. Au début de la partie elles connaissent donc leur identité, et peuvent donc avoir confiance en elles. Elles peuvent se concerter en silence. Si l'une d'elle meurt, l'autre ne meurt pas forcément.",
+        description: "Leur objectif est d'éliminer tous les autres joueurs. Au début de la partie elles connaissent donc leur identité, et peuvent donc avoir confiance en elles. Elles peuvent se concerter en silence.",
         side: "seul",
         step: null,
         descriptionInGame: null,
@@ -258,7 +258,7 @@ const roles = [
     {
         name: "Gitane",
         name_function: "Gypsy",
-        description: "Pendant la nuit, elle décide si oui ou non elle veut déclencher un évènement pour le jour suivant. Le pouvoir n'est activable qu'une fois dans la partie",
+        description: "Pendant la nuit, elle décide si elle veut déclencher un évènement pour le jour suivant. Le pouvoir n'est activable qu'une fois dans la partie",
         side: "village",
         step: "start",
         descriptionInGame: "Voulez-vous déclencher un évènement pour la prochaine journée ?",
