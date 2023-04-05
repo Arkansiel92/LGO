@@ -4,6 +4,7 @@ const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const fs = require('fs');
+const { log } = require('console');
 
 app.use(cors());
 
@@ -643,16 +644,18 @@ io.on('connection', (socket) => {
             hub.sockets.forEach((socket) => {
                 let player = getPlayer(socket);
 
-                if (player.role.side === "méchant" || player.isInfected || player.role.name === "Loup blanc") {
-                    check = true;
-                    player.isTurn = true;
-
-                    let data = {
-                        description: "Vous pouvez tuer un joueur.",
-                        role: player.role.name,
+                if (!player.isDead) {
+                    if (player.role.side === "méchant" || player.isInfected || player.role.name === "Loup blanc") {
+                        check = true;
+                        player.isTurn = true;
+    
+                        let data = {
+                            description: "Vous pouvez tuer un joueur.",
+                            role: player.role.name,
+                        }
+    
+                        boxRole(player.socket, data);
                     }
-
-                    boxRole(player.socket, data);
                 }
             });
         }
@@ -865,6 +868,7 @@ io.on('connection', (socket) => {
         })
 
         hub.votes = [''];
+        hub.kills = {};
         hub.voteWolf = null;
         hub.infected = null;
         hub.protected = null;
@@ -1453,6 +1457,10 @@ io.on('connection', (socket) => {
 
     socket.on('setWitchChoice', (bool) => {
         if (bool) {
+            delete hub.kills[hub.voteWolf];
+
+            console.log(hub.kills);
+            
             hub.voteWolf = null;
             hub.healthPotion = false;
         } else {
