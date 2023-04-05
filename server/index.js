@@ -750,42 +750,50 @@ io.on('connection', (socket) => {
             sendMessage("server", null, getPlayer(hub.ravenSocket).name + " a reçu la visite du corbeau cette nuit, il a deux votes en plus pour cette journée.");
             hub.ravenSocket = null;
         }
-        
-        console.log(hub.kills);
 
-        if (hub.kills.length > 0) {
 
-            if (hub.voteWolf) {
-                getPlayer(hub.voteWolf).isDead = true;
-            }
 
-            sendMessage("server", null, "Le jour se lève sans " + hub.kills.toString() + ".");
+
+        let kills = Object.keys(hub.kills);
+        let str = "";
+
+        if (kills.length > 0) {
+
+            kills.forEach(socket => {
+                let player = getPlayer(socket);
+                player.isDead = true;
+
+                str += "Le jour se lève sans " + player.name + " (" + player.role.name + "). ";
+            })
+            
+            sendMessage("server", null, str);
 
             if (hub.roles.includes("Chasseur")) {
-                if (hub.kills.includes(getPlayerByRole("Chasseur").socket)) {
+                if (kills.includes(getPlayerByRole("Chasseur").socket)) {
                     let hunter = getPlayerByRole('Chasseur');
 
                     sendMessage("server", null, "Le chasseur est mort, il peut tuer quelqu'un avant de mourir.");
                     timeBySocket(30, hunter);
-                    return actionInGame(hunter.socket, true);
+                    return boxRole(hunter.socket, {
+                        description: hunter.role.descriptionInGame
+                    });
                 }
             }
 
             if (hub.roles.includes("Fossoyeur")) {
-                if (hub.kills.includes(getPlayerByRole('Fossoyeur').socket)) {
+                if (kills.includes(getPlayerByRole('Fossoyeur').socket)) {
                     let gravedigger = getPlayerByRole("Fossoyeur");
 
                     sendMessage("server", null, "Le fossyeur est mort, sa mort lui permet d'activer son pouvoir.");
                     timeBySocket(30, gravedigger);
-                    return actionInGame(gravedigger.socket, true);
+                    return boxRole(gravedigger.socket, {
+                        description: gravedigger.descriptionInGame
+                    });
                 }
             }
+
         } else {
             sendMessage("server", null, "Le jour se lève et personne n'est mort cette nuit !");
-        }
-
-        if (hub.nbTurn === 2) {
-            sendMessage("server", null, "Election du maire !", false, false);
         }
 
         // reset des votes
@@ -795,6 +803,10 @@ io.on('connection', (socket) => {
         });
 
         hub.night = false;
+
+        if (hub.nbTurn === 2) {
+            sendMessage("server", null, "Election du maire !", false, false);
+        }
 
         //time(120);
 
@@ -1811,7 +1823,7 @@ io.on('connection', (socket) => {
         hub.sockets = [socket.id];
         hub.roles = [];
         hub.votes = [''];
-        hub.kills = [];
+        hub.kills = {};
         hub.event = null;
         hub.healthPotion = true;
         hub.deathPotion = true;
