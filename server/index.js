@@ -531,15 +531,13 @@ io.on('connection', (socket) => {
         return io.to(socket.room).emit('clearIntervals');
     }
 
-    function sendMessage(author, recipient, msg, sister, loved) {
+    function sendMessage(type, recipient, msg) {
         hub.messages.push({
             socket: socket.id,
-            author: author,
+            type: type,
             recipient: recipient,
             msg: msg,
             isDead: getPlayer(socket.id).isDead,
-            loved: loved,
-            sister: sister
         })
 
         return room();
@@ -671,30 +669,34 @@ io.on('connection', (socket) => {
     }
 
     function triggerEvent() {
-        let target = getPlayer(hub.sockets[Math.floor(Math.random() * hub.sockets.length)]);
+        let target = getRandomPlayer;
 
         if (hub.event.name === "Résurrection aveugle") {
 
             while (target.isDead === false) {
-                target = getPlayer(hub.sockets[Math.floor(Math.random() * hub.sockets.length)]);
+                target = getRandomPlayer;
             }
 
             target.isDead = false;
 
+            sendMessage("server", null, "Evènement : un joueur a été réanimé.");
+
         } else if (hub.event.name === "Punition aveugle") {
 
             while (target.isDead === true) {
-                target = getPlayer(hub.sockets[Math.floor(Math.random() * hub.sockets.length)]);
+                target = getRandomPlayer;
             }
 
             target.isDead = true;
+
+            sendMessage("server", null, "Evènement : un joueur a été tué.");
         }
 
         hub.event = null;
 
         room();
 
-        return sendMessage("server", null, "l'évènement a été déclenché avec succès.", false, false);
+        return sendMessage("server", null, "l'évènement a été déclenché avec succès.");
     }
 
     function day() {
@@ -711,7 +713,7 @@ io.on('connection', (socket) => {
                 let target = getPlayer(socketTarget);
                 hub.mercenaryTarget = target.socket;
 
-                sendMessage(null, mercenary.socket, "Votre cible est " + target.name + ". Si vous parvenez à l'éliminer ce jour-ci, vous gagnez la partie.", false, false);
+                sendMessage(null, mercenary.socket, "Votre cible est " + target.name + ". Si vous parvenez à l'éliminer ce jour-ci, vous gagnez la partie.");
             }
         }
 
@@ -746,16 +748,13 @@ io.on('connection', (socket) => {
         }
 
         if (hub.event) {
-            sendMessage("server", null, "La gitane a décidé d'utiliser l'évènement " + hub.event.name + ". Il sera déclencher en fin de journée. Préparez-vous...");
+            sendMessage("server", null, "La gitane a décidé d'utiliser l'évènement " + hub.event.name + ". Il sera déclencher en fin de journée.");
         }
 
         if (hub.ravenSocket) {
             sendMessage("server", null, getPlayer(hub.ravenSocket).name + " a reçu la visite du corbeau cette nuit, il a deux votes en plus pour cette journée.");
             hub.ravenSocket = null;
         }
-
-
-
 
         let kills = Object.keys(hub.kills);
         let str = "";
@@ -808,7 +807,7 @@ io.on('connection', (socket) => {
         hub.night = false;
 
         if (hub.nbTurn === 2) {
-            sendMessage("server", null, "Election du maire !", false, false);
+            sendMessage("server", null, "Election du maire !");
         }
 
         //time(120);
@@ -983,11 +982,11 @@ io.on('connection', (socket) => {
             }
 
             if (target.role.name !== "Idiot du village") {
-                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name, false, false);
+                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name);
                 target.isDead = true;
                 hub.roles.splice(hub.roles.indexOf(target.role.name), 1);
             } else {
-                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " (" + target.role.name + "). Le village a pitié de lui et décide de le laisser en vie, mais en échange il perd son droit de vote.", false, false);
+                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " (" + target.role.name + "). Le village a pitié de lui et décide de le laisser en vie, mais en échange il perd son droit de vote.");
                 target.isVote = false;
             }
 
@@ -1001,7 +1000,7 @@ io.on('connection', (socket) => {
                 hub.roles.splice(hub.roles.indexOf("L'Héritier"), 1);
                 hub.roles.push(target.role.name);
 
-                sendMessage(null, player.socket, "Votre héritier est mort, vous héritez de ses pouvoirs et du rôle de " + target.role.name + ".", false, false);
+                sendMessage(null, player.socket, "Votre héritier est mort, vous héritez de ses pouvoirs et du rôle de " + target.role.name + ".");
             }
 
             if (target.role.name === "Chasseur") {
@@ -1015,14 +1014,14 @@ io.on('connection', (socket) => {
             if (equality && hub.roles.includes("Bouc émissaire")) {
                 let player = getPlayerByRole("Bouc émissaire");
 
-                sendMessage("server", null, "Le village n'a pas réussi à se départager. Par dépit, le village décide de se tourner vers " + player.name + " qui est bouc émissaire. Il peut choisir une personne qui ne pourra pas voter au prochain tour.", false, false);
+                sendMessage("server", null, "Le village n'a pas réussi à se départager. Par dépit, le village décide de se tourner vers " + player.name + " qui est bouc émissaire. Il peut choisir une personne qui ne pourra pas voter au prochain tour.");
                 actionInGame(player.socket, true);
 
                 hub.step = order();
 
                 return timeBySocket(30, player);
             } else {
-                sendMessage("server", null, "Personne n'a été exclu du village.", false, false);
+                sendMessage("server", null, "Personne n'a été exclu du village.");
             }
         }
 
@@ -1150,7 +1149,7 @@ io.on('connection', (socket) => {
         } else {
             villager.vote = targetID;
             target.votes.push(villager.socket);
-            sendMessage("server", null, villager.name + " a voté pour " + target.name + " !", false, false);
+            sendMessage("server", null, villager.name + " a voté pour " + target.name + " !");
         };
 
     })
@@ -1161,10 +1160,10 @@ io.on('connection', (socket) => {
 
         if (wolf.voteWolf == target.socket) {
             wolf.voteWolf = null;
-            sendMessage(null, wolf.socket, "Vote retiré", false, false);
+            sendMessage(null, wolf.socket, "Vote retiré");
         } else {
             wolf.voteWolf = target.socket;
-            sendMessage(null, wolf.socket, "Vous avez voté pour " + target.name, false, false);
+            sendMessage(null, wolf.socket, "Vous avez voté pour " + target.name);
         }
 
         return room();
@@ -1173,7 +1172,7 @@ io.on('connection', (socket) => {
     // function Role
     socket.on('setThief', (targetID) => {
         if (targetID === socket.id) {
-            return sendMessage(null, socket.id, "Vous ne pouvez pas voler votre carte.", false, false);
+            return sendMessage(null, socket.id, "Vous ne pouvez pas voler votre carte.");
         }
 
         let target = getPlayer(targetID);
@@ -1199,8 +1198,8 @@ io.on('connection', (socket) => {
 
         hub.roles.push("Villageois");
 
-        sendMessage(null, target.socket, "Vous vous êtes fait voler votre carte. Vous devenez villageois.", false, false);
-        sendMessage(null, socket.id, "Vous avez volé la carte de " + target.name + ". Il était " + player.role.name + ".", false, false)
+        sendMessage(null, target.socket, "Vous vous êtes fait voler votre carte. Vous devenez villageois.");
+        sendMessage(null, socket.id, "Vous avez volé la carte de " + target.name + ". Il était " + player.role.name + ".")
 
         clearInterval(interval);
 
@@ -1217,7 +1216,7 @@ io.on('connection', (socket) => {
         player.isPower = false;
         target.isDead = true;
 
-        sendMessage('server', null, "Le chasseur a tiré sur " + target.name + " qui était " + target.role.name + ".", false, false);
+        sendMessage('server', null, "Le chasseur a tiré sur " + target.name + " qui était " + target.role.name + ".");
 
         clearIntervals();
 
@@ -1249,8 +1248,8 @@ io.on('connection', (socket) => {
                 lover_one.isCouple = true;
                 lover_two.isCouple = true;
 
-                sendMessage(null, lover_one.socket, "Vous venez de tomber amoureux de " + lover_two.name + ". Vous avez un chat à disposition pour parler avec l'être aimé.", false, false);
-                sendMessage(null, lover_two.socket, "Vous venez de tomber amoureux de " + lover_one.name + ". Vous avez un chat à disposition pour parler avec l'être aimé.", false, false);
+                sendMessage(null, lover_one.socket, "Vous venez de tomber amoureux de " + lover_two.name + ". Vous avez un chat à disposition pour parler avec l'être aimé.");
+                sendMessage(null, lover_two.socket, "Vous venez de tomber amoureux de " + lover_one.name + ". Vous avez un chat à disposition pour parler avec l'être aimé.");
 
                 actionInGame(socket.id, false);
             }
@@ -1262,7 +1261,7 @@ io.on('connection', (socket) => {
     socket.on('setHair', (targetID) => {
 
         if (targetID === socket.id) {
-            return sendMessage(null, socket.id, "Vous ne pouvez pas hériter de vous-même.", false, false);
+            return sendMessage(null, socket.id, "Vous ne pouvez pas hériter de vous-même.");
         }
 
         const target = getPlayer(targetID);
@@ -1275,7 +1274,7 @@ io.on('connection', (socket) => {
 
             actionInGame(socket.id, false);
 
-            sendMessage(null, socket.id, "Vous recevrez les pouvoirs de " + target.name + " à sa mort.", false, false)
+            sendMessage(null, socket.id, "Vous recevrez les pouvoirs de " + target.name + " à sa mort.")
         }
 
         return room();
@@ -1337,10 +1336,10 @@ io.on('connection', (socket) => {
 
 
         if (targetID === socket.id) {
-            return sendMessage(null, player.socket, "Vous ne pouvez pas voir votre propre carte.", false, false);
+            return sendMessage(null, player.socket, "Vous ne pouvez pas voir votre propre carte.");
         }
 
-        sendMessage(null, player.socket, target.name + " est " + target.role.name + ".", false, false);
+        sendMessage(null, player.socket, target.name + " est " + target.role.name + ".");
 
         return actionInGame(player.socket, false);
     })
@@ -1350,11 +1349,11 @@ io.on('connection', (socket) => {
         const player = getPlayer(socket.id);
 
         if (hub.protected === target.socket) {
-            sendMessage(null, player.socket, "Vous ne pouvez pas protéger deux fois de suite la même personne !", false, false);
+            sendMessage(null, player.socket, "Vous ne pouvez pas protéger deux fois de suite la même personne !");
             return room();
         } else {
             hub.protected = target.socket;
-            sendMessage(null, player.socket, "Vous avez protéger " + target.name + " des loups pour cette nuit.", false, false);
+            sendMessage(null, player.socket, "Vous avez protéger " + target.name + " des loups pour cette nuit.");
         }
 
         return actionInGame(player.socket, false);
@@ -1367,7 +1366,7 @@ io.on('connection', (socket) => {
             getPlayer(socket.id).isPower = false;
         }
 
-        sendMessage(null, socket.id, action ? "Vous avez choisi de faire un coup d'état le prochain tour" : "Vous avez choisi de ne pas faire de coup d'état.", false, false);
+        sendMessage(null, socket.id, action ? "Vous avez choisi de faire un coup d'état le prochain tour" : "Vous avez choisi de ne pas faire de coup d'état.");
 
         return socket.emit('actionByRole', null);
     })
@@ -1379,7 +1378,7 @@ io.on('connection', (socket) => {
 
         hub.ravenSocket = target.socket;
 
-        sendMessage(null, socket.id, target.name + " se réveillera avec deux votes en plus !", false, false);
+        sendMessage(null, socket.id, target.name + " se réveillera avec deux votes en plus !");
 
         return actionInGame(socket.id, false);
     })
@@ -1389,7 +1388,7 @@ io.on('connection', (socket) => {
         let player = getPlayer(socket.id);
 
         if (target.socket === player.socket) {
-            return sendMessage(null, player.socket, "Vous connaissez déjà votre rôle...", false, false);
+            return sendMessage(null, player.socket, "Vous connaissez déjà votre rôle...");
         }
 
         if (!player.socketFox && !player.roleFox) {
@@ -1417,10 +1416,10 @@ io.on('connection', (socket) => {
             if (isWolf) {
                 player.socketFox = [];
                 player.roleFox = [];
-                sendMessage(null, player.socket, "Il y a un loup parmis ces personnes. Vous gardez vos pouvoirs.", false, false);
+                sendMessage(null, player.socket, "Il y a un loup parmis ces personnes. Vous gardez vos pouvoirs.");
             } else {
                 player.isPower = false;
-                sendMessage(null, player.socket, "Il n'y a aucun loup parmis ces personnes. Vos pouvoirs vous quittent...", false, false);
+                sendMessage(null, player.socket, "Il n'y a aucun loup parmis ces personnes. Vos pouvoirs vous quittent...");
             }
 
             return actionInGame(player.socket, false);
@@ -1449,7 +1448,7 @@ io.on('connection', (socket) => {
             hub.kills.splice(0, 1);
 
             getPlayer(socket.id).isPower = false;
-            sendMessage(null, hub.infected, "Vous avez été infecté par le loup noir !", false, false);
+            sendMessage(null, hub.infected, "Vous avez été infecté par le loup noir !");
         }
 
         return room();
@@ -1485,7 +1484,7 @@ io.on('connection', (socket) => {
             killBy: "witch"
         }
 
-        sendMessage(null, socket.id, "Vous avez décider de tuer " + target.name + " avec votre potion.", false, false);
+        sendMessage(null, socket.id, "Vous avez décider de tuer " + target.name + " avec votre potion.");
 
         room();
 
@@ -1600,7 +1599,7 @@ io.on('connection', (socket) => {
 
         room()
 
-        return sendMessage("server", null, "Un loup se cache parmis " + target.name + " et " + randomPlayer.name, false, false);
+        return sendMessage("server", null, "Un loup se cache parmis " + target.name + " et " + randomPlayer.name);
     })
 
     socket.on('inGame', ready => {
@@ -1610,7 +1609,7 @@ io.on('connection', (socket) => {
 
         hub.step = "start";
 
-        sendMessage("server", null, "La nuit tombe sur le village...", false, false);
+        sendMessage("server", null, "La nuit tombe sur le village...");
 
         // copy array
         let roleArray = [...hub.roles];
@@ -1656,7 +1655,7 @@ io.on('connection', (socket) => {
             const thief = getPlayerByRole("Voleur")
 
             if (thief) {
-                sendMessage("server", null, "Le voleur décide du joueur à voler.", false, false);
+                sendMessage("server", null, "Le voleur décide du joueur à voler.");
                 timeBySocket(30, thief);
                 io.to(thief.socket).emit('actionByRole', { name: thief.role.name, descriptionInGame: thief.role.descriptionInGame, response: false })
                 return actionInGame(thief.socket, true);
@@ -1725,7 +1724,7 @@ io.on('connection', (socket) => {
         });
     })
 
-    socket.on("setMessage", ({ msg, sister, lover }) => sendMessage(socket.name, null, msg, sister, lover));
+    socket.on("setMessage", ({ msg, type }) => sendMessage(type, socket.name, msg,));
 
     socket.on('getRoles', () => io.to(socket.id).emit('getRoles', roles));
 
@@ -1781,7 +1780,7 @@ io.on('connection', (socket) => {
 
         hub.messages.push({
             socket: null,
-            author: "server",
+            author: "join",
             msg: pseudo.toLowerCase() === "xprolive" || pseudo.toLowerCase() === "prolive" | pseudo.toLowerCase() === "alexis" ? pseudo + " vient d'arriver dans la partie ! (il sera loup-garou à la prochaine partie)" : pseudo + " vient d'arriver dans la partie !"
         })
 
