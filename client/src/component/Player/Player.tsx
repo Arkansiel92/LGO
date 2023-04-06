@@ -26,11 +26,11 @@ function Player({player, role_function, isTurn, step}: props) {
 
     const handleSubmit = () => {
         if (isTurn) {
-            if (step !== "werewolf" && step !== "day") {
+            if (step !== "werewolf" && step !== "village") {
                 socket.emit('set' + role_function, player.socket);
             } 
             
-            if (step === "day") {
+            if (step === "village") {
                 socket.emit('voteVillage', player.socket);
             }
 

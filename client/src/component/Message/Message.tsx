@@ -74,6 +74,9 @@ function Message(props: props) {
                                     props.msg.type === "join" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="5" cy="2.75" r="2.25" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><path d="M4.5,12.5H.5V11A4.51,4.51,0,0,1,7,7" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></path><line x1="10.5" y1="7.5" x2="10.5" y2="13.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7.5" y1="10.5" x2="13.5" y2="10.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
                                 }
                                 {
+                                    props.msg.type === "leave" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="5" cy="3.75" r="2.25" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></circle><path d="M6.5,13.5H.5V12A4.5,4.5,0,0,1,7.89,8.55" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></path><line x1="8.5" y1="11.5" x2="13.5" y2="11.5" fill="none" stroke="#fefefe" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+                                }
+                                {
                                     props.msg.type === "server" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><g><circle cx="7" cy="7" r="6.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="7" x2="7" y2="10.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><circle cx="7" cy="4.5" r="0.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle></g></svg>
                                 }
                                 {
