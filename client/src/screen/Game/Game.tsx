@@ -9,6 +9,7 @@ import Topbar from '../../component/Topbar/Topbar';
 import BoxRole from '../../component/BoxRole/BoxRole';
 import { event } from '../../component/Event/Event';
 import Counter from '../../component/Counter/Counter';
+import Votes from '../../component/Votes/Votes';
 
 type Params = {
     id: string
@@ -154,6 +155,11 @@ function Game() {
                     {
                         !player?.isTurn && inGame && <Counter />
                     }
+                    <div>
+                    {
+                        room?.step === "village" && <Votes players={room?.players} />
+                    }
+                    </div>
                     <div className="col text-center">
                         {
                             !inGame &&

@@ -800,16 +800,15 @@ io.on('connection', (socket) => {
                 
                 if (kills.includes(gravedigger.socket) && gravedigger.isPower) {
 
-                    sendMessage("server", null, "Le fossyeur est mort, sa mort lui permet d'activer son pouvoir.");
+                    sendMessage("server", null, "Le fossoyeur est mort, il peut activer son pouvoir et sonder deux personnes.");
                     boxRole(gravedigger.socket, { description: gravedigger.descriptionInGame });
                     room();
 
                     return timeBySocket(30, gravedigger);
                 }
             }
-
         } else {
-            sendMessage("server", null, "Le jour se lève et personne est mort cette nuit !");
+            sendMessage("server", null, "Le jour se lève et personne est mort cette nuit.");
         }
 
         // reset des votes
