@@ -8,18 +8,21 @@ interface props {
 
 function Votes({players}: props) {
     return (
-        <div className="card" id="array-votes">
-            <div className="card-header">
-                <h1>Tableau des votes</h1>
-            </div>
-            <div className="card-body">
-                <div className="row">
-                {players.map((player) => (
-                    <div className="col">
-                        <span>{player.name}</span>
-                    </div>
-                ))}
+        <div className="mt-5" id="array-votes">
+            <h1 className="text-center border-bottom">Tableau des votes</h1>
+            <div className="row">
+            {players.map((player) => (
+                <div className="col-sm-6 text-center">
+                    <h4>{player.name} ({player.votes.length})</h4>
+                    {
+                        player.votes.length === 0 
+                        ? <p className="fst-italic">Aucun vote</p>
+                        : player.votes.map((vote) => (
+                            <p>{vote}</p>
+                        ))
+                    }
                 </div>
+            ))}
             </div>
         </div>
     )

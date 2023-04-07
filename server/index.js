@@ -107,7 +107,7 @@ const roles = [
         description: "Le voleur est appelé uniquement la première nuit. Il peut décider ou non, d'échanger sa carte avec celle d'un autre joueur. A la suite de ça, le joueur qui a la carte voleur devient un Villageois.",
         side: "village",
         step: null,
-        descriptionInGame: "Vous pouvez voler la carte d'un joueur et prendre son rôle. Cette personne deviendra villageois à la suite de ce vol.",
+        descriptionInGame: "Vous pouvez voler la carte d'un joueur et prendre son rôle. La personne volée deviendra villageois.",
         max: 1,
         needVictim: false,
         img: "card-thief.svg",
@@ -791,7 +791,7 @@ io.on('connection', (socket) => {
                     boxRole(hunter.socket, { description: hunter.role.descriptionInGame });
                     room();
                     
-                    return timeBySocket(30, hunter);
+                    return time(15);
                 }
             }
 
@@ -804,7 +804,7 @@ io.on('connection', (socket) => {
                     boxRole(gravedigger.socket, { description: gravedigger.descriptionInGame });
                     room();
 
-                    return timeBySocket(30, gravedigger);
+                    return time(15);
                 }
             }
         } else {
@@ -897,14 +897,37 @@ io.on('connection', (socket) => {
     }
 
     function time(time) {
-        // clear tous les setInterval avant
-        clearInterval(interval);
+        if (interval) {
+            clearInterval(interval);
+            console.log("clear interval");
+        }
 
         interval = setInterval(() => {
             io.to(socket.room).emit('counter', time);
 
             if (time <= 0) {
                 clearInterval(interval);
+
+                if (hub.roles.includes('Voleur')) {
+                    let player = getPlayerByRole("Voleur");
+
+                    player.role = {
+                        name: "Villageois",
+                        name_function: "Villager",
+                        description: "Le villageois est un personnage qui incarne les habitants d\'un village. Son rôle est de découvrir l\'identité des loups-garous et de les éliminer avant qu\'ils ne tuent tous les villageois.",
+                        side: "village",
+                        step: null,
+                        descriptionInGame: null,
+                        max: 100,
+                        needVictim: false,
+                        img: "card-villager.svg"
+                    };
+
+                    hub.roles.splice(hub.roles.indexOf("Voleur"), 1);
+                    hub.roles.push("Villageois");
+
+                    sendMessage('role', player.socket, "Vous devenez un villageois.");
+                }
 
                 if (hub.step === "village") {
                     return voteVillagers();
@@ -924,14 +947,15 @@ io.on('connection', (socket) => {
     }
 
     function timeBySocket(time, player) {
-        clearInterval(interval);
+        if (interval) {
+            clearInterval(interval);
+            console.log("clear interval");
+        }
 
         interval = setInterval(() => {
             io.to(player.socket).emit('counter', time);
 
             if (time <= 0) {
-                clearInterval(interval);
-
                 if (player.role.name === "Voleur") {
                     player.role = {
                         name: "Villageois",
@@ -949,6 +973,8 @@ io.on('connection', (socket) => {
                     hub.roles.push("Villageois");
 
                 }
+
+                clearInterval(interval);
 
                 room();
 
@@ -1005,7 +1031,6 @@ io.on('connection', (socket) => {
                 target.isVote = false;
             }
 
-
             if (target.isHair) {
                 let player = getPlayerByRole("L'Héritier");
 
@@ -1020,21 +1045,32 @@ io.on('connection', (socket) => {
 
             if (target.role.name === "Chasseur") {
                 sendMessage("server", null, "Le chasseur est mort, il peut tuer quelqu'un avant de mourir.");
-                timeBySocket(30, target);
-                actionInGame(target.socket, true);
-                return io.to('actionByRole', { name: target.role.name, descriptionInGame: target.role.descriptionInGame, name_function: target.role.name_function, response: false })
+                target.isTurn = true;
+                boxRole(target.socket, {
+                    description: target.role.descriptionInGame
+                })
+                return time(15);
+            }
+
+            if (target.role.name === "Fossoyeur") {
+                sendMessage("server", null, "Le fossoyeur est mort, il peut activer son pouvoir et sonder deux personnes.");
+                target.isTurn = true;
+                boxRole(gravedigger.socket, { description: gravedigger.descriptionInGame });
+
+                return time(15);
             }
 
         } else {
             if (equality && hub.roles.includes("Bouc émissaire")) {
                 let player = getPlayerByRole("Bouc émissaire");
-
+                
+                player.isTurn = true;
                 sendMessage("server", null, "Le village n'a pas réussi à se départager. Par dépit, le village décide de se tourner vers " + player.name + " qui est bouc émissaire. Il peut choisir une personne qui ne pourra pas voter au prochain tour.");
-                actionInGame(player.socket, true);
+                boxRole(target.socket, {
+                    description: target.role.descriptionInGame
+                })
 
-                hub.step = order();
-
-                return timeBySocket(30, player);
+                return time(15);
             } else {
                 sendMessage("server", null, "Personne n'a été exclu du village.");
             }
@@ -1154,19 +1190,24 @@ io.on('connection', (socket) => {
 
     socket.on('voteVillage', (targetID) => {
         const target = getPlayer(targetID);
-        const villager = getPlayer(socket.id);
+        const player = getPlayer(socket.id);
 
-        if (targetID === villager.vote) {
-            villager.vote = null;
-            let index = target.votes.indexOf(villager.socket);
+        if (player.vote) {
+            let oldTarget = getPlayer(player.vote);
+            oldTarget.votes.splice(oldTarget.votes.indexOf(player.name));
+        }
+
+        if (targetID === player.vote) {
+            player.vote = null;
+            let index = target.votes.indexOf(player.name);
             target.votes.splice(index, 1);
-            return;
         } else {
-            villager.vote = targetID;
-            target.votes.push(villager.socket);
-            sendMessage("vote", null, villager.name + " a voté pour " + target.name + " !");
+            player.vote = targetID;
+            target.votes.push(player.name);
+            sendMessage("vote", null, player.name + " a voté pour " + target.name + ".");
         };
 
+        return room();
     })
 
     socket.on('voteWolf', (targetID) => {
@@ -1193,8 +1234,6 @@ io.on('connection', (socket) => {
         let target = getPlayer(targetID);
         let player = getPlayer(socket.id);
 
-        // pas necessaire de mettre player.isPower = false car il vole le pouvoir forcément actif d'un joueur
-
         player.role = target.role;
 
         hub.roles.splice(hub.roles.indexOf("Voleur"), 1);
@@ -1214,9 +1253,7 @@ io.on('connection', (socket) => {
         hub.roles.push("Villageois");
 
         sendMessage("role", target.socket, "Vous vous êtes fait voler votre carte. Vous devenez villageois.");
-        sendMessage("role", socket.id, "Vous avez volé la carte de " + target.name + ". Il était " + player.role.name + ".")
-
-        clearInterval(interval);
+        sendMessage("role", socket.id, "Vous avez volé la carte de " + target.name + ". Il était " + player.role.name + ".");
 
         room();
         
@@ -1233,7 +1270,7 @@ io.on('connection', (socket) => {
 
         sendMessage('server', null, "Le chasseur a tiré sur " + target.name + " (" + target.role.name + ").");
 
-        //clearIntervals();
+        clearInterval(interval);
 
         room();
 
@@ -1666,15 +1703,17 @@ io.on('connection', (socket) => {
 
         room();
 
-
         if (hub.roles.includes("Voleur")) {
             const thief = getPlayerByRole("Voleur")
 
             if (thief) {
                 sendMessage("server", null, "Le voleur décide du joueur à voler.");
-                timeBySocket(30, thief);
-                io.to(thief.socket).emit('actionByRole', { name: thief.role.name, descriptionInGame: thief.role.descriptionInGame, response: false })
-                return actionInGame(thief.socket, true);
+                thief.isTurn = true;
+                boxRole(thief.socket, {
+                    description: thief.role.descriptionInGame
+                });
+                room();
+                return time(30);
             }
         }
 

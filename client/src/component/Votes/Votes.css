@@ -1,6 +1,6 @@
 #array-votes {
     float: right;
-    background-color: rgb(196, 175, 149);
+    background-color: rgb(196, 175, 149, .8);
     padding: 10px;
     border-radius: 20px;
 }

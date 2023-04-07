@@ -33,6 +33,8 @@ export interface player {
     frameX: number,
     frameY: number,
     role: roles | null,
+    vote: string | null,
+    votes : string[],
     isVote: boolean,
     isDead: boolean,
     isTurn: boolean,
@@ -153,7 +155,7 @@ function Game() {
                         <button className="btn btn-info mt-5" onClick={() => {setSideBar(!sideBar)}}>Rôles & Messages</button>
                     </div>
                     {
-                        !player?.isTurn && inGame && <Counter />
+                        (!player?.isTurn && inGame && room?.step !== "village") && <Counter />
                     }
                     <div>
                     {
