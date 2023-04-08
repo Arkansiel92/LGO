@@ -13,13 +13,18 @@ function Votes({players}: props) {
             <div className="row">
             {players.map((player) => (
                 <div className="col-sm-6 text-center">
-                    <h4>{player.name} ({player.votes.length})</h4>
                     {
-                        player.votes.length === 0 
-                        ? <p className="fst-italic">Aucun vote</p>
-                        : player.votes.map((vote) => (
-                            <p>{vote}</p>
-                        ))
+                        !player.isDead &&
+                        <div>
+                        <h4>{player.name} ({player.votes.length})</h4>
+                        {
+                            player.votes.length === 0 
+                            ? <p className="fst-italic lh-1">Aucun vote</p>
+                            : player.votes.map((vote) => (
+                                <p className="lh-1">{vote}</p>
+                            ))
+                        }
+                        </div>
                     }
                 </div>
             ))}

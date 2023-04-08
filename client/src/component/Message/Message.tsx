@@ -69,7 +69,7 @@ function Message(props: props) {
                             {
                                 props.msg.author && <span className="author fw-bold">{props.msg.author}</span>
                             }
-                            <div className="message d-flex align-items-center">
+                            <div className={`message d-flex align-items-center`}>
                                 {
                                     props.msg.type === "join" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="5" cy="2.75" r="2.25" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><path d="M4.5,12.5H.5V11A4.51,4.51,0,0,1,7,7" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></path><line x1="10.5" y1="7.5" x2="10.5" y2="13.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7.5" y1="10.5" x2="13.5" y2="10.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
                                 }
@@ -84,6 +84,9 @@ function Message(props: props) {
                                 }
                                 {
                                     props.msg.type === "role" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><polygon points="8 0.5 8 5.5 11.5 5.5 6 13.5 6 8.5 2.5 8.5 8 0.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></polygon></svg>
+                                }
+                                {
+                                    props.msg.type === "death" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M13,6.5a6,6,0,1,0-9.5,4.87V12.5a1,1,0,0,0,1,1h5a1,1,0,0,0,1-1V11.37A6,6,0,0,0,13,6.5Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="4.5" cy="7" r="0.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><circle cx="9.5" cy="7" r="0.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="6" y1="11.5" x2="6" y2="13.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line><line x1="8" y1="11.5" x2="8" y2="13.5" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
                                 }
                                 <span className="mx-1">{props.msg.msg}</span>
                             </div>

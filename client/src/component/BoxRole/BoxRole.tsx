@@ -7,9 +7,9 @@ import Actor from "../Actor/Actor";
 import { roles } from "../../screen/Game/Game";
 
 interface boxRole {
-    description: string
-    role: string
-    victim: string | null
+    description: string | undefined
+    role: string | undefined
+    victim: string | null | undefined
     name_function: string | undefined
     health?: boolean
     death?: boolean
