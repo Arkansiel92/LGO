@@ -817,7 +817,6 @@ io.on('connection', (socket) => {
         // reset des votes
         hub.players.forEach((player) => {
             player.vote = null;
-            player.votes = [];
             if (player.isVote && !player.isDead) {
                 player.isTurn = true;
             }
@@ -844,6 +843,9 @@ io.on('connection', (socket) => {
         hub.nbTurn++;
 
         hub.players.forEach((player) => {
+            player.vote = null;
+            player.votes = [];
+
             if (player.role.name !== "Idiot du village") {
                 player.isVote = true;
             }
@@ -1424,14 +1426,19 @@ io.on('connection', (socket) => {
 
     socket.on('setRaven', (targetID) => {
         let target = getPlayer(targetID);
+        let player = getPlayer(socket.id);
 
         target.votes.push('Corbeau', 'Corbeau');
 
+        console.log(hub.players);
+
         hub.ravenSocket = target.socket;
 
-        sendMessage(null, socket.id, target.name + " se réveillera avec deux votes en plus !");
+        sendMessage(null, player.socket, target.name + " se réveillera avec deux votes en plus !");
 
-        return actionInGame(socket.id, false);
+        player.isTurn = false;
+
+        return room();
     })
 
     socket.on('setFox', (targetID) => {
