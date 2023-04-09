@@ -35,6 +35,7 @@ export interface player {
     role: roles | null,
     vote: string | null,
     votes: string[],
+    isMayor: boolean,
     isVote: boolean,
     isDead: boolean,
     isTurn: boolean,

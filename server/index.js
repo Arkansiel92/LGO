@@ -162,7 +162,7 @@ const roles = [
         description: "Se réveille en dernier. Il peut charmer un joueur par tour qui deviendra charmé. Il gagne lorsque tous les joueurs en vie sont charmés.",
         side: "seul",
         step: "end",
-        descriptionInGame: "Vous pouvez charmer un/plusieurs joueur(s)",
+        descriptionInGame: "Vous pouvez charmer un joueur.",
         max: 1,
         needVictim: false,
         img: "card-flute.svg",
@@ -173,7 +173,7 @@ const roles = [
         description: "Chaque nuit, le garde protège une personne. Cette personne sera protégée et ne pourra donc pas mourir durant la nuit. Le garde ne peut pas protéger la même personne deux nuits de suite.",
         side: "village",
         step: "start",
-        descriptionInGame: "Vous pouvez protéger un joueur. ",
+        descriptionInGame: "Vous pouvez protéger un joueur.",
         max: 1,
         needVictim: false,
         img: "card-gard.svg",
@@ -508,10 +508,6 @@ io.on('connection', (socket) => {
         return io.to(socket.room).emit('getRoom', hub);
     }
 
-    function actionInGame(socketID, bool) {
-        return io.to(socketID).emit('action', bool);
-    }
-
     function boxRole(socketID, box) {
         return io.to(socketID).emit('boxRole', box);
     }
@@ -560,7 +556,6 @@ io.on('connection', (socket) => {
     }
 
     function order() {
-        boxRole(socket.room, null);
         setIsTurnRoom(false);
 
         if (hub.step === "start") {
@@ -606,10 +601,8 @@ io.on('connection', (socket) => {
 
         //console.log("ETAPE : " + hub.step);
         if (hub.step !== "werewolf") {
-            roles.forEach((role) => {
-                if (hub.roles.includes(role.name)) {
-                    const player = getPlayerByRole(role.name);
-                    if (role.step === hub.step) {
+            hub.players.forEach((player) => {
+                    if (player.role.step === hub.step) {
                         if (!player.isDead && player.isPower) {
                             check = true;
                             player.isTurn = true;
@@ -646,7 +639,6 @@ io.on('connection', (socket) => {
                             sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.");
                         }
                     }
-                }
             })
         } else {
             sendMessage("server", null, "Les loups garou se réveillent...");
@@ -1042,6 +1034,8 @@ io.on('connection', (socket) => {
                 player.role = target.role;
                 player.isPower = target.isPower;
 
+                console.log(player.isPower);
+
                 hub.roles.splice(hub.roles.indexOf("L'Héritier"), 1);
                 hub.roles.push(target.role.name);
 
@@ -1236,6 +1230,7 @@ io.on('connection', (socket) => {
         let target = getPlayer(targetID);
         let player = getPlayer(socket.id);
 
+        player.isTurn = false;
         player.role = target.role;
 
         hub.roles.splice(hub.roles.indexOf("Voleur"), 1);
@@ -1268,6 +1263,8 @@ io.on('connection', (socket) => {
         let player = getPlayer(socket.id);
 
         player.isPower = false;
+        player.isTurn = false;
+
         target.isDead = true;
 
         sendMessage('death', null, "Le chasseur a tiré sur " + target.name + " (" + target.role.name + ").");
@@ -1294,6 +1291,7 @@ io.on('connection', (socket) => {
             let cupidon = getPlayer(socket.id);
 
             if (cupidon.isPower) {
+                cupidon.isTurn = false;
                 cupidon.isPower = false;
 
                 let lover_one = getPlayer(hub.lover_one);
@@ -1324,9 +1322,9 @@ io.on('connection', (socket) => {
         if (player.isPower) {
 
             player.isPower = false;
-            target.isHair = true;
+            player.isTurn = false;
 
-            actionInGame(socket.id, false);
+            target.isHair = true;
 
             sendMessage("role", socket.id, "Vous recevrez les pouvoirs de " + target.name + " à sa mort.")
         }
@@ -1394,7 +1392,9 @@ io.on('connection', (socket) => {
 
         sendMessage("role", player.socket, target.name + " est " + target.role.name + ".");
 
-        return actionInGame(player.socket, false);
+        player.isTurn = false;
+
+        return room();
     })
 
     socket.on('setGuard', (targetID) => {
@@ -1409,19 +1409,25 @@ io.on('connection', (socket) => {
             sendMessage("role", player.socket, "Vous avez protéger " + target.name + " des loups pour cette nuit.");
         }
 
-        return actionInGame(player.socket, false);
+        player.isTurn = false;
+
+        return room();
 
     })
 
     socket.on('setDictator', (action) => {
+        let player = getPlayer(socket.id);
+
         if (action) {
             hub.dictator = action;
-            getPlayer(socket.id).isPower = false;
+            player.isPower = false;
         }
 
         sendMessage("role", socket.id, action ? "Vous avez choisi de faire un coup d'état le prochain tour" : "Vous avez choisi de ne pas faire de coup d'état.");
 
-        return socket.emit('actionByRole', null);
+        player.isTurn = false;
+        
+        return room();
     })
 
     socket.on('setRaven', (targetID) => {
@@ -1480,12 +1486,15 @@ io.on('connection', (socket) => {
                 sendMessage("role", player.socket, "Il n'y a aucun loup parmis ces personnes. Vos pouvoirs vous quittent...");
             }
 
-            return actionInGame(player.socket, false);
+            player.isTurn = false;
+
+            return room();
         }
     })
 
     socket.on('setWhiteWerewolf', (targetID) => {
-        const target = getPlayer(targetID);
+        let target = getPlayer(targetID);
+        let player = getPlayer(socket.id);
 
         hub.kills[target.socket] = {
             name: target.name,
@@ -1493,21 +1502,25 @@ io.on('connection', (socket) => {
             killBy: "whiteWerewolf"
         };
 
-        room();
+        player.isTurn = false;
 
-        return actionInGame(socket.id, false);
+        return room();
     })
 
     socket.on('setBlackWerewolf', (bool) => {
+        let player = getPlayer(socket.id);
+
         if (bool) {
             hub.infected = hub.voteWolf;
             hub.voteWolf = null;
 
             hub.kills.splice(0, 1);
 
-            getPlayer(socket.id).isPower = false;
+            player.isPower = false;
             sendMessage("role", hub.infected, "Vous avez été infecté par le loup noir !");
         }
+
+        player.isTurn = false;
 
         return room();
     })
@@ -1551,7 +1564,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('setGypsy', (choice) => {
-        const gypsy = getPlayer(socket.id);
+        let gypsy = getPlayer(socket.id);
 
         gypsy.isPower = false;
         gypsy.isTurn = false;
