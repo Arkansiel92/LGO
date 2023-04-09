@@ -145,6 +145,7 @@ function Game() {
                     player={p}
                     role_function={player?.role?.name_function}
                     isTurn={player?.isTurn}
+                    isVote={player?.isVote}
                     step={room?.step}
                     key={index} />
             ))}

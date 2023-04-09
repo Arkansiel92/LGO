@@ -7,10 +7,11 @@ interface props{
     player: player,
     role_function: string | undefined
     isTurn: boolean | undefined
+    isVote: boolean | undefined
     step: string
 }
 
-function Player({player, role_function, isTurn, step}: props) {
+function Player({player, role_function, isTurn, isVote, step}: props) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
 
@@ -29,7 +30,7 @@ function Player({player, role_function, isTurn, step}: props) {
                 socket.emit('set' + role_function, player.socket);
             } 
             
-            if (step === "village") {
+            if (step === "village" && isVote) {
                 socket.emit('voteVillage', player.socket);
             }
 

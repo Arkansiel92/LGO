@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { socketContext, ExtendedSocket } from '../../context/socket';
 import Navbar from "../../component/Navbar/Navbar";
 import './Home.css';
+import Cloud from '../../component/Cloud/Cloud';
 
 function Home() {
     const socket = useContext<ExtendedSocket>(socketContext);
@@ -55,6 +56,9 @@ function Home() {
             }
             <div>
                 <Navbar />
+                <Cloud />
+                <Cloud />
+                <Cloud />
                 {
                     alert && <div className='container text-center alert alert-danger'>{alert}</div>
                 }
