@@ -5,22 +5,22 @@
 	}
 
 	20% {
-		transform: translateX(-16px);
+		transform: translateX(-100px);
 	}
 
 	40% {
-		transform: translateX(0px);
+		transform: translateX(-40px);
 	}
 
 	60% {
-		transform: translateX(16px);
+		transform: translateX(0px);
 	}
 
 	80% {
-		transform: translateX(8px);
+		transform: translateX(40px);
 	}
 
 	100% {
-		transform: translateX(0);
+		transform: translateX(0px);
 	}
 }

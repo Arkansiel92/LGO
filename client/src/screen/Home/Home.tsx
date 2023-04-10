@@ -4,6 +4,7 @@ import { socketContext, ExtendedSocket } from '../../context/socket';
 import Navbar from "../../component/Navbar/Navbar";
 import './Home.css';
 import Cloud from '../../component/Cloud/Cloud';
+import Background from '../../component/Background/Background';
 
 function Home() {
     const socket = useContext<ExtendedSocket>(socketContext);
@@ -56,13 +57,11 @@ function Home() {
             }
             <div>
                 <Navbar />
-                <Cloud />
-                <Cloud />
-                <Cloud />
+                <Background />
                 {
                     alert && <div className='container text-center alert alert-danger'>{alert}</div>
                 }
-                <img className='moon' src="/assets/img/moon.svg" alt="" width={250} />
+                <img className='moon mx-5' src="/assets/img/sprites/moon_half.png" alt="moon" />
                 <div className="home d-flex flex-column">
                     <h1 className='text-center mt-5 fw-bold'>La Malédiction de Thiercelieux</h1>
                     <div className="m-auto w-50">

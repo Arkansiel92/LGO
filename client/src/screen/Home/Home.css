@@ -95,33 +95,6 @@
 .forest {
   position: absolute;
   z-index: -1;
-  animation: forest 6s linear infinite;
-}
-
-@keyframes forest {
-  0% {
-		transform: translateY(0) translateX(2px);
-	}
-
-	20% {
-		transform: translateY(-2px) translateX(-2px);
-	}
-
-	40% {
-		transform: translateY(0px);
-	}
-
-	60% {
-		transform: translateY(2px);
-	}
-
-	80% {
-		transform: translateX(2px);
-	}
-
-	100% {
-		transform: translateY(0);
-	}
 }
 
 .card-circle {
