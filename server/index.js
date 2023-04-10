@@ -20,20 +20,6 @@ const io = new Server(server, {
     }
 });
 
-let map = null;
-
-function loadMap() {
-    return new Promise((resolve, reject) => {
-        tmx.parseFile('./assets/map1.tmx', function (err, loadedMap) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(loadedMap);
-            }
-        });
-    });
-}
-
 const roles = [
     {
         name: "Villageois",

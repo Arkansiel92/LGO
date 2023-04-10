@@ -35,7 +35,7 @@ function Topbar({ room, player }: props) {
 
                 {
                     player?.role
-                        ? <span> {player?.role.name}</span>
+                        ? <span> {player?.role.name} {player?.isInfected && "(infecté)"}</span>
                         : <span> aucun rôle</span>
                 }
             </div>

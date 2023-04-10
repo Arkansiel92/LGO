@@ -143,9 +143,7 @@ function Game() {
             {room?.players?.map((p: player, index: number) => (
                 <Player
                     player={p}
-                    role_function={player?.role?.name_function}
-                    isTurn={player?.isTurn}
-                    isVote={player?.isVote}
+                    selfPlayer={player}
                     step={room?.step}
                     key={index} />
             ))}
@@ -158,11 +156,9 @@ function Game() {
                     {
                         (!player?.isTurn && inGame && room?.step !== "village") && <Counter />
                     }
-                    <div>
-                        {
-                            room?.step === "village" && <Votes players={room?.players} />
-                        }
-                    </div>
+                    {
+                        room?.step === "village" && <Votes players={room?.players} />
+                    }
                     <div className="col text-center">
                         {
                             !inGame &&
