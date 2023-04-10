@@ -776,6 +776,10 @@ io.on('connection', (socket) => {
                 player.isDead = true;
 
                 str += player.name + " (" + player.role.name + "). ";
+
+                if (player.isInfected) {
+                    str += "(infecté) ";
+                }
             })
             
             sendMessage("death", null, str);
@@ -1044,7 +1048,11 @@ io.on('connection', (socket) => {
                 sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " (" + target.role.name + "). Cependant le village a pitié de lui et décide de le laisser en vie, mais en échange il perd son droit de vote.");
                 target.isVote = false;
             } else {
-                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name);
+                if (!target.isInfected) {
+                    sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name + ".");
+                } else {
+                    sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name + ' (infecté).');
+                }
                 target.isDead = true;
             }
             
@@ -1524,7 +1532,9 @@ io.on('connection', (socket) => {
             hub.infected = hub.voteWolf;
             hub.voteWolf = null;
 
-            hub.kills.splice(0, 1);
+            delete hub.kills[hub.infected];
+
+            getPlayer(hub.infected).isInfected = true;
 
             player.isPower = false;
             sendMessage("role", hub.infected, "Vous avez été infecté par le loup noir !");

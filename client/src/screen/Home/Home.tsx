@@ -63,7 +63,7 @@ function Home() {
                 }
                 <img className='moon mx-5' src="/assets/img/sprites/moon_half.png" alt="moon" />
                 <div className="home d-flex flex-column">
-                    <h1 className='text-center mt-5 fw-bold'>La Malédiction de Thiercelieux</h1>
+                    <h1 className='text-center mt-5 fw-bold'>Moonrise</h1>
                     <div className="m-auto w-50">
                         <div className="mt-5">
                             {
