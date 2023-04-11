@@ -541,17 +541,6 @@ io.on('connection', (socket) => {
         return sendMessage("server", null, angel.name + " était l'Ange. Il gagne la partie.");
     }
 
-    function mayor() {
-        sendMessage("server", null, "Election du maire !");
-
-        hub.players.forEach((player) => {
-            player.isTurn = true;
-            boxRole(player.socket, { description: "Election du maire. Vous pouvez vous présenter.", textarea: true });
-        })
-
-        return time(240);
-    }
-
     function order() {
         setIsTurnRoom(false);
 
@@ -574,7 +563,7 @@ io.on('connection', (socket) => {
         } else if (hub.step === "preVillage") {
 
             return "village";
-        
+
         } else if (hub.step === "village" || "postVillage") {
 
             if (hub.event) {
@@ -599,52 +588,52 @@ io.on('connection', (socket) => {
         //console.log("ETAPE : " + hub.step);
         if (hub.step !== "werewolf") {
             hub.players.forEach((player) => {
-                    if (player.role.step === hub.step) {
-                        if (!player.isDead && player.isPower) {
-                            let data = {
-                                description: player.role.descriptionInGame,
-                                victim: player.role.needVictim && hub.voteWolf ? getPlayer(hub.voteWolf).name : null
-                            }
-
-                            if (player.role.name === "Sorcière") {
-                                data['health'] = hub.healthPotion && hub.voteWolf ? true : false;
-                                data['death'] = hub.deathPotion ? true : false;
-                            };
-
-                            if (player.role.name === "Dictateur" || player.role.name === "Loup noir") {
-                                data['setYes'] = "Oui";
-                                data['setNo'] = "Non";
-                            }
-
-                            if (player.role.name === "Gitane") {
-                                data['eventsGypsy'] = eventsGypsy;
-                            }
-
-                            if (player.role.name === "Chien-loup") {
-                                data['setYes'] = "Loup-garou";
-                                data['setNo'] = "Villageois";
-                            }
-
-                            if (player.role.name === "Comédien") {
-                                data['actor'] = getRandomRole(3);
-                            }
-
-                            if (player.role.name === "Loup noir") {
-                                if (hub.voteWolf) {
-                                boxRole(player.socket, data);
-                                sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.");
-                                check = true;
-                                player.isTurn = true;
-                                }
-                            } else {
-                                boxRole(player.socket, data);
-                                sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.");
-                                check = true;
-                                player.isTurn = true;
-                            }
-
+                if (player.role.step === hub.step) {
+                    if (!player.isDead && player.isPower) {
+                        let data = {
+                            description: player.role.descriptionInGame,
+                            victim: player.role.needVictim && hub.voteWolf ? getPlayer(hub.voteWolf).name : null
                         }
+
+                        if (player.role.name === "Sorcière") {
+                            data['health'] = hub.healthPotion && hub.voteWolf ? true : false;
+                            data['death'] = hub.deathPotion ? true : false;
+                        };
+
+                        if (player.role.name === "Dictateur" || player.role.name === "Loup noir") {
+                            data['setYes'] = "Oui";
+                            data['setNo'] = "Non";
+                        }
+
+                        if (player.role.name === "Gitane") {
+                            data['eventsGypsy'] = eventsGypsy;
+                        }
+
+                        if (player.role.name === "Chien-loup") {
+                            data['setYes'] = "Loup-garou";
+                            data['setNo'] = "Villageois";
+                        }
+
+                        if (player.role.name === "Comédien") {
+                            data['actor'] = getRandomRole(3);
+                        }
+
+                        if (player.role.name === "Loup noir") {
+                            if (hub.voteWolf) {
+                                boxRole(player.socket, data);
+                                sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.");
+                                check = true;
+                                player.isTurn = true;
+                            }
+                        } else {
+                            boxRole(player.socket, data);
+                            sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.");
+                            check = true;
+                            player.isTurn = true;
+                        }
+
                     }
+                }
             })
         } else {
             sendMessage("server", null, "Les loups garou se réveillent...");
@@ -656,12 +645,12 @@ io.on('connection', (socket) => {
                     if (player.role.side === "méchant" || player.isInfected || player.role.name === "Loup blanc") {
                         check = true;
                         player.isTurn = true;
-    
+
                         let data = {
                             description: "Vous pouvez tuer un joueur.",
                             role: player.role.name,
                         }
-    
+
                         boxRole(player.socket, data);
                     }
                 }
@@ -690,18 +679,18 @@ io.on('connection', (socket) => {
             target.isDead = false;
 
             sendMessage("server", null, "Evènement : un joueur a été réanimé.");
-            
+
         } else if (hub.event.name === "Punition aveugle") {
-            
+
             while (target.isDead === true) {
                 target = getRandomPlayer();
             }
-            
+
             target.isDead = true;
-            
+
             sendMessage("server", null, "Evènement : un joueur a été tué.");
         }
-        
+
         console.log(target.name);
 
         hub.event = null;
@@ -787,7 +776,7 @@ io.on('connection', (socket) => {
                     str += "(infecté) ";
                 }
             })
-            
+
             sendMessage("death", null, str);
 
             if (hub.roles.includes("Chasseur")) {
@@ -799,14 +788,14 @@ io.on('connection', (socket) => {
                     sendMessage("server", null, "Le chasseur est mort, il peut tuer quelqu'un avant de mourir.");
                     boxRole(hunter.socket, { description: hunter.role.descriptionInGame });
                     room();
-                    
+
                     return time(15);
                 }
             }
 
             if (hub.roles.includes("Fossoyeur")) {
                 let gravedigger = getPlayerByRole("Fossoyeur");
-                
+
                 if (kills.includes(gravedigger.socket) && gravedigger.isPower) {
 
                     sendMessage("server", null, "Le fossoyeur est mort, il peut activer son pouvoir et sonder deux personnes.");
@@ -826,7 +815,7 @@ io.on('connection', (socket) => {
             player.isTurn = true;
             sendMessage("role", null, "Le dictateur a décidé de prendre le pouvoir et de faire un coup d'état");
 
-            boxRole(player.socket, { description: "Vous pouvez éliminer un joueur."});
+            boxRole(player.socket, { description: "Vous pouvez éliminer un joueur." });
             room();
 
             return time(15);
@@ -842,8 +831,15 @@ io.on('connection', (socket) => {
 
         hub.night = false;
 
-        if (hub.nbTurn === 2) {
-            return mayor();
+        if (hub.nbTurn === 2 && !hub.mayor) {
+            sendMessage("server", null, "Election du maire !");
+
+            hub.players.forEach((player) => {
+                player.isTurn = true;
+                boxRole(player.socket, { description: "Election du maire. Vous pouvez vous présenter.", textarea: true });
+            })
+    
+            return time(20);
         }
 
         hub.step = "village";
@@ -883,7 +879,7 @@ io.on('connection', (socket) => {
                     checkWolf = hub.players.find((player) => {
                         return player.isDead && player.role.side === "méchant"
                     });
-    
+
                     if (checkWolf) {
                         player.isPower = false;
                     }
@@ -955,7 +951,7 @@ io.on('connection', (socket) => {
 
                 if (hub.roles.includes("Chien-loup")) {
                     let player = getPlayerByRole('Chien-loup');
-                    
+
                     hub.roles.splice(hub.roles.indexOf("Chien-loup"), 1);
 
                     if (getRandomNumber(0, 1) === 0) {
@@ -970,7 +966,7 @@ io.on('connection', (socket) => {
                             needVictim: false,
                             img: "card-villager.svg"
                         };
-    
+
                         hub.roles.push("Villageois");
                     } else {
                         player.role = {
@@ -989,6 +985,10 @@ io.on('connection', (socket) => {
                     }
 
                     sendMessage("role", player.socket, "Vous venez de devenir " + player.role.name + ".");
+                }
+
+                if (hub.step === "mayor") {
+                    return voteMayor();
                 }
 
                 if (hub.step === "village") {
@@ -1050,26 +1050,26 @@ io.on('connection', (socket) => {
             }
 
             if (target.role.name === "Idiot du village") {
-                sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " (" + target.role.name + "). Cependant le village a pitié de lui et décide de le laisser en vie, mais en échange il perd son droit de vote.");
+                sendMessage("death", null, "Le village a décidé d'exclure " + target.name + " (" + target.role.name + "). Cependant le village a pitié de lui et décide de le laisser en vie, mais en échange il perd son droit de vote.");
                 target.isVote = false;
             } else {
                 if (!target.isInfected) {
-                    sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name + ".");
+                    sendMessage("death", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name + ".");
                 } else {
-                    sendMessage("server", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name + ' (infecté).');
+                    sendMessage("death", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name + ' (infecté).');
                 }
                 target.isDead = true;
             }
-            
+
             if (target.role.name === "Ancien du village") {
-                
+
                 hub.players.forEach((player) => {
                     if (player.role.side === "village") {
                         player.isPower = false;
                     }
                 })
-                
-                sendMessage("role", null, "L'ancien du village a été exclu cette nuit. L'ancien, dans son dernier souffle, lance une malédiction qui annulent tous les pouvoirs des villageois.");
+
+                sendMessage("death", null, "L'ancien du village a été exclu cette nuit. L'ancien, dans son dernier souffle, lance une malédiction qui annulent tous les pouvoirs des villageois.");
             }
 
             if (target.isHair) {
@@ -1106,7 +1106,7 @@ io.on('connection', (socket) => {
         } else {
             if (equality && hub.roles.includes("Bouc émissaire")) {
                 let player = getPlayerByRole("Bouc émissaire");
-                
+
                 player.isDead = true;
                 player.isTurn = true;
 
@@ -1149,7 +1149,7 @@ io.on('connection', (socket) => {
                     if (vote === votes[i]) {
                         countValue++;
                     }
-    
+
                     if (countValue > count) {
                         count = countValue;
                         playerKilled = vote;
@@ -1158,7 +1158,7 @@ io.on('connection', (socket) => {
             })
 
             let equality = false;
-    
+
             votes.forEach((vote) => {
                 countValue = 0;
                 if (vote !== playerKilled) {
@@ -1167,18 +1167,18 @@ io.on('connection', (socket) => {
                             countValue++;
                         }
                     }
-    
+
                     if (count === countValue) {
                         equality = true;
                     };
                 }
             });
-    
+
             if (!equality) {
                 hub.voteWolf = playerKilled
-    
+
                 let kill = getPlayer(hub.voteWolf);
-    
+
                 hub.kills[kill.socket] = {
                     name: kill.name,
                     role: kill.role.name,
@@ -1192,26 +1192,71 @@ io.on('connection', (socket) => {
         return stepNight();
     }
 
-    socket.on("voteMayor", name => {
-        let player = getPlayer(socket.id);
-        let oldVote = null;
+    function voteMayor() {
+        setIsTurnRoom(false);
 
-        if (player.vote) {
-            oldVote = player.vote;
-            player.vote = null;
+        let target = null;
+        let count = 0;
+
+        hub.mayorDialog.forEach((dialog) => {
+            if (dialog.votes.length > count) {
+                target = dialog.socket;
+                count = dialog.votes.length;
+            }
+        });
+
+        let equality = false;
+
+        hub.mayorDialog.forEach((dialog) => {
+            if (dialog.socket !== target) {
+                if (count === dialog.votes.length && dialog.votes.length > 0) {
+                    equality = true;
+                };
+            }
+        });
+
+        if (!equality && target) {
+            let player = getPlayer(target);
+
+            player.isMayor = true;
+            hub.mayor = player.socket;
         } else {
-            player.vote = name;
+            let index = Math.floor(Math.random() * hub.players.length);
+
+            hub.players[index].isMayor = true;
         }
 
-        hub.mayorDialog.forEach(dialog => {
-            if (dialog.name === name) {
-                dialog.votes.push(player.name);
-            }
+        hub.step = "day";
 
-            if (dialog.name === oldVote) {
-                dialog.votes.splice(dialog.votes.indexOf(oldVote), 1);
+        room();
+
+        return day();
+    }
+
+    socket.on("voteMayor", name => {
+        let player = getPlayer(socket.id);
+
+        if (player.vote) {
+
+            let oldDialog = hub.mayorDialog.find((dialog) => {
+                return dialog.name === player.vote
+            })
+
+            oldDialog.votes.splice(oldDialog.votes.indexOf(player.name), 1);
+
+            if (player.vote === name) {
+                player.vote = null;
+                return room();
             }
+        } 
+
+        player.vote = name;
+
+        let dialog = hub.mayorDialog.find((d) => {
+            return d.name === player.vote
         })
+
+        dialog.votes.push(player.name);
 
         return room();
     })
@@ -1223,6 +1268,7 @@ io.on('connection', (socket) => {
 
         hub.mayorDialog.push({
             name: player.name,
+            socket: player.socket,
             content: input,
             votes: []
         })
@@ -1235,19 +1281,30 @@ io.on('connection', (socket) => {
     socket.on('voteVillage', (targetID) => {
         const target = getPlayer(targetID);
         const player = getPlayer(socket.id);
+        let indexMayor = 1;
+
+        if (player.isMayor) {
+            indexMayor = 2;
+        }
 
         if (player.vote) {
             let oldTarget = getPlayer(player.vote);
-            oldTarget.votes.splice(oldTarget.votes.indexOf(player.name));
+            oldTarget.votes.splice(oldTarget.votes.indexOf(player.name), indexMayor);
         }
 
         if (targetID === player.vote) {
             player.vote = null;
             let index = target.votes.indexOf(player.name);
-            target.votes.splice(index, 1);
+            target.votes.splice(index, indexMayor);
         } else {
             player.vote = targetID;
-            target.votes.push(player.name);
+            
+            if (player.isMayor) {
+                target.votes.push(player.name, player.name);
+            } else {
+                target.votes.push(player.name);
+            }
+
             sendMessage("vote", null, player.name + " a voté pour " + target.name + ".");
         };
 
@@ -1301,7 +1358,7 @@ io.on('connection', (socket) => {
         sendMessage("role", socket.id, "Vous avez volé la carte de " + target.name + ". Il était " + player.role.name + ".");
 
         room();
-        
+
         return stepNight();
 
     })
@@ -1465,16 +1522,16 @@ io.on('connection', (socket) => {
 
     socket.on('setDictator', (action) => {
         let player = getPlayer(socket.id);
-        
+
         player.isTurn = false;
-        
+
         if (hub.dictator) {
             let target = getPlayer(action);
 
             target.isDead = true;
-            
+
             sendMessage("role", null, "Le dictateur a décidé d'éliminer " + target.name + " (" + target.role.name + ")");
-            
+
             hub.dictator = false;
             hub.step = "start";
 
@@ -1489,7 +1546,7 @@ io.on('connection', (socket) => {
         }
 
         sendMessage("role", socket.id, action ? "Vous avez choisi de faire un coup d'état le prochain tour" : "Vous avez choisi de ne pas faire de coup d'état.");
-        
+
         return room();
     })
 
@@ -1595,7 +1652,7 @@ io.on('connection', (socket) => {
 
         if (bool) {
             delete hub.kills[hub.voteWolf];
-            
+
             hub.voteWolf = null;
             hub.healthPotion = false;
             witch.isTurn = false;
@@ -1717,10 +1774,10 @@ io.on('connection', (socket) => {
 
         target.isCharmed = true;
         player.isTurn = false;
-        
+
         sendMessage("role", player.socket, "Vous avez charmé " + target.name + " cette nuit.");
         sendMessage("role", target.socket, "Vous avez été charmé par le joueur de flûte cette nuit.");
-        
+
         return room();
     })
 
@@ -1732,7 +1789,7 @@ io.on('connection', (socket) => {
 
         hub.players.forEach((player) => {
             if (!player.isDead) {
-                if(player.role.side === "village" || player.role.side === "seul" && player.role.name !== "Loup blanc") {
+                if (player.role.side === "village" || player.role.side === "seul" && player.role.name !== "Loup blanc") {
                     villageArray.push(player.name);
                 } else {
                     wolfArray.push(player.name);
@@ -1749,7 +1806,7 @@ io.on('connection', (socket) => {
         }
 
         getPlayer(socket.id).isPower = false;
-        
+
         room();
 
         sendMessage("server", null, "Un loup se cache entre " + target.name + " et " + randomPlayer + ".");
