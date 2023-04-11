@@ -201,7 +201,7 @@ const roles = [
         name: "Chien-loup",
         name_function: "DogWerewolf",
         description: "La première nuit, il choisit d’être un villageois ou un Loup-garou.",
-        side: "méchant",
+        side: "village",
         step: "start",
         descriptionInGame: "Voulez-vous être villageois ou loup-garou ?",
         max: 1,
@@ -541,6 +541,17 @@ io.on('connection', (socket) => {
         return sendMessage("server", null, angel.name + " était l'Ange. Il gagne la partie.");
     }
 
+    function mayor() {
+        sendMessage("server", null, "Election du maire !");
+
+        hub.players.forEach((player) => {
+            player.isTurn = true;
+            boxRole(player.socket, { description: "Election du maire. Vous pouvez vous présenter.", textarea: true });
+        })
+
+        return time(240);
+    }
+
     function order() {
         setIsTurnRoom(false);
 
@@ -590,9 +601,6 @@ io.on('connection', (socket) => {
             hub.players.forEach((player) => {
                     if (player.role.step === hub.step) {
                         if (!player.isDead && player.isPower) {
-                            check = true;
-                            player.isTurn = true;
-
                             let data = {
                                 description: player.role.descriptionInGame,
                                 victim: player.role.needVictim && hub.voteWolf ? getPlayer(hub.voteWolf).name : null
@@ -621,8 +629,20 @@ io.on('connection', (socket) => {
                                 data['actor'] = getRandomRole(3);
                             }
 
-                            boxRole(player.socket, data);
-                            sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.");
+                            if (player.role.name === "Loup noir") {
+                                if (hub.voteWolf) {
+                                boxRole(player.socket, data);
+                                sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.");
+                                check = true;
+                                player.isTurn = true;
+                                }
+                            } else {
+                                boxRole(player.socket, data);
+                                sendMessage("server", null, player.role.name + " : utilisation de ses pouvoirs.");
+                                check = true;
+                                player.isTurn = true;
+                            }
+
                         }
                     }
             })
@@ -823,7 +843,7 @@ io.on('connection', (socket) => {
         hub.night = false;
 
         if (hub.nbTurn === 2) {
-            sendMessage("server", null, "Election du maire !");
+            return mayor();
         }
 
         hub.step = "village";
@@ -897,7 +917,6 @@ io.on('connection', (socket) => {
         hub.protected = null;
         hub.dictator = false;
         hub.ravenSocket = null;
-        hub.actorSocket = null;
 
         return room();
     }
@@ -1172,6 +1191,46 @@ io.on('connection', (socket) => {
 
         return stepNight();
     }
+
+    socket.on("voteMayor", name => {
+        let player = getPlayer(socket.id);
+        let oldVote = null;
+
+        if (player.vote) {
+            oldVote = player.vote;
+            player.vote = null;
+        } else {
+            player.vote = name;
+        }
+
+        hub.mayorDialog.forEach(dialog => {
+            if (dialog.name === name) {
+                dialog.votes.push(player.name);
+            }
+
+            if (dialog.name === oldVote) {
+                dialog.votes.splice(dialog.votes.indexOf(oldVote), 1);
+            }
+        })
+
+        return room();
+    })
+
+    socket.on('setMayor', input => {
+        hub.step = "mayor";
+
+        let player = getPlayer(socket.id);
+
+        hub.mayorDialog.push({
+            name: player.name,
+            content: input,
+            votes: []
+        })
+
+        player.isTurn = false;
+
+        return room();
+    });
 
     socket.on('voteVillage', (targetID) => {
         const target = getPlayer(targetID);
@@ -1622,6 +1681,8 @@ io.on('connection', (socket) => {
 
         hub.roles.push(player.role.name);
 
+        player.isTurn = false;
+
         return room();
     })
 
@@ -1942,8 +2003,8 @@ io.on('connection', (socket) => {
         hub.protected = null;
         hub.dictator = false;
         hub.ravenSocket = null;
-        hub.actorSocket = null;
         hub.mercenaryTarget = null;
+        hub.mayorDialog = []
         hub.roleActor = [];
         hub.inGame = false;
         hub.step = "start";

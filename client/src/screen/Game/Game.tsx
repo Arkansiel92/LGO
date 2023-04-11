@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ManagementRoom from '../../component/ManagementRoom/ManagementRoom';
-import Map from '../../component/Map/Map';
 import { socketContext, ExtendedSocket } from '../../context/socket';
 import './Game.css';
 import Player from '../../component/Player/Player';
@@ -10,6 +9,8 @@ import BoxRole from '../../component/BoxRole/BoxRole';
 import { event } from '../../component/Event/Event';
 import Counter from '../../component/Counter/Counter';
 import Votes from '../../component/Votes/Votes';
+import Cloud from '../../component/Cloud/Cloud';
+import Mayor from '../../component/Mayor/Mayor';
 
 type Params = {
     id: string
@@ -59,12 +60,19 @@ export interface message {
     isDead: boolean,
 }
 
+export interface mayor {
+    name: string,
+    content: string,
+    votes: string[]
+}
+
 export interface room {
     status: string,
     author: string,
     players: player[],
     roles: string[],
     votes: string[],
+    mayorDialog: mayor[],
     messages: message[],
     night: boolean,
     nbTurn: number;
@@ -81,6 +89,7 @@ interface boxRole {
     death?: boolean
     setYes?: boolean
     setNo?: boolean
+    textarea?: boolean
     eventsGypsy?: event[]
     actor?: roles[]
 }
@@ -119,10 +128,30 @@ function Game() {
     }, [socket, room])
 
     return (
-        <div id="container">
+        <div id="container" style={{ 
+            backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/maps/background-game.svg'})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center bottom',
+            backgroundColor: room?.night ? "#23323D" : "#87CEEB",
+            width: window.innerWidth,
+            height: window.innerHeight
+          }}>
             <div id="loader"></div>
-
+            
             <Topbar room={room} player={player} />
+
+            <div className='position-absolute'>
+            {
+                room?.night 
+                ? <img className='moon m-5' src="/assets/img/sprites/moon_full.png" alt="moon" />
+                : <img className='moon m-5' src="/assets/img/sprites/sun.png" alt="moon" />
+            }
+            <Cloud nb={2} animationDelay={18} left={800} top={10} />
+            <Cloud nb={2} animationDelay={30} left={600} top={40} />
+            <Cloud nb={2} animationDelay={22} left={300} top={80} />
+            <Cloud nb={2} animationDelay={18} left={1200} top={30} />
+            </div>
+
 
             {player?.isTurn && <BoxRole
                 description={boxRole?.description}
@@ -134,11 +163,10 @@ function Game() {
                 setYes={boxRole?.setYes}
                 setNo={boxRole?.setNo}
                 eventsGypsy={boxRole?.eventsGypsy}
-                actor={boxRole?.actor} />}
+                actor={boxRole?.actor} 
+                textarea={boxRole?.textarea} />}
 
             <ManagementRoom room={room} player={player} inGame={inGame} sideBar={sideBar} />
-
-            <Map room={room} />
 
             {room?.players?.map((p: player, index: number) => (
                 <Player
@@ -159,11 +187,14 @@ function Game() {
                     {
                         room?.step === "village" && <Votes players={room?.players} />
                     }
+                    {
+                        room?.step === "mayor" && <Mayor candidates={room?.mayorDialog} />
+                    }
                     <div className="col text-center">
                         {
                             !inGame &&
                             <div>
-                                <div onClick={() => { navigator.clipboard.writeText(window.location.host + "?id=" + id) }} className='id-room my-5 p-3 w-50 m-auto' data-bs-toggle="tooltip" data-bs-placement="top" title="copier le lien" data-bs-custom-class="tooltip">
+                                <div onClick={() => { navigator.clipboard.writeText(window.location.host + "?id=" + id) }} className='id-room my-5 p-3 w-25 m-auto' data-bs-toggle="tooltip" data-bs-placement="top" title="copier le lien" data-bs-custom-class="tooltip">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
                                     <span className='mx-2'>
                                         {window.location.host}?id={id}

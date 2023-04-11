@@ -10,6 +10,10 @@
     cursor: pointer
 }
 
+#container {
+    transition: all .8s;
+}
+
 #loader {
     position: absolute;
     width: 100%;

@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ExtendedSocket, socketContext } from "../../context/socket";
 import Counter from "../Counter/Counter";
 import "./BoxRole.css";
@@ -15,13 +15,21 @@ interface boxRole {
     death?: boolean
     setYes?: boolean
     setNo?: boolean
+    textarea?: boolean
     eventsGypsy?: event[]
     actor?: roles[]
 }
 
-function BoxRole({description, victim, name_function, health, death, setYes, setNo, eventsGypsy, actor}: boxRole) {
+function BoxRole({description, victim, name_function, health, death, setYes, setNo, eventsGypsy, actor, textarea}: boxRole) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
+    const [textareaInput, setTextareaInput] = useState("");
+
+    const mayor = () => {
+        if (textareaInput !== "") {
+            socket.emit('setMayor', textareaInput);
+        }
+    }
 
     return (
         <div id="boxDialog" className="bg-dark card text-center lead p-3 m-auto">
@@ -61,6 +69,13 @@ function BoxRole({description, victim, name_function, health, death, setYes, set
                         eventsGypsy.map((event: event) => (
                             <Event name={event.name} description={event.description} />
                         ))
+                    }
+                    {
+                        textarea &&
+                        <div>
+                            <textarea name="" id="" className="form-control" value={textareaInput} placeholder="essayez de convaincre le village." onChange={(e) => { setTextareaInput(e.target.value) }} cols={60} rows={5}></textarea>
+                            <button onClick={mayor} className="btn btn-primary mt-2">Postuler</button>
+                        </div>
                     }
                     {
                         actor &&

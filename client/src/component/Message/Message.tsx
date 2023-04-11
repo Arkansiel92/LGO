@@ -14,8 +14,6 @@ interface props {
 function Message(props: props) {
     const socket = useContext<ExtendedSocket>(socketContext);
 
-    console.log(props);
-
     return (
         <div>
             {/* {
