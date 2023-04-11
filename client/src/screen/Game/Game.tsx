@@ -11,6 +11,7 @@ import Counter from '../../component/Counter/Counter';
 import Votes from '../../component/Votes/Votes';
 import Cloud from '../../component/Cloud/Cloud';
 import Mayor from '../../component/Mayor/Mayor';
+import Options from '../../component/Options/Options';
 
 type Params = {
     id: string
@@ -200,8 +201,8 @@ function Game() {
                                         {window.location.host}?id={id}
                                     </span>
                                 </div>
-                                <div>
-                                    
+                                <div className='w-25 m-auto my-5'>
+                                    <Options roles={room?.roles} />
                                 </div>
                                 {
                                     room?.players?.length === room?.roles?.length && socket.id === room?.author &&

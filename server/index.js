@@ -541,8 +541,17 @@ io.on('connection', (socket) => {
         return sendMessage("server", null, angel.name + " était l'Ange. Il gagne la partie.");
     }
 
+    function finishedBySide() {
+        return true;
+    }
+
     function order() {
         setIsTurnRoom(false);
+
+        if (finishedBySide()) {
+            console.log('coucou');
+            return sendMessage('server', null, "FIN DE LA PARTIE");
+        }
 
         if (hub.step === "start") {
 
