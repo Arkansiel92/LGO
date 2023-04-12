@@ -2123,8 +2123,8 @@ io.on('connection', (socket) => {
         hub.players = [{
             name: pseudo,
             socket: socket.id,
-            x: getRandomNumber(500, 1200),
-            y: getRandomNumber(400, 600),
+            x: getRandomNumber(400, 600),
+            y: getRandomNumber(600, 800),
             frameX: 0,
             frameY: 0,
             vote: null,

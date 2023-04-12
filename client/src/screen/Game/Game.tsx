@@ -7,7 +7,6 @@ import Player from '../../component/Player/Player';
 import Topbar from '../../component/Topbar/Topbar';
 import BoxRole from '../../component/BoxRole/BoxRole';
 import { event } from '../../component/Event/Event';
-import Counter from '../../component/Counter/Counter';
 import Votes from '../../component/Votes/Votes';
 import Cloud from '../../component/Cloud/Cloud';
 import Mayor from '../../component/Mayor/Mayor';
@@ -182,9 +181,6 @@ function Game() {
                         <button className="btn btn-info mt-5" onClick={() => { setSideBar(!sideBar) }}>Rôles & Messages</button>
                     </div>
                     {
-                        (!player?.isTurn && room?.inGame && room?.step !== "village") && <Counter />
-                    }
-                    {
                         room?.step === "village" && <Votes players={room?.players} />
                     }
                     {
@@ -201,12 +197,8 @@ function Game() {
                                     </span>
                                 </div>
                                 <div className='w-25 m-auto my-5'>
-                                    <Options roles={room?.roles} />
+                                    <Options room={room} />
                                 </div>
-                                {
-                                    room?.players?.length === room?.roles?.length && socket.id === room?.author &&
-                                    <button className="btn btn-success btn-lg" onClick={() => { socket.emit('inGame') }}>Lancer la partie</button>
-                                }
                             </div>
                         }
                     </div>

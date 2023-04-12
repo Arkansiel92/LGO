@@ -15,11 +15,10 @@ function Win({room, author, side}: props) {
 
     return (
         <div id="win" className="card w-50 m-auto bg-dark text-center">
-            <h1>Partie terminée</h1>
             {
                 side === room?.winner
-                ? <h2 className="text-success">Vous avez gagné !</h2>
-                : <h2 className="text-danger">Vous avez perdu !</h2>
+                ? <h1 className="text-success">Vous avez gagné !</h1>
+                : <h1 className="text-danger">Vous avez perdu !</h1>
             }
             <div className="my-2">
                 <h3>Liste des joueurs</h3>
