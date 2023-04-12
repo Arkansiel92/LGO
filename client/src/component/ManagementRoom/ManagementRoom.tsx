@@ -8,7 +8,7 @@ import Chat from "../Chat/Chat";
 interface props {
     room: room | null
     player: player | undefined
-    inGame: boolean
+    inGame: boolean | undefined
     sideBar: boolean
 }
 

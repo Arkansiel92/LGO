@@ -12,6 +12,7 @@ import Votes from '../../component/Votes/Votes';
 import Cloud from '../../component/Cloud/Cloud';
 import Mayor from '../../component/Mayor/Mayor';
 import Options from '../../component/Options/Options';
+import Win from '../../component/Win/Win';
 
 type Params = {
     id: string
@@ -79,6 +80,7 @@ export interface room {
     nbTurn: number;
     voteWolf: string,
     inGame: boolean
+    winner: string | null
     step: string
 }
 
@@ -100,7 +102,6 @@ function Game() {
     const [room, setRoom] = useState<room | null>(null);
     const [player, setPlayer] = useState<player>();
     const [boxRole, setBoxRole] = useState<boxRole | undefined>();
-    const [inGame, setInGame] = useState<boolean>(false);
     const [sideBar, setSideBar] = useState<boolean>(true);
     const socket = useContext<ExtendedSocket>(socketContext);
 
@@ -114,10 +115,6 @@ function Game() {
         setPlayer(player);
     })
 
-    socket.on('inGame', bool => {
-        setInGame(bool)
-    })
-
     socket.on('boxRole', box => {
         setBoxRole(box);
     })
@@ -126,7 +123,7 @@ function Game() {
         if (!room) {
             socket.emit('getRoom');
         }
-    }, [socket, room])
+    }, [socket, room]);
 
     return (
         <div id="container" style={{ 
@@ -167,23 +164,25 @@ function Game() {
                 actor={boxRole?.actor} 
                 textarea={boxRole?.textarea} />}
 
-            <ManagementRoom room={room} player={player} inGame={inGame} sideBar={sideBar} />
+
+            <ManagementRoom room={room} player={player} inGame={room?.inGame} sideBar={sideBar} />
 
             {room?.players?.map((p: player, index: number) => (
                 <Player
-                    player={p}
-                    selfPlayer={player}
-                    step={room?.step}
-                    key={index} />
-            ))}
+                player={p}
+                selfPlayer={player}
+                step={room?.step}
+                key={index} />
+                ))}
 
             <div className="game-screen">
                 <div className="container-fluid">
+                    {room?.step === "overview" && <Win room={room} author={room?.author} side={player?.role?.side} />}
                     <div className="text-end">
                         <button className="btn btn-info mt-5" onClick={() => { setSideBar(!sideBar) }}>Rôles & Messages</button>
                     </div>
                     {
-                        (!player?.isTurn && inGame && room?.step !== "village") && <Counter />
+                        (!player?.isTurn && room?.inGame && room?.step !== "village") && <Counter />
                     }
                     {
                         room?.step === "village" && <Votes players={room?.players} />
@@ -193,7 +192,7 @@ function Game() {
                     }
                     <div className="col text-center">
                         {
-                            !inGame &&
+                            !room?.inGame &&
                             <div>
                                 <div onClick={() => { navigator.clipboard.writeText(window.location.host + "?id=" + id) }} className='id-room my-5 p-3 w-25 m-auto' data-bs-toggle="tooltip" data-bs-placement="top" title="copier le lien" data-bs-custom-class="tooltip">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
@@ -206,7 +205,7 @@ function Game() {
                                 </div>
                                 {
                                     room?.players?.length === room?.roles?.length && socket.id === room?.author &&
-                                    <button className="btn btn-success btn-lg" onClick={() => { socket.emit('inGame', true) }}>Lancer la partie</button>
+                                    <button className="btn btn-success btn-lg" onClick={() => { socket.emit('inGame') }}>Lancer la partie</button>
                                 }
                             </div>
                         }

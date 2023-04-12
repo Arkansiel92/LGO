@@ -1,0 +1,8 @@
+#win {
+    position: absolute;
+	top: 30%;
+	left: 50%;
+	transform: translateX(-50%);
+    animation: entrance 1s ease 0s 1 normal forwards;
+    z-index: 1;
+}

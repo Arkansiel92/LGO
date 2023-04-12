@@ -375,6 +375,15 @@ const eventsGypsy = [
     }
 ]
 
+const randomEvents = [
+    {
+        name: "Le guerriseur",
+        description: "Un étranger arrive, affirmant qu'il peut guérir toutes les maladies grâce à une potion mystérieuse qu'il a préparée. Les villageois sont d'abord méfiants, mais quand ils voient qu'il a réussi à guérir une personne gravement malade en peu de temps, ils commencent à se demander si ce n'est pas une mauvaise idée de lui acheter.",
+        responseYes: "Lui acheter plusieurs exemplaires.",
+        responseNo: "Lui dire de passer son chemin à ce SDF de merde. (Vous êtes pas cool sérieux)"
+    }
+]
+
 const TICK_RATE = 30;
 const SPEED = 7;
 const inputsMap = {};
@@ -534,24 +543,59 @@ io.on('connection', (socket) => {
     }
 
     function finishedByMercenary(mercenary) {
+        hub.step = "overview";
+
         return sendMessage("server", null, "Le joueur expulsé était la cible de " + mercenary.name + " qui était Mercenaire. Il gagne la partie.");
     }
 
     function finishedByAngel(angel) {
+        hub.step = "overview";
+
         return sendMessage("server", null, angel.name + " était l'Ange. Il gagne la partie.");
     }
 
     function finishedBySide() {
-        return true;
+        let playerSideAlive = [];
+        let check = false;
+
+        hub.players.forEach(player => {
+            if (!player.isDead) {
+                playerSideAlive.push(player.role.side);
+            }
+        })
+
+        let side = null;
+
+        playerSideAlive.forEach((sideP) => {
+            if (!side) {
+                side = sideP;
+            } else {
+                if (side !== sideP) {
+                    check = true;
+                }
+            }
+        })
+
+        if (playerSideAlive.length === 0 || !check) {
+            hub.step = "overview";
+
+            if (playerSideAlive.length === 0) {
+                hub.winner = "égalité";
+            }
+
+            if (!check) {
+                hub.winner = side;
+            } 
+    
+            room();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function order() {
         setIsTurnRoom(false);
-
-        if (finishedBySide()) {
-            console.log('coucou');
-            return sendMessage('server', null, "FIN DE LA PARTIE");
-        }
 
         if (hub.step === "start") {
 
@@ -590,6 +634,10 @@ io.on('connection', (socket) => {
     function stepNight() {
         if (hub.step === "preVillage") {
             return day();
+        }
+
+        if (finishedBySide()) {
+            return sendMessage('server', null, "FIN DE LA PARTIE");
         }
 
         let check = false;
@@ -847,7 +895,7 @@ io.on('connection', (socket) => {
                 player.isTurn = true;
                 boxRole(player.socket, { description: "Election du maire. Vous pouvez vous présenter.", textarea: true });
             })
-    
+
             return time(20);
         }
 
@@ -1257,7 +1305,7 @@ io.on('connection', (socket) => {
                 player.vote = null;
                 return room();
             }
-        } 
+        }
 
         player.vote = name;
 
@@ -1266,6 +1314,54 @@ io.on('connection', (socket) => {
         })
 
         dialog.votes.push(player.name);
+
+        return room();
+    })
+
+    socket.on('resetGame', () => {
+        hub.players.forEach((player) => {
+            player.vote = null
+            player.votes = []
+            player.voteWolf = null
+            player.role = null
+            player.isMayor = false
+            player.isVote = true
+            player.isDead = false
+            player.isTurn = false
+            player.isPower = true
+            player.isCouple = false
+            player.isSister = false
+            player.isCharmed = false
+            player.isHair = false
+            player.isActor = false
+            player.isScapegoat = false
+        })
+
+        hub.roles = [];
+        hub.votes = [];
+        hub.kills = {};
+        hub.event = null;
+        hub.healthPotion = true;
+        hub.deathPotion = true;
+        hub.night = false;
+        hub.voteWolf = null;
+        hub.messages = [];
+        hub.nbTurn = 0;
+        hub.oldManLife = 1;
+        hub.oldManReveal = false;
+        hub.lover_one = null;
+        hub.lover_two = null;
+        hub.infected = null;
+        hub.protected = null;
+        hub.dictator = false;
+        hub.ravenSocket = null;
+        hub.mercenaryTarget = null;
+        hub.mayorDialog = []
+        hub.roleActor = [];
+        hub.inGame = false;
+        hub.step = "start";
+
+        sendMessage('server', null, "Le jeu est en bêta-test. Merci de report les bugs/améliorations sur le discord. Coeur sur vous et votre famille. (Myou est loup-garou)");
 
         return room();
     })
@@ -1307,7 +1403,7 @@ io.on('connection', (socket) => {
             target.votes.splice(index, indexMayor);
         } else {
             player.vote = targetID;
-            
+
             if (player.isMayor) {
                 target.votes.push(player.name, player.name);
             } else {
@@ -1823,11 +1919,8 @@ io.on('connection', (socket) => {
         return stepNight();
     })
 
-    socket.on('inGame', ready => {
-        hub.inGame = ready;
-
-        io.to(socket.room).emit('inGame', true);
-
+    socket.on('inGame', () => {
+        hub.inGame = true;
         hub.step = "start";
 
         sendMessage("server", null, "La nuit tombe sur le village...");
@@ -2073,6 +2166,7 @@ io.on('connection', (socket) => {
         hub.mayorDialog = []
         hub.roleActor = [];
         hub.inGame = false;
+        hub.winner = null;
         hub.step = "start";
 
         sendMessage('server', null, "Le jeu est en bêta-test. Merci de report les bugs/améliorations sur le discord. Coeur sur vous et votre famille. (Myou est loup-garou)");
