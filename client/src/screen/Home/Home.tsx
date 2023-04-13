@@ -4,7 +4,6 @@ import { socketContext, ExtendedSocket } from '../../context/socket';
 import Navbar from "../../component/Navbar/Navbar";
 import './Home.css';
 import Cloud from '../../component/Cloud/Cloud';
-import Background from '../../component/Background/Background';
 
 function Home() {
     const socket = useContext<ExtendedSocket>(socketContext);
@@ -18,9 +17,9 @@ function Home() {
 
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
-    
+
     const id = params['id']
-    
+
     socket.on('navigate', (id: string) => {
         setLoading(true);
         setTimeout(() => {
@@ -40,7 +39,7 @@ function Home() {
     const join = () => {
         socket.emit('join', { id: room, pseudo: pseudo });
     }
-    
+
     useEffect(() => {
         socket.emit('clear');
 
@@ -51,19 +50,27 @@ function Home() {
     }, [socket, id])
 
     return (
-        <div>
+        <div style={{
+            backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/maps/background-game.svg'})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center bottom',
+            backgroundColor: "#87CEEB",
+            width: window.innerWidth,
+            height: window.innerHeight
+        }}>
             {
                 loading && <div id="loader-home"></div>
             }
             <div>
                 <Navbar />
-                <Background />
+                <Cloud nb={1} animationDelay={15} left={1200} top={20} />
+                <Cloud nb={2} animationDelay={25} left={600} top={80} />
+                <Cloud nb={3} animationDelay={20} left={400} top={40} />
                 {
                     alert && <div className='container text-center alert alert-danger'>{alert}</div>
                 }
-                <img className='moon mx-5' src="/assets/img/sprites/moon_half.png" alt="moon" />
+                <img className='sun mx-5' src="/assets/img/sprites/sun.png" alt="moon" />
                 <div className="home d-flex flex-column">
-                    <h1 className='text-center mt-5 fw-bold'>Moonrise</h1>
                     <div className="m-auto w-50">
                         <div className="mt-5">
                             {
@@ -109,29 +116,29 @@ function Home() {
                                 </div>
                         }
                     </div>
-                    <div className="row px-5 container-fluid text-center">
-                        <div className="col-lg-4">
-                            <img className='card-circle' src="assets/img/role/card-cupidon.svg" alt="" width={60} />
+                    <div className="container d-flex justify-content-around text-center my-5">
+                        <div className="bg-dark rounded p-2">
+                            <img src="assets/img/role/card-cupidon.svg" alt="" width={60} />
                             <h2><strong>Jouer à plusieurs</strong></h2>
                             <p className='lead'>Jouer jusqu'à 20 joueurs rapidement en rejoignant la partie avec un simple code. Un jeu qui rapproche les uns des autres et aide à développer l'esprit d'équipe !</p>
                         </div>
-                        <div className="col-lg-4">
-                            <img className='card-circle' src="assets/img/role/card-actor.svg" alt="" width={60} />
-                            <h2><strong>Plus de 30 rôles disponible</strong></h2>
-                            <p className='lead'>Incarne l'un des 32 rôles disponible. De nombreux rôles dans cette version avec des nouveaux systèmes. Il est important de bien cerner les particularités techniques de chacun des rôles afin de réussir à gagner.</p>
+                        <div className="bg-dark rounded p-2 mx-5">
+                            <img src="assets/img/role/card-actor.svg" alt="" width={60} />
+                            <h2><strong>28 rôles disponible</strong></h2>
+                            <p className='lead'>Incarne l'un des 28 rôles disponible. De nombreux rôles dans cette version avec des nouveaux systèmes. Il est important de bien cerner les particularités techniques de chacun des rôles afin de réussir à gagner.</p>
                         </div>
-                        <div className="col-lg-4">
-                            <img className='card-circle' src="assets/img/role/card-hair.svg" alt="" width={60} />
+                        <div className="bg-dark rounded p-2">
+                            <img src="assets/img/role/card-hair.svg" alt="" width={60} />
                             <h2><strong>Simple et rapide</strong></h2>
                             <p className='lead'>Avec un pseudo et un code, vous pouvez rejoindre n'importe quelle partie et jouer directement sans attente ou création de compte.</p>
                         </div>
                     </div>
-                    <footer className="bg-dark mt-auto p-2 text-center">
+
+                    <footer className="footer bg-dark mt-auto p-2 text-center fixed-bottom">
                         <span>
                             Arkansiel © - 2023. <a target={'_blank'} rel="noreferrer" href="https://discord.gg/J6wefxT4">Discord MyouTwitch</a>
                         </span>
                     </footer>
-                    <img className='forest' src="assets/img/forest.svg" alt="" />
                 </div>
             </div>
         </div>
