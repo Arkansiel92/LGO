@@ -10,13 +10,9 @@ export interface ExtendedSocket extends Socket {
     isProtected?: boolean,
 }
 
-export const socket: ExtendedSocket = io('http://localhost:3001', {transports: ['websocket']}); // IP on private network (localhost works too)
+export const socket: ExtendedSocket = io('http://153.92.223.27:3001', {transports: ['websocket']}); // IP on private network (localhost works too)
 
 socket.name = '';
 socket.room = null;
-socket.role = null;
-socket.isReady = false;
-socket.isTurn = false;
-socket.isProtected = false;
 
 export const socketContext = createContext(socket);
