@@ -143,7 +143,7 @@ const roles = [
         img: "card-idiot.svg",
     },
     {
-        name: "Joueur de flûte",
+        name: "Pyromane",
         name_function: "Flute",
         description: "Se réveille en dernier. Il peut charmer un joueur par tour qui deviendra charmé. Il gagne lorsque tous les joueurs en vie sont charmés.",
         side: "seul",
@@ -357,11 +357,33 @@ const roles = [
         description: "Son objectif est de vaincre les Loups-Garous tant qu'il ne reçoit pas de nouveau rôle. La première nuit, il désigne un testataire qui lui léguera son rôle lors de sa mort.",
         side: "village",
         step: "start",
-        descriptionInGame: "Désignez un testataire qui vous léguera son rôle lors dà sa mort",
+        descriptionInGame: "Désignez un testataire qui vous léguera son rôle à sa mort",
         max: 1,
         needVictim: false,
         img: "card-hair.svg",
     },
+    {
+        name: "Mentaliste",
+        name_function: "Mental",
+        description: "Son objectif est de vaincre les Loups-Garous. Il peut percevoir l'issue du vote du village 30 secondes avant sa fin. 30 secondes avant la fin des votes, le Mentaliste reçoit un message lui indiquant si le vote se porte bien ou mal.",
+        side: "village",
+        step: null,
+        descriptionInGame: null,
+        max: 1,
+        needVictim: false,
+        img: "card-mental.svg",
+    },
+    {
+        name: "L'Horloger",
+        name_function: "Time",
+        description: "Son objectif est de vaincre les Loups-garou. Pendant le vote du village, l'Horloger a le pouvoir de modifier la durée du temps imparti pour les discussions. Il peut réduire ou augmenter la durée du temps de débat. Ce pouvoir ne peut être utilisé qu'une fois par partie.",
+        side: "village",
+        step: null,
+        descriptionInGame: "Souhaitez-vous accélérer le temps de délibération du village ou le ralentir ?",
+        max: 1,
+        needVictim: false,
+        img: "card-time.svg"
+    }
 ]
 
 const eventsGypsy = [
@@ -389,6 +411,7 @@ const SPEED = 7;
 const inputsMap = {};
 
 let interval;
+let horloger;
 
 io.on('connection', (socket) => {
     let hub = io.sockets.adapter.rooms.get(socket.room);
@@ -903,6 +926,20 @@ io.on('connection', (socket) => {
 
         boxRole(socket.room, { description: 'Vous pouvez voter pour exclure un joueur.' });
 
+        if (hub.roles.includes("L'Horloger")) {
+            let player = getPlayerByRole('L\'Horloger');
+
+            if (!player.isDead && player.isPower) {
+                let data = {
+                    description: player.role.descriptionInGame,
+                    setYes: "Augmenter le temps",
+                    setNo: "Réduire le temps",
+                }
+
+                boxRole(player.socket, data);
+            }
+        }
+
         //time(120);
         time(10);
 
@@ -969,6 +1006,7 @@ io.on('connection', (socket) => {
         hub.infected = null;
         hub.protected = null;
         hub.dictator = false;
+        hub.mentalist = false;
         hub.ravenSocket = null;
 
         return room();
@@ -981,6 +1019,35 @@ io.on('connection', (socket) => {
 
         interval = setInterval(() => {
             io.to(socket.room).emit('counter', time);
+
+            if (hub.horloger !== null) {
+                if (hub.horloger) {
+                    time += 60;
+                } else {
+                    time -= 60;
+                }
+
+                hub.horloger = null;
+            }
+
+
+            if (time <= 30 && hub.step === "village") {
+                if (!hub.mentalist && hub.roles.includes('Mentaliste')) {
+                    let player = getPlayerByRole('Mentaliste');
+
+                    if (player.isPower) {
+                        let side = "village";
+                        
+                        if (side !== "méchant") {
+                            sendMessage('role', player.socket, "Le vote ne se porte pas très bien, le village risque d'éliminer la mauvaise personne pour l'instant...");
+                        } else {
+                            sendMessage('role', player.socket, "Le vote se porte à merveille, le village a eu une bonne intuition pour l'instant...");
+                        }
+                    }
+
+                    hub.mentalist = true;
+                }
+            }
 
             if (time <= 0) {
                 clearInterval(interval);
@@ -1343,7 +1410,8 @@ io.on('connection', (socket) => {
         hub.event = null;
         hub.healthPotion = true;
         hub.deathPotion = true;
-        hub.night = false;
+        hub.horloger = null;
+        hub.mentalist = false;
         hub.voteWolf = null;
         hub.messages = [];
         hub.nbTurn = 0;
@@ -1358,10 +1426,11 @@ io.on('connection', (socket) => {
         hub.mercenaryTarget = null;
         hub.mayorDialog = []
         hub.roleActor = [];
+        hub.night = false;
         hub.inGame = false;
         hub.step = "start";
-
-        sendMessage('server', null, "Le jeu est en bêta-test. Merci de report les bugs/améliorations sur le discord. Coeur sur vous et votre famille. (Myou est loup-garou)");
+        
+        sendMessage('server', null, "Le jeu est en bêta-test. Merci de report les bugs/améliorations sur le discord. Coeur sur vous et votre famille.");
 
         return room();
     })
@@ -1881,7 +1950,24 @@ io.on('connection', (socket) => {
         player.isTurn = false;
 
         sendMessage("role", player.socket, "Vous avez charmé " + target.name + " cette nuit.");
-        sendMessage("role", target.socket, "Vous avez été charmé par le joueur de flûte cette nuit.");
+        sendMessage("role", target.socket, "Vous avez été charmé par le pyromane cette nuit.");
+
+        return room();
+    })
+
+    socket.on('setTime', action => {
+        let player = getPlayer(socket.id);
+
+        boxRole(socket.id, {description: "Vous pouvez voter pour exclure un joueur."});
+        player.isPower = false;
+
+        if (action) {
+            sendMessage('role', null, "L'horloger a activé son pouvoir, le temps est augmenté !");
+            hub.horloger = true;
+        } else {
+            sendMessage('role', null, "L'horloger a activé son pouvoir, le temps est réduit !");
+            hub.horloger = false;
+        }
 
         return room();
     })
@@ -2150,7 +2236,8 @@ io.on('connection', (socket) => {
         hub.event = null;
         hub.healthPotion = true;
         hub.deathPotion = true;
-        hub.night = false;
+        hub.horloger = null;
+        hub.mentalist = false;
         hub.voteWolf = null;
         hub.messages = [];
         hub.nbTurn = 0;
@@ -2165,11 +2252,12 @@ io.on('connection', (socket) => {
         hub.mercenaryTarget = null;
         hub.mayorDialog = []
         hub.roleActor = [];
+        hub.night = false;
         hub.inGame = false;
         hub.winner = null;
         hub.step = "start";
 
-        sendMessage('server', null, "Le jeu est en bêta-test. Merci de report les bugs/améliorations sur le discord. Coeur sur vous et votre famille. (Myou est loup-garou)");
+        sendMessage('server', null, "Le jeu est en bêta-test. Merci de report les bugs/améliorations sur le discord. Coeur sur vous et votre famille.");
 
         return navigate(id);
     })

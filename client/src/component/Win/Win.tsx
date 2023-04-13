@@ -25,20 +25,20 @@ function Win({room, author, side}: props) {
                 {room?.players?.map((player, index) => (
                     <div key={index}>
                         {
-                            side === "village" && <p className="text-success">- {player.name} ({player.role?.name})</p>
+                            player?.role?.side === "village" && <p className="text-success">- {player.name} ({player.role?.name})</p>
                         }
                         {
-                            side === "méchant" && <p className="text-danger">- {player.name} ({player.role?.name})</p>
+                            player?.role?.side === "méchant" && <p className="text-danger">- {player.name} ({player.role?.name})</p>
                         }
                         {
-                            side === "seul" && <p className="text-warning">- {player.name} ({player.role?.name})</p>
+                            player?.role?.side === "seul" && <p className="text-warning">- {player.name} ({player.role?.name})</p>
                         }
                     </div>
                 ))}
             </div>
             {
                 author === socket.id &&
-                <button onClick={() => {socket.emit('resetGame')}} className="btn btn-lg w-25 m-auto btn-primary my-2">Rejouer</button>
+                <button onClick={() => {socket.emit('resetGame')}} className="btn btn-lg w-25 m-auto btn-success my-2">Rejouer</button>
             }
         </div>
     )
