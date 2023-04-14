@@ -126,8 +126,8 @@ function Home() {
                     </div>
                     <div className="bg-dark rounded p-2 mx-5">
                         <img src="assets/img/role/card-actor.svg" alt="" width={60} />
-                        <h2><strong>28 rôles disponible</strong></h2>
-                        <p className='lead'>Incarne l'un des 28 rôles disponible. De nombreux rôles dans cette version avec des nouveaux systèmes. Il est important de bien cerner les particularités techniques de chacun des rôles afin de réussir à gagner.</p>
+                        <h2><strong>30 rôles disponible</strong></h2>
+                        <p className='lead'>Incarne l'un des 30 rôles disponible. De nombreux rôles dans cette version avec des nouveaux systèmes. Il est important de bien cerner les particularités techniques de chacun des rôles afin de réussir à gagner.</p>
                     </div>
                     <div className="bg-dark rounded p-2">
                         <img src="assets/img/role/card-hair.svg" alt="" width={60} />
