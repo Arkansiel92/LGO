@@ -87,6 +87,8 @@ interface boxRole {
     description: string
     role: string
     victim: string | null
+    type?: string
+    title?: string
     health?: boolean
     death?: boolean
     setYes?: boolean
@@ -154,6 +156,8 @@ function Game() {
                 description={boxRole?.description}
                 victim={boxRole?.victim}
                 name_function={player?.role?.name_function}
+                type={boxRole?.type}
+                title={boxRole?.title}
                 role={boxRole?.role}
                 health={boxRole?.health}
                 death={boxRole?.death}

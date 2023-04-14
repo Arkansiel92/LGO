@@ -4,6 +4,7 @@ import { socketContext, ExtendedSocket } from '../../context/socket';
 import Navbar from "../../component/Navbar/Navbar";
 import './Home.css';
 import Cloud from '../../component/Cloud/Cloud';
+import Footer from '../../component/Footer/Footer';
 
 function Home() {
     const socket = useContext<ExtendedSocket>(socketContext);
@@ -61,85 +62,80 @@ function Home() {
             {
                 loading && <div id="loader-home"></div>
             }
-            <div>
-                <Navbar />
+            <Navbar />
+            {
+                alert && <div className='container text-center alert alert-danger'>{alert}</div>
+            }
+            <div className='my-5'>
                 <Cloud nb={1} animationDelay={15} left={1200} top={20} />
                 <Cloud nb={2} animationDelay={25} left={600} top={80} />
                 <Cloud nb={3} animationDelay={20} left={400} top={40} />
-                {
-                    alert && <div className='container text-center alert alert-danger'>{alert}</div>
-                }
-                <img className='sun mx-5' src="/assets/img/sprites/sun.png" alt="moon" />
-                <div className="home d-flex flex-column">
-                    <div className="m-auto w-50">
-                        <div className="mt-5">
-                            {
-                                card === "create"
-                                    ? <button className="btn-home mx-1">Créer une partie</button>
-                                    : <button className="btn-home mx-1" onClick={() => { setCard('create') }}>Créer une partie</button>
-                            }
-                            {
-                                card === "join"
-                                    ? <button className="btn-home mx-1">Rejoindre</button>
-                                    : <button className="btn-home mx-1" onClick={() => { setCard('join') }}>Rejoindre</button>
-                            }
-                        </div>
+                <img className='sun mx-2' src="/assets/img/sprites/sun.png" alt="moon" />
+            </div>
+            <div>
+                <div className="m-auto w-50">
+                    <div className="mt-5">
                         {
                             card === "create"
-                                ? <div>
-                                    <div className="form-group mt-3">
-                                        <input type="text" className='form-control form-control-lg' value={pseudo} placeholder="Entrez votre nom" onChange={(e) => { setPseudo(e.target.value) }} />
-                                    </div>
-                                    <div className='my-3 d-grid'>
-                                        {
-                                            pseudo === ''
-                                                ? <button type="submit" disabled className='btn btn-lg btn-success'>Créer la partie</button>
-                                                : <button type="submit" onClick={handleSubmit} className='btn btn-lg btn-success'>Créer la partie</button>
-                                        }
-                                    </div>
-                                </div>
-                                : <div>
-                                    <div className="form-group mt-3">
-                                        <input type="text" className='form-control form-control-lg' value={pseudo} placeholder="Entrez votre nom" onChange={(e) => { setPseudo(e.target.value) }} />
-                                    </div>
-
-                                    <div className="form-group my-3">
-                                        <input type="text" className='form-control form-control-lg' value={room} placeholder="ID du lobby" onChange={(e) => { setRoom(e.target.value) }} />
-                                    </div>
-                                    <div className='my-3 d-grid'>
-                                        {
-                                            pseudo === '' || room === ''
-                                                ? <button type="submit" disabled className='btn btn-lg btn-success'>Rejoindre la partie</button>
-                                                : <button type="submit" onClick={join} className='btn btn-lg btn-success'>Rejoindre la partie</button>
-                                        }
-                                    </div>
-                                </div>
+                                ? <button className="btn btn-primary rounded-pill mx-1">Créer une partie</button>
+                                : <button className="btn btn-primary rounded-pill mx-1" onClick={() => { setCard('create') }}>Créer une partie</button>
+                        }
+                        {
+                            card === "join"
+                                ? <button className="btn btn-primary rounded-pill mx-1">Rejoindre</button>
+                                : <button className="btn btn-primary rounded-pill mx-1" onClick={() => { setCard('join') }}>Rejoindre</button>
                         }
                     </div>
-                    <div className="container d-flex justify-content-around text-center my-5">
-                        <div className="bg-dark rounded p-2">
-                            <img src="assets/img/role/card-cupidon.svg" alt="" width={60} />
-                            <h2><strong>Jouer à plusieurs</strong></h2>
-                            <p className='lead'>Jouer jusqu'à 20 joueurs rapidement en rejoignant la partie avec un simple code. Un jeu qui rapproche les uns des autres et aide à développer l'esprit d'équipe !</p>
-                        </div>
-                        <div className="bg-dark rounded p-2 mx-5">
-                            <img src="assets/img/role/card-actor.svg" alt="" width={60} />
-                            <h2><strong>28 rôles disponible</strong></h2>
-                            <p className='lead'>Incarne l'un des 28 rôles disponible. De nombreux rôles dans cette version avec des nouveaux systèmes. Il est important de bien cerner les particularités techniques de chacun des rôles afin de réussir à gagner.</p>
-                        </div>
-                        <div className="bg-dark rounded p-2">
-                            <img src="assets/img/role/card-hair.svg" alt="" width={60} />
-                            <h2><strong>Simple et rapide</strong></h2>
-                            <p className='lead'>Avec un pseudo et un code, vous pouvez rejoindre n'importe quelle partie et jouer directement sans attente ou création de compte.</p>
-                        </div>
-                    </div>
+                    {
+                        card === "create"
+                            ? <div>
+                                <div className="form-group mt-3">
+                                    <input type="text" className='form-control form-control-lg' value={pseudo} placeholder="Entrez votre nom" onChange={(e) => { setPseudo(e.target.value) }} />
+                                </div>
+                                <div className='my-3 d-grid'>
+                                    {
+                                        pseudo === ''
+                                            ? <button type="submit" disabled className='btn btn-lg btn-success'>Créer la partie</button>
+                                            : <button type="submit" onClick={handleSubmit} className='btn btn-lg btn-success'>Créer la partie</button>
+                                    }
+                                </div>
+                            </div>
+                            : <div>
+                                <div className="form-group mt-3">
+                                    <input type="text" className='form-control form-control-lg' value={pseudo} placeholder="Entrez votre nom" onChange={(e) => { setPseudo(e.target.value) }} />
+                                </div>
 
-                    <footer className="footer bg-dark mt-auto p-2 text-center fixed-bottom">
-                        <span>
-                            Arkansiel © - 2023. <a target={'_blank'} rel="noreferrer" href="https://discord.gg/J6wefxT4">Discord MyouTwitch</a>
-                        </span>
-                    </footer>
+                                <div className="form-group my-3">
+                                    <input type="text" className='form-control form-control-lg' value={room} placeholder="ID du lobby" onChange={(e) => { setRoom(e.target.value) }} />
+                                </div>
+                                <div className='my-3 d-grid'>
+                                    {
+                                        pseudo === '' || room === ''
+                                            ? <button type="submit" disabled className='btn btn-lg btn-success'>Rejoindre la partie</button>
+                                            : <button type="submit" onClick={join} className='btn btn-lg btn-success'>Rejoindre la partie</button>
+                                    }
+                                </div>
+                            </div>
+                    }
                 </div>
+                <div className="container d-flex justify-content-around text-center my-5">
+                    <div className="bg-dark rounded p-2">
+                        <img src="assets/img/role/card-cupidon.svg" alt="" width={60} />
+                        <h2><strong>Jouer à plusieurs</strong></h2>
+                        <p className='lead'>Jouer jusqu'à 20 joueurs rapidement en rejoignant la partie avec un simple code. Un jeu qui rapproche les uns des autres et aide à développer l'esprit d'équipe !</p>
+                    </div>
+                    <div className="bg-dark rounded p-2 mx-5">
+                        <img src="assets/img/role/card-actor.svg" alt="" width={60} />
+                        <h2><strong>28 rôles disponible</strong></h2>
+                        <p className='lead'>Incarne l'un des 28 rôles disponible. De nombreux rôles dans cette version avec des nouveaux systèmes. Il est important de bien cerner les particularités techniques de chacun des rôles afin de réussir à gagner.</p>
+                    </div>
+                    <div className="bg-dark rounded p-2">
+                        <img src="assets/img/role/card-hair.svg" alt="" width={60} />
+                        <h2><strong>Simple et rapide</strong></h2>
+                        <p className='lead'>Avec un pseudo et un code, vous pouvez rejoindre n'importe quelle partie et jouer directement sans attente ou création de compte.</p>
+                    </div>
+                </div>
+                <Footer />
             </div>
         </div>
     )

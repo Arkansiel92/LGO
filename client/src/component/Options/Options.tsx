@@ -30,10 +30,15 @@ function Options({ room }: props) {
                 <p className="fst-italic">En cours de débug</p>
             </div>
             {
-                room?.players?.length === room?.roles?.length && socket.id === room?.author 
-                ? <button className="btn w-50 m-auto btn-success btn-lg my-3" onClick={() => { socket.emit('inGame') }}>Lancer la partie</button>
-                : <button className="btn w-50 m-auto btn-success btn-lg my-3" disabled>Lancer la partie</button>
-             }
+                socket.id === room?.author &&
+                <div>
+                    {
+                        room?.players?.length === room?.roles?.length
+                            ? <button className="btn w-50 m-auto btn-success btn-lg my-3" onClick={() => { socket.emit('inGame') }}>Lancer la partie</button>
+                            : <button className="btn w-50 m-auto btn-success btn-lg my-3" disabled>Lancer la partie</button>
+                    }
+                </div>
+            }
         </div>
     )
 }

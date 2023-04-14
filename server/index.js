@@ -4,14 +4,10 @@ const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const fs = require('fs');
-const { log } = require('console');
 
 app.use(cors());
 
-const server = http.createServer({
-    key: fs.readFileSync('cert/key.pem'),
-    cert: fs.readFileSync('cert/cert.pem')
-}, app);
+const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
@@ -376,7 +372,7 @@ const roles = [
     {
         name: "L'Horloger",
         name_function: "Time",
-        description: "Son objectif est de vaincre les Loups-garou. Pendant le vote du village, l'Horloger a le pouvoir de modifier la durée du temps imparti pour les discussions. Il peut réduire ou augmenter la durée du temps de débat. Ce pouvoir ne peut être utilisé qu'une fois par partie.",
+        description: "Son objectif est de vaincre les Loups-garou. Pendant le vote du village, l'Horloger a le pouvoir de modifier la durée du temps imparti pour les discussions. Il peut réduire ou augmenter la durée du temps de débat. Ce pouvoir ne peut être utilisé qu'une fois par partie (crée par Myou).",
         side: "village",
         step: null,
         descriptionInGame: "Souhaitez-vous accélérer le temps de délibération du village ou le ralentir ?",
@@ -399,11 +395,58 @@ const eventsGypsy = [
 
 const randomEvents = [
     {
-        name: "Le guerriseur",
+        title: "Le guerriseur",
         description: "Un étranger arrive, affirmant qu'il peut guérir toutes les maladies grâce à une potion mystérieuse qu'il a préparée. Les villageois sont d'abord méfiants, mais quand ils voient qu'il a réussi à guérir une personne gravement malade en peu de temps, ils commencent à se demander si ce n'est pas une mauvaise idée de lui acheter.",
-        responseYes: "Lui acheter plusieurs exemplaires.",
-        responseNo: "Lui dire de passer son chemin à ce SDF de merde. (Vous êtes pas cool sérieux)"
-    }
+        responseYes: "Lui acheter ses potions",
+        responseNo: "Lui dire de passer son chemin à ce SDF. (Vous êtes pas cool sérieux)",
+        messageYes: "Le village décide de lui acheter plusieurs potion. Cependant ils s'aperçoivent que les potions utilisées étaient des fausses et qu'il a utilisé un complice. Peu à peu tous les villageois tombent malade et la sorcière est obligé d'utiliser toutes ses fioles pour aider les villageois. (La sorcière perd toutes ses potions)",
+        messageNo: "Le village décide de se méfier de l'étranger. En regardant dans la roulotte de l'étranger, ils voient un inconnu ligoté. Le village décide de chasser l'étranger et d'aider l'homme ligoté. C'était l'ancien sorcier d'un village. En récompense il donne au village plusieurs ingrédients. (La sorcière récupère toutes ses potions)",
+        function: function(hub, choice) {
+            if (choice) {
+                hub.deathPotion = false;
+                hub.healthPotion = false;
+            } else {
+                hub.deathPotion = true;
+                hub.healthPotion = true;
+            }
+
+            return hub;
+        }
+    },
+    // {
+    //     title: "Les voyageurs",
+    //     description: "une troupe de voyageurs arrive au village. Ils sont riches et bien habillés, et offrent au village une grande quantité d'argent pour les héberger pendant leur séjour.",
+    //     responseYes: "Les héberger pendant quelques jours",
+    //     responseNo: "Refuser leur proposition et les chasser du village",
+    //     messageYes: "Le village décide d'héberger la troupe de voyageur pendant quelques jours. Après quelques jours à sympathiser et rigoler avec eux, les villageois remarquent leur absence un beau matin. Ils apprennent plus tard que c'était une bonne de voleur connu qui jouait de leurs charmes pour dévaliser les villages.",
+    //     messageNo: "Peu de temps avant leur venu, les gardes avaient averti le village qu'un groupe d'escorcs était dans les parages. En comprenant que c'était bien eux, ils appelairent les gardes.",
+    //     function: function(hub, choice) {
+    //         if (choice) {
+    //             // mauvais choix
+    //         } else {
+    //             // bon choix
+    //         }
+
+    //         return hub;
+    //     }
+    // },
+    // {
+    //     title: "La vagabonde",
+    //     description: "Un jour, une belle jeune femme arrive au village. Elle est enceinte et cherche un endroit pour se reposer et se nourrir.",
+    //     responseYes: "L'accueillir au sein du village pendant quelques temps",
+    //     responseNo: "La refuser, et lui demander de partir sur le champ",
+    //     messageYes: "Le village décide de l'accueillir au sein du village pour lui permettre de se reposer. elle y reste quelques jours et aide le village et ses membres à se développer. A son départ, il utilise une magie ancienne qui permet au village de recouvrir ses pouvoirs perdus (Tous les membres du village recouvre leurs pouvoirs pour le tour suivant)",
+    //     messageNo: "Le village décide de ne pas accéder à sa requête et lui demande de partir. Peu avant son départ, elle marmonne des mots obscurs. Quelques jours plus tard, l'entièreté du village ne se sens pas bien et comprend que la femme leur a lancé un sort. (Tous les membres du village perdent leurs pouvoirs pour le tour suivant)",
+    //     function: function(hub, choice) {
+    //         if (choice) {
+    //             // bon choix
+    //         } else {
+    //             // mauvais choix
+    //         }
+
+    //         return hub;
+    //     }
+    // }
 ]
 
 const TICK_RATE = 30;
@@ -411,7 +454,6 @@ const SPEED = 7;
 const inputsMap = {};
 
 let interval;
-let horloger;
 
 io.on('connection', (socket) => {
     let hub = io.sockets.adapter.rooms.get(socket.room);
@@ -488,6 +530,14 @@ io.on('connection', (socket) => {
         return player;
     }
 
+    function getMyLover(name) {
+        const lover = hub.players.find((player) => {
+            return player.isCouple && player.name !== name;
+        })
+
+        return lover;
+    }
+
     function getRandomPlayer() {
         const index = Math.floor(Math.random() * hub.players.length);
 
@@ -520,6 +570,39 @@ io.on('connection', (socket) => {
         }
 
         return choiceRole;
+    }
+
+    function getSideTarget() {
+        let target = null;
+        let side = null;
+        let count = null;
+
+        hub.players.forEach((player) => {
+            if (!player.isDead) {
+                if (player.votes.length > count) {
+                    target = player;
+                    side = player.role.side
+                    count = player.votes.length;
+                }
+            }
+            player.isTurn = false;
+        });
+
+        let equality = false;
+
+        hub.players.forEach((player) => {
+            if (player !== target) {
+                if (count === player.votes.length && player.votes.length > 0) {
+                    equality = true;
+                };
+            }
+        });
+
+        if (equality) {
+            return null;
+        } else {
+            return side;
+        }
     }
 
     function room() {
@@ -617,6 +700,35 @@ io.on('connection', (socket) => {
         }
     }
 
+    function events() {
+        setIsTurnRoom(false);
+
+        let responseYes = hub.randomEvents['responseYes'].length;
+        let responseNo = hub.randomEvents['responseNo'].length;
+
+        let event = randomEvents.find((event) => {
+            return event.title === hub.randomEvents['title'];
+        })
+
+        if (responseYes > responseNo) {
+            hub = event.function(hub, true);
+
+            sendMessage('event', null, event.messageYes);
+        } else if (responseYes < responseNo) {
+            hub = event.function(hub, false);
+
+            sendMessage('event', null, event.messageNo);
+        } else {
+            sendMessage('event', null, "Le village n'a pas pu se décider à temps sur le choix à faire...");
+        }
+ 
+        hub.step = "day";
+
+        room();
+
+        return day();
+    }
+
     function order() {
         setIsTurnRoom(false);
 
@@ -659,9 +771,9 @@ io.on('connection', (socket) => {
             return day();
         }
 
-        if (finishedBySide()) {
-            return sendMessage('server', null, "FIN DE LA PARTIE");
-        }
+        // if (finishedBySide()) {
+        //     return sendMessage('server', null, "FIN DE LA PARTIE");
+        // }
 
         let check = false;
 
@@ -740,7 +852,7 @@ io.on('connection', (socket) => {
         room();
 
         if (check) {
-            return time(20);
+            return time(15);
         } else {
             hub.step = order();
             return stepNight();
@@ -770,8 +882,6 @@ io.on('connection', (socket) => {
 
             sendMessage("server", null, "Evènement : un joueur a été tué.");
         }
-
-        console.log(target.name);
 
         hub.event = null;
 
@@ -855,6 +965,26 @@ io.on('connection', (socket) => {
                 if (player.isInfected) {
                     str += "(infecté) ";
                 }
+
+                if (player.isHair) {
+                    let hair = getPlayerByRole('L\'Héritier');
+
+                    hair.role = player.role;
+                    hair.isPower = player.isPower;
+    
+                    hub.roles.splice(hub.roles.indexOf("L'Héritier"), 1);
+                    hub.roles.push(hair.role.name);
+    
+                    sendMessage("role", hair.socket, "Votre héritier est mort, vous héritez de ses pouvoirs et du rôle de " + player.role.name + ".");
+                }
+
+                if (player.isCouple) {
+                    let lover = getMyLover(player.name);
+
+                    lover.isDead = true;
+
+                    str += "par amour " + lover.name + " (" + lover.role.name + ") s'est donné la mort. ";
+                }
             })
 
             sendMessage("death", null, str);
@@ -914,6 +1044,8 @@ io.on('connection', (socket) => {
         if (hub.nbTurn === 2 && !hub.mayor) {
             sendMessage("server", null, "Election du maire !");
 
+            hub.step = "mayor";
+
             hub.players.forEach((player) => {
                 player.isTurn = true;
                 boxRole(player.socket, { description: "Election du maire. Vous pouvez vous présenter.", textarea: true });
@@ -922,9 +1054,31 @@ io.on('connection', (socket) => {
             return time(20);
         }
 
+        if (hub.nbTurn % 6 === 0 && !hub.randomEvents['title']) {
+
+            let event = randomEvents[Math.floor(Math.random() * randomEvents.length)]
+
+            console.log(randomEvents);
+
+            hub.step = "randomEvents";
+            hub.randomEvents['title'] = event.title;
+
+            boxRole(socket.room, {
+                type: "event",
+                title: event.title,
+                description: event.description,
+                setYes: event.responseYes,
+                setNo: event.responseNo
+            })
+
+            sendMessage('event', null, "Un évènement aléatoire");
+
+            return time(45);
+        }
+
         hub.step = "village";
 
-        boxRole(socket.room, { description: 'Vous pouvez voter pour exclure un joueur.' });
+        boxRole(socket.room, { title: "Village", description: 'Vous pouvez voter pour exclure un joueur.' });
 
         if (hub.roles.includes("L'Horloger")) {
             let player = getPlayerByRole('L\'Horloger');
@@ -960,7 +1114,7 @@ io.on('connection', (socket) => {
 
             player.isScapegoat = false;
 
-            if (player.role.name === "Loup blanc") {
+            if (player.role.name === "Loup blanc" && !player.isDead) {
                 if (hub.nbTurn % 2 === 0) {
                     player.isPower = true;
                 } else {
@@ -968,7 +1122,7 @@ io.on('connection', (socket) => {
                 }
             }
 
-            if (player.role.name === "Grand méchant loup") {
+            if (player.role.name === "Grand méchant loup" && !player.isDead) {
                 if (player.isPower) {
                     checkWolf = hub.players.find((player) => {
                         return player.isDead && player.role.side === "méchant"
@@ -980,7 +1134,7 @@ io.on('connection', (socket) => {
                 }
             }
 
-            if (player.isActor) {
+            if (player.isActor && !player.isDead) {
                 hub.roles.splice(hub.roles.indexOf(player.role), 1);
 
                 player.isActor = false;
@@ -1008,6 +1162,9 @@ io.on('connection', (socket) => {
         hub.dictator = false;
         hub.mentalist = false;
         hub.ravenSocket = null;
+        hub.randomEvents['responseYes'] = [];
+        hub.randomEvents['responseNo'] = [];
+        hub.randomEvents['title'] = null;
 
         return room();
     }
@@ -1030,22 +1187,22 @@ io.on('connection', (socket) => {
                 hub.horloger = null;
             }
 
-
             if (time <= 30 && hub.step === "village") {
                 if (!hub.mentalist && hub.roles.includes('Mentaliste')) {
                     let player = getPlayerByRole('Mentaliste');
 
                     if (player.isPower) {
-                        let side = "village";
+                        let side = getSideTarget();
                         
-                        if (side !== "méchant") {
-                            sendMessage('role', player.socket, "Le vote ne se porte pas très bien, le village risque d'éliminer la mauvaise personne pour l'instant...");
-                        } else {
-                            sendMessage('role', player.socket, "Le vote se porte à merveille, le village a eu une bonne intuition pour l'instant...");
+                        if (side) {
+                            if (side !== "méchant") {
+                                sendMessage('role', player.socket, "Le vote ne se porte pas très bien, le village risque d'éliminer la mauvaise personne pour l'instant...");
+                            } else {
+                                sendMessage('role', player.socket, "Le vote se porte à merveille, le village a eu une bonne intuition pour l'instant...");
+                            }
+                            hub.mentalist = true;
                         }
                     }
-
-                    hub.mentalist = true;
                 }
             }
 
@@ -1113,6 +1270,10 @@ io.on('connection', (socket) => {
 
                 if (hub.step === "mayor") {
                     return voteMayor();
+                }
+
+                if (hub.step === "randomEvents") {
+                    return events();
                 }
 
                 if (hub.step === "village") {
@@ -1348,6 +1509,14 @@ io.on('connection', (socket) => {
             let index = Math.floor(Math.random() * hub.players.length);
 
             hub.players[index].isMayor = true;
+            hub.mayor = hub.players[index].socket;
+        }
+
+        if (count === 0) {
+            let index = Math.floor(Math.random() * hub.players.length);
+
+            hub.players[index].isMayor = true;
+            hub.mayor = hub.players[index].socket;
         }
 
         hub.step = "day";
@@ -1381,6 +1550,20 @@ io.on('connection', (socket) => {
         })
 
         dialog.votes.push(player.name);
+
+        return room();
+    })
+
+    socket.on('setRandomEvent', bool => {
+        let player = getPlayer(socket.id);
+
+        if (bool) {
+            hub.randomEvents['responseYes'].push(player.name);
+        } else {
+            hub.randomEvents['responseNo'].push(player.name);
+        }
+
+        console.log(hub.randomEvents);
 
         return room();
     })
@@ -1436,8 +1619,6 @@ io.on('connection', (socket) => {
     })
 
     socket.on('setMayor', input => {
-        hub.step = "mayor";
-
         let player = getPlayer(socket.id);
 
         hub.mayorDialog.push({
@@ -1730,8 +1911,6 @@ io.on('connection', (socket) => {
 
         target.votes.push('Corbeau', 'Corbeau');
 
-        console.log(hub.players);
-
         hub.ravenSocket = target.socket;
 
         sendMessage(null, player.socket, target.name + " se réveillera avec deux votes en plus !");
@@ -1777,7 +1956,7 @@ io.on('connection', (socket) => {
                 sendMessage("role", player.socket, "Il y a un loup parmis ces personnes. Vous gardez vos pouvoirs.");
             } else {
                 player.isPower = false;
-                sendMessage("role", player.socket, "Il n'y a aucun loup parmis ces personnes. Vos pouvoirs vous quittent...");
+                sendMessage("role", player.socket, "Il n'y a aucun loup parmis ces personnes. Vos pouvoirs vous quittent peu à peu...");
             }
 
             player.isTurn = false;
@@ -1869,7 +2048,7 @@ io.on('connection', (socket) => {
             return event.name === choice
         })
 
-        sendMessage("role", socket.id, "Vous achez choisi de déclencher l'évènement : " + choice);
+        sendMessage("role", socket.id, "Vous achez choisi de déclencher l'évènement " + choice);
 
         return room();
     })
@@ -2252,6 +2431,11 @@ io.on('connection', (socket) => {
         hub.mercenaryTarget = null;
         hub.mayorDialog = []
         hub.roleActor = [];
+        hub.randomEvents = {
+            title: null,
+            responseYes : [],
+            responseNo : []
+        }
         hub.night = false;
         hub.inGame = false;
         hub.winner = null;
@@ -2262,9 +2446,9 @@ io.on('connection', (socket) => {
         return navigate(id);
     })
 
-    socket.on('inputs', inputs => {
-        inputsMap[socket.id] = inputs;
-    })
+    // socket.on('inputs', inputs => {
+    //     inputsMap[socket.id] = inputs;
+    // })
 
     socket.on('clear', () => {
         if (hub) {
@@ -2297,7 +2481,6 @@ io.on('connection', (socket) => {
                     sendMessage('leave', null, player.name + " a quitté la partie.");
                 }
             })
-
 
             return room();
         }

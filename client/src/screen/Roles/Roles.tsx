@@ -4,7 +4,6 @@ import "./Roles.css";
 import { ExtendedSocket, socketContext } from "../../context/socket";
 import { roles } from "../Game/Game";
 
-
 function Roles() {
 
     const socket = useContext<ExtendedSocket>(socketContext);

@@ -25,13 +25,13 @@ function Win({room, author, side}: props) {
                 {room?.players?.map((player, index) => (
                     <div key={index}>
                         {
-                            player?.role?.side === "village" && <p className="text-success">- {player.name} ({player.role?.name})</p>
+                            player?.role?.side === "village" && <span className="text-success">- {player.name} ({player.role?.name}) {player.isInfected && "(infecté)"}</span>
                         }
                         {
-                            player?.role?.side === "méchant" && <p className="text-danger">- {player.name} ({player.role?.name})</p>
+                            player?.role?.side === "méchant" && <span className="text-danger">- {player.name} ({player.role?.name}) {player.isInfected && "(infecté)"}</span>
                         }
                         {
-                            player?.role?.side === "seul" && <p className="text-warning">- {player.name} ({player.role?.name})</p>
+                            player?.role?.side === "seul" && <span className="text-warning">- {player.name} ({player.role?.name}) {player.isInfected && "(infecté)"}</span>
                         }
                     </div>
                 ))}

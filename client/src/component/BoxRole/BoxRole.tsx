@@ -1,16 +1,17 @@
 import { useContext, useState } from "react";
 import { ExtendedSocket, socketContext } from "../../context/socket";
-import Counter from "../Counter/Counter";
-import "./BoxRole.css";
 import Event, { event } from "../Event/Event";
 import Actor from "../Actor/Actor";
 import { roles } from "../../screen/Game/Game";
+import "./BoxRole.css";
 
 interface boxRole {
     description: string | undefined
     role: string | undefined
     victim: string | null | undefined
     name_function: string | undefined
+    type?: string
+    title?: string
     health?: boolean
     death?: boolean
     setYes?: boolean
@@ -20,7 +21,7 @@ interface boxRole {
     actor?: roles[]
 }
 
-function BoxRole({description, victim, name_function, health, death, setYes, setNo, eventsGypsy, actor, textarea}: boxRole) {
+function BoxRole({description, victim, name_function, type, title, health, death, setYes, setNo, eventsGypsy, actor, textarea}: boxRole) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
     const [textareaInput, setTextareaInput] = useState("");
@@ -31,11 +32,22 @@ function BoxRole({description, victim, name_function, health, death, setYes, set
         }
     }
 
+    function handleSubmit(bool: boolean) {
+        if (type === "event") {
+            return socket.emit('setRandomEvent', bool);
+        }
+
+        return socket.emit('set' + name_function, bool)
+    }
+
     return (
-        <div id="boxDialog" className="bg-dark card text-center lead p-3 m-auto">
-            <div className="card-header">
-                <Counter />
-            </div>
+        <div id="boxDialog" className="bg-dark card text-center lead m-auto">
+            {
+                title && 
+                <div className="card-header">
+                    <h2>{title}</h2>
+                </div>
+            }
             <div className="card-body">
                 <p>{description}</p>
                 {victim && <p><span className="fw-bold">{victim}</span> est mort cette nuit.</p>}
@@ -53,15 +65,15 @@ function BoxRole({description, victim, name_function, health, death, setYes, set
                         </div>
                     }
                     {
-                        setNo &&
-                        <div onClick={() => {socket.emit('set' + name_function, false)}} className="action-box">
-                            <span>{setNo}</span>
+                        setYes &&
+                        <div onClick={() => {handleSubmit(true)}} className="action-box">
+                            <span>{setYes}</span>
                         </div>
                     }
                     {
-                        setYes &&
-                        <div onClick={() => {socket.emit('set' + name_function, true)}} className="action-box">
-                            <span>{setYes}</span>
+                        setNo &&
+                        <div onClick={() => {handleSubmit(false)}} className="action-box">
+                            <span>{setNo}</span>
                         </div>
                     }
                     {
@@ -73,7 +85,7 @@ function BoxRole({description, victim, name_function, health, death, setYes, set
                     {
                         textarea &&
                         <div>
-                            <textarea name="" id="" className="form-control" value={textareaInput} placeholder="essayez de convaincre le village." onChange={(e) => { setTextareaInput(e.target.value) }} cols={60} rows={5}></textarea>
+                            <textarea className="form-control" value={textareaInput} placeholder="essayez de convaincre le village." onChange={(e) => { setTextareaInput(e.target.value) }} cols={60} rows={5}></textarea>
                             <button onClick={mayor} className="btn btn-primary mt-2">Postuler</button>
                         </div>
                     }

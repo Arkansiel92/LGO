@@ -11,7 +11,6 @@ interface props {
 function Cloud({nb, animationDelay, left, top}: props) {
 
     const style: CSSProperties = {
-        display: 'inline-block',
         position: 'absolute',
         left: left + "px",
         top: top + "px",
@@ -19,9 +18,7 @@ function Cloud({nb, animationDelay, left, top}: props) {
     }
 
     return (
-        <div>
-            <img style={style} className="cloud" src={`assets/img/sprites/cloud${nb}.png`} alt="cloud" />
-        </div>
+        <img style={style} className="cloud" src={`assets/img/sprites/cloud${nb}.png`} alt="cloud" />
     )
 };
 
