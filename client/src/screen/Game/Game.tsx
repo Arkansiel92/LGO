@@ -145,12 +145,10 @@ function Game() {
                 ? <img className='moon m-5' src="/assets/img/sprites/moon_full.png" alt="moon" />
                 : <img className='moon m-5' src="/assets/img/sprites/sun.png" alt="moon" />
             }
-            <Cloud nb={2} animationDelay={18} left={800} top={10} />
-            <Cloud nb={2} animationDelay={30} left={600} top={40} />
-            <Cloud nb={2} animationDelay={22} left={300} top={80} />
-            <Cloud nb={2} animationDelay={18} left={1200} top={30} />
+            <Cloud nb={2} animationDelay={18} left={50} top={10} />
+            <Cloud nb={2} animationDelay={30} left={150} top={12} />
+            <Cloud nb={2} animationDelay={18} left={10} top={6} />
             </div>
-
 
             {player?.isTurn && <BoxRole
                 description={boxRole?.description}

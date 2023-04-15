@@ -771,9 +771,9 @@ io.on('connection', (socket) => {
             return day();
         }
 
-        if (finishedBySide()) {
-            return sendMessage('server', null, "FIN DE LA PARTIE");
-        }
+        // if (finishedBySide()) {
+        //     return sendMessage('server', null, "FIN DE LA PARTIE");
+        // }
 
         let check = false;
 
@@ -1057,6 +1057,8 @@ io.on('connection', (socket) => {
         if (hub.nbTurn % 6 === 0 && !hub.randomEvents['title']) {
 
             let event = randomEvents[Math.floor(Math.random() * randomEvents.length)]
+
+            console.log(randomEvents);
 
             hub.step = "randomEvents";
             hub.randomEvents['title'] = event.title;
@@ -1560,6 +1562,8 @@ io.on('connection', (socket) => {
         } else {
             hub.randomEvents['responseNo'].push(player.name);
         }
+
+        console.log(hub.randomEvents);
 
         return room();
     })

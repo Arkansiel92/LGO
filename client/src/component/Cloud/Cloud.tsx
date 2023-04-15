@@ -12,8 +12,8 @@ function Cloud({nb, animationDelay, left, top}: props) {
 
     const style: CSSProperties = {
         position: 'absolute',
-        left: left + "px",
-        top: top + "px",
+        left: left + "vh",
+        top: top + "vh",
         animation: "clouds " + animationDelay + "s linear infinite"
     }
 

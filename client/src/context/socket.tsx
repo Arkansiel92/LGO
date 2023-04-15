@@ -6,8 +6,8 @@ export interface ExtendedSocket extends Socket {
     room?: string | null,
 }
 
-export const socket: ExtendedSocket = io('http://153.92.223.27:3001', {transports: ['websocket']});
-//export const socket: ExtendedSocket = io('http://localhost:3001', {transports: ['websocket']});
+//export const socket: ExtendedSocket = io('http://153.92.223.27:3001', {transports: ['websocket']});
+export const socket: ExtendedSocket = io('http://localhost:3001', {transports: ['websocket']});
 
 socket.name = '';
 socket.room = null;

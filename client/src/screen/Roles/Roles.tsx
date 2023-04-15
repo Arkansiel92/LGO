@@ -24,14 +24,19 @@ function Roles() {
         <div>
             <Navbar />
             <div className="my-3 container-fluid">
-                <h1 className="text-center">Rôles</h1>
+                <div className="align-items-center py-5 text-center">
+                    <h1 className="display-5 fw-bold text-body-emphasis lh-1 mb-3">
+                        Liste des rôles
+                    </h1>
+                    <p className="lead">La liste complète des rôles de Moonrise</p>
+                </div>
                 <div className="row">
                     <div className="col-3">
                         <h1>Rôle</h1>
                     </div>
                     <div className="col">
                         <h1>Description</h1>
-                        </div>
+                    </div>
                 </div>
                 {roles?.map((role: roles) => (
                     <div className={`row ${role.side} my-3`}>
