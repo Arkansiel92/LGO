@@ -97,6 +97,9 @@ function BoxRole({description, victim, name_function, type, title, health, death
                     }
                 </div>
             </div>
+            <div className="card-footer">
+                <button onClick={() => {handleSubmit(false)}} className="btn btn-lg btn-secondary">Ne rien faire</button>
+            </div>
         </div>
     )
 }

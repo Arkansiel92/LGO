@@ -17,8 +17,6 @@ interface role {
 
 function Role({ name, name_function, description, side, max, img, roleArray, author, inGame }: role) {
 
-    console.log(inGame);
-
     const socket = useContext<ExtendedSocket>(socketContext);
 
     const nbRole = roleArray?.filter((role) => {

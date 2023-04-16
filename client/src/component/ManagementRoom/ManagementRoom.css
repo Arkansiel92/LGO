@@ -4,6 +4,7 @@
     height: 100vh;
     min-height: 100%;
     transition: left 0.5s ease-in-out;
+    z-index: 1;
 }
 
 .sidebar-true {
@@ -12,6 +13,7 @@
     height: 100vh;
     min-height: 100%;
     transition: left 0.5s ease-in-out;
+    z-index: 1;
 }
 
 .container-roles {

@@ -11,7 +11,6 @@ function Roles() {
 
     socket.on('getRoles', (roles) => {
         setRoles(roles);
-        console.log(roles);
     })
 
     useEffect(() => {

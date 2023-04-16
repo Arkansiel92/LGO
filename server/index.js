@@ -1,16 +1,18 @@
 const express = require('express');
 const app = express();
-const https = require('https');
+const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const fs = require('fs');
 
 app.use(cors());
 
-const server = https.createServer({
-    key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
-    cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
-}, app);
+// const server = https.createServer({
+//     key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
+//     cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
+// }, app);
+
+const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
@@ -111,7 +113,7 @@ const roles = [
     {
         name: "Ancien du village",
         name_function: "OldMan",
-        description: "L’ancien possède deux vies durant la nuit. La première fois qu'il doit mourir, il en perd une. Le matin, il se réveille avec les autres, mais dévoile sa carte (la seconde fois qu’il est attaqué par les loups garous alors il meurt normalement). Si l’ancien est chassé du village par le vote des villageois il meurt directement et tous les rôles des villageois perdent leurs pouvoirs.",
+        description: "L’ancien possède deux vies durant la nuit. La première fois qu'il doit mourir, il en perd une. Le matin, il se réveille avec les autres, mais dévoile son rôle (la seconde fois qu’il est attaqué par les loups garous alors il meurt normalement). Si l’ancien est chassé du village par le vote des villageois il meurt directement et tous les rôles des villageois perdent leurs pouvoirs.",
         side: "village",
         step: null,
         descriptionInGame: null,
@@ -1061,8 +1063,6 @@ io.on('connection', (socket) => {
 
             let event = randomEvents[Math.floor(Math.random() * randomEvents.length)]
 
-            console.log(randomEvents);
-
             hub.step = "randomEvents";
             hub.randomEvents['title'] = event.title;
 
@@ -1184,7 +1184,7 @@ io.on('connection', (socket) => {
                 if (hub.horloger) {
                     time += 60;
                 } else {
-                    time -= 60;
+                    time = 10;
                 }
 
                 hub.horloger = null;
@@ -1562,11 +1562,13 @@ io.on('connection', (socket) => {
 
         if (bool) {
             hub.randomEvents['responseYes'].push(player.name);
+
+            sendMessage('server', null, player.name + " a voté pour.");
         } else {
             hub.randomEvents['responseNo'].push(player.name);
-        }
 
-        console.log(hub.randomEvents);
+            sendMessage('server', null, player.name + " a voté contre.");
+        }
 
         return room();
     })
