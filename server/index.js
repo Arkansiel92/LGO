@@ -139,7 +139,7 @@ const roles = [
         img: "card-idiot.svg",
     },
     {
-        name: "Pyromane",
+        name: "Joueur de flûte",
         name_function: "Flute",
         description: "Se réveille en dernier. Il peut charmer un joueur par tour qui deviendra charmé. Il gagne lorsque tous les joueurs en vie sont charmés.",
         side: "seul",
@@ -2129,7 +2129,7 @@ io.on('connection', (socket) => {
         player.isTurn = false;
 
         sendMessage("role", player.socket, "Vous avez charmé " + target.name + " cette nuit.");
-        sendMessage("role", target.socket, "Vous avez été charmé par le pyromane cette nuit.");
+        sendMessage("role", target.socket, "Vous avez été charmé par le Joueur de flûte cette nuit.");
 
         return room();
     })

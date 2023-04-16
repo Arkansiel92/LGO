@@ -51,13 +51,7 @@ function Home() {
     }, [socket, id])
 
     return (
-        <div style={{
-            backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/maps/background-game.svg'})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center bottom',
-            backgroundColor: "#87CEEB",
-            backgroundSize: "cover"
-        }}>
+        <div>
             {
                 loading && <div id="loader-home"></div>
             }
@@ -76,13 +70,13 @@ function Home() {
                     <div className="mt-5">
                         {
                             card === "create"
-                                ? <button className="btn btn-lg btn-primary rounded-pill mx-1">Créer une partie</button>
-                                : <button className="btn btn-lg btn-primary rounded-pill mx-1" onClick={() => { setCard('create') }}>Créer une partie</button>
+                                ? <button className="btn btn-lg btn-primary rounded-pill m-1">Créer une partie</button>
+                                : <button className="btn btn-lg btn-primary rounded-pill m-1" onClick={() => { setCard('create') }}>Créer une partie</button>
                         }
                         {
                             card === "join"
-                                ? <button className="btn btn-lg btn-primary rounded-pill mx-1">Rejoindre</button>
-                                : <button className="btn btn-lg btn-primary rounded-pill mx-1" onClick={() => { setCard('join') }}>Rejoindre</button>
+                                ? <button className="btn btn-lg btn-primary rounded-pill m-1">Rejoindre</button>
+                                : <button className="btn btn-lg btn-primary rounded-pill m-1" onClick={() => { setCard('join') }}>Rejoindre</button>
                         }
                     </div>
                     {
@@ -118,17 +112,17 @@ function Home() {
                     }
                 </div>
                 <div className="row container-fluid text-center my-5">
-                    <div className="col bg-dark rounded p-2 mx-3">
+                    <div className="col rounded p-2 mx-3">
                         <img src="assets/img/role/card-cupidon.svg" alt="" width={60} />
                         <h2><strong>Jouer à plusieurs</strong></h2>
                         <p className='lead'>Jouer jusqu'à 20 joueurs rapidement en rejoignant la partie avec un simple code. Un jeu qui rapproche les uns des autres et aide à développer l'esprit d'équipe !</p>
                     </div>
-                    <div className="col bg-dark rounded p-2 mx-3">
+                    <div className="col rounded p-2 mx-3">
                         <img src="assets/img/role/card-actor.svg" alt="" width={60} />
                         <h2><strong>30 rôles disponible</strong></h2>
                         <p className='lead'>Incarne l'un des 30 rôles disponible. De nombreux rôles dans cette version avec des nouveaux systèmes. Il est important de bien cerner les particularités techniques de chacun des rôles afin de réussir à gagner.</p>
                     </div>
-                    <div className="col bg-dark rounded p-2 mx-3">
+                    <div className="col rounded p-2 mx-3">
                         <img src="assets/img/role/card-hair.svg" alt="" width={60} />
                         <h2><strong>Simple et rapide</strong></h2>
                         <p className='lead'>Avec un pseudo et un code, vous pouvez rejoindre n'importe quelle partie et jouer directement sans attente ou création de compte.</p>

@@ -55,7 +55,7 @@ function Player({player, selfPlayer, step}: props) {
                     }
                     {player.name}
                 </div>
-                <img src="assets/img/sprites/playerBlue.png" className='mx-auto d-block' alt="" />
+                <img src="assets/img/sprites/player3.png" className='mx-auto d-block' alt="" />
             </div>
         }
         </div>
