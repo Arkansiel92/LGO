@@ -1,13 +1,16 @@
 const express = require('express');
 const app = express();
-const http = require('http');
+const https = require('https');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const fs = require('fs');
 
 app.use(cors());
 
-const server = http.createServer(app);
+const server = https.createServer({
+    key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/fullchain.pem"),
+}, app);
 
 const io = new Server(server, {
     cors: {
