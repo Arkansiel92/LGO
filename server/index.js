@@ -9,7 +9,7 @@ app.use(cors());
 
 const server = https.createServer({
     key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
-    cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/fullchain.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
 }, app);
 
 const io = new Server(server, {
