@@ -366,7 +366,7 @@ const roles = [
     {
         name: "Mentaliste",
         name_function: "Mental",
-        description: "Son objectif est de vaincre les Loups-Garous. Il peut percevoir l'issue du vote du village 30 secondes avant sa fin. 30 secondes avant la fin des votes, le Mentaliste reçoit un message lui indiquant si le vote se porte bien ou mal.",
+        description: "Son objectif est de vaincre les Loups-Garous. Il peut percevoir l'issue du vote du village. 30 secondes avant la fin des votes, le Mentaliste reçoit un message lui indiquant si le vote se porte bien ou mal.",
         side: "village",
         step: null,
         descriptionInGame: null,
@@ -666,31 +666,47 @@ io.on('connection', (socket) => {
     }
 
     function finishedBySide() {
-        let playerSideAlive = [];
+        let playerAlive = [];
         let check = false;
 
         hub.players.forEach(player => {
             if (!player.isDead) {
-                playerSideAlive.push(player.role.side);
+                playerAlive.push(player);
             }
         })
 
+        if (playerAlive.length === 2) {
+            if (playerAlive[0].isCouple && playerAlive[1].isCouple) {
+                hub.step = "overview";
+                hub.winner = "lovers";
+                room();
+                return true;
+            }
+
+            if (playerAlive[0].isSister && playerAlive[1].isSister) {
+                hub.step = "overview";
+                hub.winner = "sisters";
+                room();
+                return true;
+            }
+        }
+
         let side = null;
 
-        playerSideAlive.forEach((sideP) => {
+        playerAlive.forEach((p) => {
             if (!side) {
-                side = sideP;
+                side = p.role.side;
             } else {
-                if (side !== sideP) {
+                if (side !== p.role.side) {
                     check = true;
                 }
             }
         })
 
-        if (playerSideAlive.length === 0 || !check) {
+        if (playerAlive.length === 0 || !check) {
             hub.step = "overview";
 
-            if (playerSideAlive.length === 0) {
+            if (playerAlive.length === 0) {
                 hub.winner = "égalité";
             }
 
@@ -776,9 +792,9 @@ io.on('connection', (socket) => {
             return day();
         }
 
-        // if (finishedBySide()) {
-        //     return sendMessage('server', null, "FIN DE LA PARTIE");
-        // }
+        if (finishedBySide()) {
+            return sendMessage('server', null, "FIN DE LA PARTIE");
+        }
 
         let check = false;
 
@@ -789,7 +805,8 @@ io.on('connection', (socket) => {
                     if (!player.isDead && player.isPower) {
                         let data = {
                             description: player.role.descriptionInGame,
-                            victim: player.role.needVictim && hub.voteWolf ? getPlayer(hub.voteWolf).name : null
+                            victim: player.role.needVictim && hub.voteWolf ? getPlayer(hub.voteWolf).name : null,
+                            doNothing: true
                         }
 
                         if (player.role.name === "Sorcière") {
@@ -846,6 +863,7 @@ io.on('connection', (socket) => {
                         let data = {
                             description: "Vous pouvez tuer un joueur.",
                             role: player.role.name,
+                            doNothing: false
                         }
 
                         boxRole(player.socket, data);
@@ -892,10 +910,14 @@ io.on('connection', (socket) => {
 
         room();
 
-        return sendMessage("death", target.socket, "L'évènement vous a visé de plein fouet.");
+        return sendMessage("death", target.socket, "Vous entendez un langage ancien. Vous comprenez que la gitane est en train de lancer un envoûtement qui vous touche de plein fouet. Vous venez de mourir.");
     }
 
     function day() {
+        if (finishedBySide()) {
+            return sendMessage('server', null, "FIN DE LA PARTIE");
+        }
+
         if (hub.nbTurn === 1) {
             if (hub.roles.includes("Mercenaire")) {
                 let mercenary = getPlayerByRole("Mercenaire");
@@ -1053,10 +1075,15 @@ io.on('connection', (socket) => {
 
             hub.players.forEach((player) => {
                 player.isTurn = true;
-                boxRole(player.socket, { description: "Election du maire. Vous pouvez vous présenter.", textarea: true });
+                boxRole(player.socket, {
+                    title: "Election", 
+                    description: "Vous pouvez vous présenter.", 
+                    textarea: true, 
+                    doNothing: true 
+                });
             })
 
-            return time(20);
+            return time(120);
         }
 
         if (hub.nbTurn % 6 === 0 && !hub.randomEvents['title']) {
@@ -1074,14 +1101,14 @@ io.on('connection', (socket) => {
                 setNo: event.responseNo
             })
 
-            sendMessage('event', null, "Un évènement aléatoire");
+            sendMessage('event', null, "Un évènement aléatoire est déclenché");
 
             return time(45);
         }
 
         hub.step = "village";
 
-        boxRole(socket.room, { title: "Village", description: 'Vous pouvez voter pour exclure un joueur.' });
+        boxRole(socket.room, { title: "Village", description: 'Vous pouvez voter pour exclure un joueur.', doNothing: false });
 
         if (hub.roles.includes("L'Horloger")) {
             let player = getPlayerByRole('L\'Horloger');
@@ -1357,7 +1384,7 @@ io.on('connection', (socket) => {
                     }
                 })
 
-                sendMessage("death", null, "L'ancien du village a été exclu cette nuit. L'ancien, dans son dernier souffle, lance une malédiction qui annulent tous les pouvoirs des villageois.");
+                sendMessage("death", null, "L'ancien du village a été exclu cette nuit. Dans son dernier souffle, il lance une malédiction qui annulent tous les pouvoirs des villageois.");
             }
 
             if (target.isHair) {
@@ -2046,6 +2073,20 @@ io.on('connection', (socket) => {
     socket.on('setGypsy', (choice) => {
         let gypsy = getPlayer(socket.id);
 
+        if (choice === "Résurrection aveugle") {
+            let isDead = false;
+
+            hub.players.forEach(player => {
+                if (player.isDead) {
+                    isDead = true;
+                }
+            })
+
+            if (!isDead) {
+                return sendMessage('role', gypsy.socket, "Personne n'est encore mort dans le village.");
+            }
+        }
+
         gypsy.isPower = false;
         gypsy.isTurn = false;
 
@@ -2244,7 +2285,8 @@ io.on('connection', (socket) => {
                 sendMessage("server", null, "Le voleur décide du joueur à voler.");
                 thief.isTurn = true;
                 boxRole(thief.socket, {
-                    description: thief.role.descriptionInGame
+                    description: thief.role.descriptionInGame,
+                    doNothing: true
                 });
                 room();
                 return time(20);
@@ -2322,7 +2364,7 @@ io.on('connection', (socket) => {
     socket.on('join', ({ id, pseudo }) => {
 
         if (!io.sockets.adapter.rooms.get(id)) {
-            return socket.emit('alert', 'Ce lobby n\'existe pas !');
+            return socket.emit('alert', 'Ce lobby n\'existe pas ou a été supprimé !');
         }
 
         if (io.sockets.adapter.rooms.get(id).inGame) {
@@ -2332,8 +2374,8 @@ io.on('connection', (socket) => {
         const player = {
             name: pseudo,
             socket: socket.id,
-            x: getRandomNumber(500, 700),
-            y: getRandomNumber(400, 600),
+            x: getRandomNumber(20, 80),
+            y: getRandomNumber(70, 90),
             frameX: 0,
             frameY: 0,
             vote: null,
@@ -2393,8 +2435,8 @@ io.on('connection', (socket) => {
         hub.players = [{
             name: pseudo,
             socket: socket.id,
-            x: getRandomNumber(400, 600),
-            y: getRandomNumber(600, 800),
+            x: getRandomNumber(20, 80),
+            y: getRandomNumber(70, 90),
             frameX: 0,
             frameY: 0,
             vote: null,

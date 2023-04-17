@@ -16,9 +16,9 @@ function Mayor({candidates}: props) {
     }
 
     return (
-        <div className="text-center mt-5 d-flex w-100">
+        <div className="text-center" id="array-mayor">
             {candidates.map((candid) => (
-                <div onClick={() => vote(candid.name)} className="card-mayor card bg-dark m-auto">
+                <div onClick={() => vote(candid.name)} className="card-mayor card bg-dark m-1">
                     <div>
                         <div className="card-header">
                             <h5>{candid.name} ({candid.votes.length})</h5>
@@ -27,7 +27,7 @@ function Mayor({candidates}: props) {
                             <p className="lead"><span className="fw-bold">Discours :</span> {candid.content}</p>
                             {
                                 candid.votes.length === 0
-                                ? <p>Aucun vote</p>
+                                ? <p className="fst-italic">Aucun vote</p>
                                 : candid.votes.map((player) => (
                                     <p>{player}</p>
                                     ))

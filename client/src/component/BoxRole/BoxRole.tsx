@@ -17,11 +17,12 @@ interface boxRole {
     setYes?: boolean
     setNo?: boolean
     textarea?: boolean
+    doNothing: boolean | undefined
     eventsGypsy?: event[]
     actor?: roles[]
 }
 
-function BoxRole({description, victim, name_function, type, title, health, death, setYes, setNo, eventsGypsy, actor, textarea}: boxRole) {
+function BoxRole({description, victim, name_function, type, title, health, death, setYes, setNo, eventsGypsy, actor, textarea, doNothing}: boxRole) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
     const [textareaInput, setTextareaInput] = useState("");
@@ -97,9 +98,12 @@ function BoxRole({description, victim, name_function, type, title, health, death
                     }
                 </div>
             </div>
-            <div className="card-footer">
-                <button onClick={() => {handleSubmit(false)}} className="btn btn-lg btn-secondary">Ne rien faire</button>
-            </div>
+            {
+                doNothing &&
+                <div className="card-footer">
+                    <button onClick={() => {handleSubmit(false)}} className="btn btn-lg btn-secondary">Ne rien faire</button>
+                </div>
+            }
         </div>
     )
 }

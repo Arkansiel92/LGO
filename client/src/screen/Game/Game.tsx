@@ -94,6 +94,7 @@ interface boxRole {
     setYes?: boolean
     setNo?: boolean
     textarea?: boolean
+    doNothing: boolean
     eventsGypsy?: event[]
     actor?: roles[]
 }
@@ -163,7 +164,8 @@ function Game() {
                 setNo={boxRole?.setNo}
                 eventsGypsy={boxRole?.eventsGypsy}
                 actor={boxRole?.actor} 
-                textarea={boxRole?.textarea} />}
+                textarea={boxRole?.textarea}
+                doNothing={boxRole?.doNothing} />}
 
 
             <ManagementRoom room={room} player={player} inGame={room?.inGame} sideBar={sideBar} />

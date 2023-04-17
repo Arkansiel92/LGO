@@ -41,7 +41,7 @@ function Role({ name, name_function, description, side, max, img, roleArray, aut
     }
 
     return (
-        <div className={`p-2 my-4 mx-1 ${side} row`}>
+        <div className={`p-2 my-3 mx-1 ${side} row`}>
             <div className="d-flex align-items-center justify-content-between">
                 <div className="d-flex">
                     <h4 className="fw-bold">{name}</h4>

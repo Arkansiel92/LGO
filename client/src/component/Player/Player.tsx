@@ -16,8 +16,8 @@ function Player({player, selfPlayer, step}: props) {
     const style: CSSProperties = {
         display: 'inline-block',
         position: 'absolute',
-        left: player.x,
-        top: player.y - 10,
+        left: player.x + "%",
+        top: player.y + "%",
         fontSize: "20px",
         cursor: selfPlayer?.isTurn ? 'pointer' : 'default'
     }
