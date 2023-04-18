@@ -16,7 +16,7 @@ const server = https.createServer({
 
 const io = new Server(server, {
     cors: {
-        origin: "https://localhost:3000",
+        origin: "*",
         method: ["GET", "POST"]
     }
 });
