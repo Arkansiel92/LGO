@@ -6,7 +6,10 @@ export interface ExtendedSocket extends Socket {
     room?: string | null,
 }
 
-export const socket: ExtendedSocket = io('wss://' + window.location.host +'/', {transports: ['websocket']});
+console.log(window.location.host);
+
+
+export const socket: ExtendedSocket = io('https://moonrise-game.fr:3001/', {transports: ['websocket']});
 //export const socket: ExtendedSocket = io('http://localhost:3001', {transports: ['websocket']});
 
 socket.name = '';

@@ -461,6 +461,8 @@ const inputsMap = {};
 let interval;
 
 io.on('connection', (socket) => {
+    console.log(socket.id);
+
     let hub = io.sockets.adapter.rooms.get(socket.room);
 
     // function tick() {
