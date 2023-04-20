@@ -107,6 +107,10 @@ function Game() {
     const [sideBar, setSideBar] = useState<boolean>(true);
     const socket = useContext<ExtendedSocket>(socketContext);
 
+    const handleSidebarChange = (bool: boolean) => {
+        setSideBar(bool);
+    }
+
     socket.on('getRoom', room => {
         setRoom(room);
 
@@ -133,8 +137,6 @@ function Game() {
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center bottom',
             backgroundColor: room?.night ? "#23323D" : "#87CEEB",
-            width: window.innerWidth,
-            height: window.innerHeight
           }}>
             <div id="loader"></div>
             
@@ -168,7 +170,14 @@ function Game() {
                 doNothing={boxRole?.doNothing} />}
 
 
-            <ManagementRoom room={room} player={player} inGame={room?.inGame} sideBar={sideBar} />
+            <ManagementRoom room={room} player={player} inGame={room?.inGame} sideBar={sideBar} handleChange={handleSidebarChange} />
+
+            {
+                sideBar === false && 
+                <button onClick={() => {setSideBar(true)}} className='btn-sidebar m-3 p-2 position-absolute rounded-pill'>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="25" width="25"><g><line x1="4" y1="7" x2="10" y2="7" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></line><polyline points="8.5 5.5 10 7 8.5 8.5" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></polyline><circle cx="7" cy="7" r="6.5" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></circle></g></svg>
+                </button>
+            }
 
             {room?.players?.map((p: player, index: number) => (
                 <Player
@@ -181,9 +190,6 @@ function Game() {
             <div className="game-screen">
                 <div className="container-fluid">
                     {room?.step === "overview" && <Win room={room} author={room?.author} side={player?.role?.side} />}
-                    <div className="text-end">
-                        <button className="btn btn-info mt-5" onClick={() => { setSideBar(!sideBar) }}>Rôles & Messages</button>
-                    </div>
                     {
                         room?.step === "village" && <Votes players={room?.players} />
                     }
@@ -194,10 +200,10 @@ function Game() {
                         {
                             !room?.inGame &&
                             <div>
-                                <div onClick={() => { navigator.clipboard.writeText(window.location.host + "?id=" + id) }} className='id-room my-5 p-3 w-25 m-auto' data-bs-toggle="tooltip" data-bs-placement="top" title="copier le lien" data-bs-custom-class="tooltip">
+                                <div onClick={() => { navigator.clipboard.writeText("https://" + window.location.host + "?id=" + id) }} className='id-room my-5 p-3 w-25 m-auto' data-bs-toggle="tooltip" data-bs-placement="top" title="copier le lien" data-bs-custom-class="tooltip">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
                                     <span className='mx-2'>
-                                        {window.location.host}?id={id}
+                                        https://{window.location.host}?id={id}
                                     </span>
                                 </div>
                                 <div className='w-25 m-auto my-5'>

@@ -10,9 +10,10 @@ interface props {
     player: player | undefined
     inGame: boolean | undefined
     sideBar: boolean
+    handleChange : (bool: boolean) => void
 }
 
-function ManagementRoom({ room, player, inGame, sideBar }: props) {
+function ManagementRoom({ room, player, inGame, sideBar, handleChange }: props) {
 
     const [roleScreen, setRoleScreen] = useState(false);
     const [roles, setRoles] = useState<roles[] | null>(null);
@@ -32,7 +33,7 @@ function ManagementRoom({ room, player, inGame, sideBar }: props) {
     return (
         <div className={`col-md-3 sidebar-${sideBar} p-2`}>
             <div className="my-3 d-flex justify-content-around">
-                <button className='btn-home mt-4' onClick={() => (setRoleScreen(false))}>
+                <button className='btn-home' onClick={() => (setRoleScreen(false))}>
                     <div className='d-flex justify-content-around align-items-center'>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="3.5" cy="7" r="0.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><circle cx="6.75" cy="7" r="0.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><circle cx="10" cy="7" r="0.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><path d="M7,.5A6.5,6.5,0,0,0,1.59,10.6L.5,13.5l3.65-.66A6.5,6.5,0,1,0,7,.5Z" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
                         <span className="mx-2">
@@ -40,13 +41,16 @@ function ManagementRoom({ room, player, inGame, sideBar }: props) {
                         </span>
                     </div>
                 </button>
-                <button className='btn-home mt-4' onClick={() => (setRoleScreen(true))}>
+                <button className='btn-home' onClick={() => (setRoleScreen(true))}>
                     <div className='d-flex justify-content-around align-items-center'>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="5" cy="2.75" r="2.25" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><path d="M3.5,12.5H.5V11A4.51,4.51,0,0,1,7,7" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></path><polygon points="13.5 8.5 8.79 13.21 6.66 13.5 6.96 11.37 11.66 6.66 13.5 8.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></polygon></g></svg>
                         <span className="mx-2">
                             Rôles
                         </span>
                     </div>
+                </button>
+                <button className="btn-sidebar" onClick={() => {handleChange(false)}}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="25" width="25"><g><line x1="10" y1="7" x2="4" y2="7" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></line><polyline points="5.5 5.5 4 7 5.5 8.5" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></polyline><circle cx="7" cy="7" r="6.5" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></circle></g></svg>
                 </button>
             </div>
             {

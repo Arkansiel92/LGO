@@ -1,18 +1,19 @@
 const express = require('express');
 const app = express();
 const https = require('https');
+const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const fs = require('fs');
 
 app.use(cors());
 
-const server = https.createServer({
-    key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
-    cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
-}, app);
+// const server = https.createServer({
+//     key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
+//     cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
+// }, app);
 
-//const server = http.createServer(app);
+const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
@@ -2507,7 +2508,13 @@ io.on('connection', (socket) => {
                 if (player.socket === socket.id) {
                     hub.players.splice(index, 1);
                     hub.votes.splice(index, 1);
+                    
                     socket.leave(room);
+
+                    if (player.isMayor) {
+                        hub.players[0].isMayor = true;
+                    }
+
                     sendMessage('leave', null, player.name + " a quitté la partie.");
                 }
             })
@@ -2526,7 +2533,13 @@ io.on('connection', (socket) => {
                 if (player.socket === socket.id) {
                     hub.players.splice(index, 1);
                     hub.votes.splice(index, 1);
+                    
                     socket.leave(room);
+
+                    if (player.isMayor) {
+                        hub.players[0].isMayor = true;
+                    }
+
                     sendMessage('leave', null, player.name + " a quitté la partie.");
                 }
             })
