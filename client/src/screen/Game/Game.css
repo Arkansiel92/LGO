@@ -1,5 +1,7 @@
-.game-screen {
-    height: 100%;
+@media screen and (max-width: 480px) {
+    #container {
+        min-width: 100vh;
+    }
 }
 
 .id-room {
@@ -21,11 +23,8 @@
 }
 
 #container {
-    height: 100%;
-    width: 100%;
-    left: 0;
-    top: 0;
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: auto;
     position: fixed;
 }
 

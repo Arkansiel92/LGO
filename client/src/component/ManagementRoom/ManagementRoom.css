@@ -1,9 +1,9 @@
 .sidebar-false {
     position: fixed;
-    left: -100%;
+    left: -300%;
     height: 100vh;
     min-height: 100%;
-    transition: left 0.5s ease-in-out;
+    transition: left 0.7s ease-in-out;
     z-index: 1;
 }
 
@@ -12,7 +12,7 @@
     left: 0;
     height: 100vh;
     min-height: 100%;
-    transition: left 0.5s ease-in-out;
+    transition: left 0.7s ease-in-out;
     z-index: 1;
 }
 

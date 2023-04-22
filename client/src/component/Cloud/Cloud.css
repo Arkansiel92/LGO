@@ -1,7 +1,7 @@
 @media screen and (max-width: 480px) {
-	.cloud {
+	/* .cloud {
 		display: none;
-	}
+	} */
 }
 
 @keyframes clouds {

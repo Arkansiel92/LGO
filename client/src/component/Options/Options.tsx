@@ -33,7 +33,7 @@ function Options({ room }: props) {
                 socket.id === room?.author &&
                 <div>
                     {
-                        room?.players?.length === room?.roles?.length
+                        room?.players?.length === room?.roles?.length && room?.players?.length > 2
                             ? <button className="btn w-50 m-auto btn-success btn-lg my-3" onClick={() => { socket.emit('inGame') }}>Lancer la partie</button>
                             : <button className="btn w-50 m-auto btn-success btn-lg my-3" disabled>Lancer la partie</button>
                     }

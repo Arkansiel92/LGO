@@ -45,6 +45,9 @@ function Player({player, selfPlayer, step}: props) {
             <div style={style} onClick={handleSubmit} className='position-absolute'>
                 <div className="d-flex align-items-center rounded p-1 my-1" id="player-banner">
                     {
+                        player.isCouple && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><path d="M7,12.45l-5.52-5c-3-3,1.41-8.76,5.52-4.1,4.11-4.66,8.5,1.12,5.52,4.1Z" fill="none" stroke="#336c87" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    }
+                    {
                         player.isMayor && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><path d="M13.5,4l-3,3L7,2,3.5,7,.5,4v6.5A1.5,1.5,0,0,0,2,12H12a1.5,1.5,0,0,0,1.5-1.5Z" fill="none" stroke="#ffec00" strokeLinecap="round" strokeLinejoin="round"></path></svg>
                     }
                     {

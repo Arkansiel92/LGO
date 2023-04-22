@@ -31,7 +31,7 @@ function ManagementRoom({ room, player, inGame, sideBar, handleChange }: props) 
     }, [socket, roles])
 
     return (
-        <div className={`col-md-3 sidebar-${sideBar} p-2`}>
+        <div className={`col-md-3 sidebar-${sideBar} px-2`}>
             <div className="my-3 d-flex justify-content-around">
                 <button className='btn-home' onClick={() => (setRoleScreen(false))}>
                     <div className='d-flex justify-content-around align-items-center'>

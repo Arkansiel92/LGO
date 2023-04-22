@@ -131,26 +131,31 @@ function Game() {
         }
     }, [socket, room]);
 
+    const style = {
+        backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/maps/background-game.svg'})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%',
+        backgroundColor: room?.night ? "#23323D" : "#87CEEB",
+    }
+
     return (
-        <div id="container" style={{ 
-            backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/maps/background-game.svg'})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center bottom',
-            backgroundColor: room?.night ? "#23323D" : "#87CEEB",
-          }}>
+        <div id="container" style={style}>
             <div id="loader"></div>
-            
+
             <Topbar room={room} player={player} />
 
             <div className='position-absolute'>
-            {
-                room?.night 
-                ? <img className='moon m-5' src="/assets/img/sprites/moon_full.png" alt="moon" />
-                : <img className='moon m-5' src="/assets/img/sprites/sun.png" alt="moon" />
-            }
-            <Cloud nb={2} animationDelay={18} left={50} top={10} />
-            <Cloud nb={2} animationDelay={30} left={150} top={12} />
-            <Cloud nb={2} animationDelay={18} left={10} top={6} />
+                {
+                    room?.night
+                        ? <img className='moon m-5' src="/assets/img/sprites/moon_full.png" alt="moon" />
+                        : <img className='moon m-5' src="/assets/img/sprites/sun.png" alt="moon" />
+                }
+                <Cloud nb={2} animationDelay={18} left={50} top={10} />
+                <Cloud nb={2} animationDelay={30} left={150} top={12} />
+                <Cloud nb={2} animationDelay={18} left={10} top={6} />
             </div>
 
             {player?.isTurn && <BoxRole
@@ -165,7 +170,7 @@ function Game() {
                 setYes={boxRole?.setYes}
                 setNo={boxRole?.setNo}
                 eventsGypsy={boxRole?.eventsGypsy}
-                actor={boxRole?.actor} 
+                actor={boxRole?.actor}
                 textarea={boxRole?.textarea}
                 doNothing={boxRole?.doNothing} />}
 
@@ -173,19 +178,19 @@ function Game() {
             <ManagementRoom room={room} player={player} inGame={room?.inGame} sideBar={sideBar} handleChange={handleSidebarChange} />
 
             {
-                sideBar === false && 
-                <button onClick={() => {setSideBar(true)}} className='btn-sidebar m-3 p-2 position-absolute rounded-pill'>
+                sideBar === false &&
+                <button onClick={() => { setSideBar(true) }} className='btn-sidebar m-3 p-2 position-absolute rounded-pill'>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="25" width="25"><g><line x1="4" y1="7" x2="10" y2="7" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></line><polyline points="8.5 5.5 10 7 8.5 8.5" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></polyline><circle cx="7" cy="7" r="6.5" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></circle></g></svg>
                 </button>
             }
 
             {room?.players?.map((p: player, index: number) => (
                 <Player
-                player={p}
-                selfPlayer={player}
-                step={room?.step}
-                key={index} />
-                ))}
+                    player={p}
+                    selfPlayer={player}
+                    step={room?.step}
+                    key={index} />
+            ))}
 
             <div className="game-screen">
                 <div className="container-fluid">
