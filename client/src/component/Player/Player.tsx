@@ -24,16 +24,14 @@ function Player({player, selfPlayer, step}: props) {
 
     const handleSubmit = () => {
         if (selfPlayer?.isTurn) {
-            if (step !== "werewolf" && step !== "village") {
-                socket.emit('set' + selfPlayer?.role?.name_function, player.socket);
-            } 
-            
             if (step === "village" && selfPlayer?.isVote) {
                 socket.emit('voteVillage', player.socket);
-            }
-
-            if (step === "werewolf") {
+            } else if (step === "werewolf") {
                 socket.emit('voteWolf', player.socket);
+            } else if (step === "mayor") {
+                socket.emit('setParkerRanger', player.socket)
+            } else {
+                socket.emit('set' + selfPlayer?.role?.name_function, player.socket);
             }
         }
     }
@@ -45,7 +43,13 @@ function Player({player, selfPlayer, step}: props) {
             <div style={style} onClick={handleSubmit} className='position-absolute'>
                 <div className="d-flex align-items-center rounded p-1 my-1" id="player-banner">
                     {
-                        player.isCouple && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><path d="M7,12.45l-5.52-5c-3-3,1.41-8.76,5.52-4.1,4.11-4.66,8.5,1.12,5.52,4.1Z" fill="none" stroke="#336c87" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                        player.isParkRanger && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M7.36,13.43h0a1,1,0,0,1-.72,0h0a9.67,9.67,0,0,1-6.14-9V1.5a1,1,0,0,1,1-1h11a1,1,0,0,1,1,1V4.42A9.67,9.67,0,0,1,7.36,13.43Z" fill="none" stroke="#0b6ea8" strokeLinecap="round" strokeLinejoin="round"></path><rect x="4.5" y="5.5" width="5" height="4" rx="1" fill="none" stroke="#0b6ea8" strokeLinecap="round" strokeLinejoin="round"></rect><path d="M8.5,5.5v-1a1.5,1.5,0,1,0-3,0v1" fill="none" stroke="#0b6ea8" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
+                    }
+                    {
+                        (player.isCouple && selfPlayer?.isCouple) && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><path d="M7,12.45l-5.52-5c-3-3,1.41-8.76,5.52-4.1,4.11-4.66,8.5,1.12,5.52,4.1Z" fill="none" stroke="#336c87" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                    }
+                    {
+                        (player.isSister && selfPlayer?.isSister) && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="5" cy="3.75" r="2.25" fill="none" stroke="#5e0472" strokeLinecap="round" strokeLinejoin="round"></circle><path d="M9.5,13.5H.5v-1a4.5,4.5,0,0,1,9,0Z" fill="none" stroke="#5e0472" strokeLinecap="round" strokeLinejoin="round"></path><path d="M9,1.5A2.25,2.25,0,0,1,9,6" fill="none" stroke="#5e0472" strokeLinecap="round" strokeLinejoin="round"></path><path d="M10.6,8.19a4.5,4.5,0,0,1,2.9,4.2V13.5H12" fill="none" stroke="#5e0472" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
                     }
                     {
                         player.isMayor && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><path d="M13.5,4l-3,3L7,2,3.5,7,.5,4v6.5A1.5,1.5,0,0,0,2,12H12a1.5,1.5,0,0,0,1.5-1.5Z" fill="none" stroke="#ffec00" strokeLinecap="round" strokeLinejoin="round"></path></svg>

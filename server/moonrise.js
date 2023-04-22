@@ -8,12 +8,12 @@ const fs = require('fs');
 
 app.use(cors());
 
-const server = https.createServer({
-    key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
-    cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
-}, app);
+// const server = https.createServer({
+//     key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
+//     cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
+// }, app);
 
-//const server = http.createServer(app);
+const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
@@ -419,40 +419,40 @@ const randomEvents = [
             return hub;
         }
     },
-    // {
-    //     title: "Les voyageurs",
-    //     description: "une troupe de voyageurs arrive au village. Ils sont riches et bien habillés, et offrent au village une grande quantité d'argent pour les héberger pendant leur séjour.",
-    //     responseYes: "Les héberger pendant quelques jours",
-    //     responseNo: "Refuser leur proposition et les chasser du village",
-    //     messageYes: "Le village décide d'héberger la troupe de voyageur pendant quelques jours. Après quelques jours à sympathiser et rigoler avec eux, les villageois remarquent leur absence un beau matin. Ils apprennent plus tard que c'était une bonne de voleur connu qui jouait de leurs charmes pour dévaliser les villages.",
-    //     messageNo: "Peu de temps avant leur venu, les gardes avaient averti le village qu'un groupe d'escorcs était dans les parages. En comprenant que c'était bien eux, ils appelairent les gardes.",
-    //     function: function(hub, choice) {
-    //         if (choice) {
-    //             // mauvais choix
-    //         } else {
-    //             // bon choix
-    //         }
+    {
+        title: "Les voyageurs",
+        description: "une troupe de voyageurs arrive au village. Ils sont riches et bien habillés, et offrent au village une grande quantité d'argent pour les héberger pendant leur séjour.",
+        responseYes: "Les héberger pendant quelques jours",
+        responseNo: "Refuser leur proposition et les chasser du village",
+        messageYes: "Le village décide d'héberger la troupe de voyageur pendant quelques jours. Après quelques jours à sympathiser et rigoler avec eux, les villageois remarquent leur absence un beau matin. Ils apprennent plus tard que c'était une bonne de voleur connu qui jouait de leurs charmes pour dévaliser les villages.",
+        messageNo: "Peu de temps avant leur venu, les gardes avaient averti le village qu'un groupe d'escorcs était dans les parages. En comprenant que c'était bien eux, ils appelairent les gardes.",
+        function: function(hub, choice) {
+            if (choice) {
+                // mauvais choix
+            } else {
+                // bon choix
+            }
 
-    //         return hub;
-    //     }
-    // },
-    // {
-    //     title: "La vagabonde",
-    //     description: "Un jour, une belle jeune femme arrive au village. Elle est enceinte et cherche un endroit pour se reposer et se nourrir.",
-    //     responseYes: "L'accueillir au sein du village pendant quelques temps",
-    //     responseNo: "La refuser, et lui demander de partir sur le champ",
-    //     messageYes: "Le village décide de l'accueillir au sein du village pour lui permettre de se reposer. elle y reste quelques jours et aide le village et ses membres à se développer. A son départ, il utilise une magie ancienne qui permet au village de recouvrir ses pouvoirs perdus (Tous les membres du village recouvre leurs pouvoirs pour le tour suivant)",
-    //     messageNo: "Le village décide de ne pas accéder à sa requête et lui demande de partir. Peu avant son départ, elle marmonne des mots obscurs. Quelques jours plus tard, l'entièreté du village ne se sens pas bien et comprend que la femme leur a lancé un sort. (Tous les membres du village perdent leurs pouvoirs pour le tour suivant)",
-    //     function: function(hub, choice) {
-    //         if (choice) {
-    //             // bon choix
-    //         } else {
-    //             // mauvais choix
-    //         }
+            return hub;
+        }
+    },
+    {
+        title: "La vagabonde",
+        description: "Un jour, une belle jeune femme arrive au village. Elle est enceinte et cherche un endroit pour se reposer et se nourrir.",
+        responseYes: "L'accueillir au sein du village pendant quelques temps",
+        responseNo: "La refuser, et lui demander de partir sur le champ",
+        messageYes: "Le village décide de l'accueillir au sein du village pour lui permettre de se reposer. elle y reste quelques jours et aide le village et ses membres à se développer. A son départ, il utilise une magie ancienne qui permet au village de recouvrir ses pouvoirs perdus (Tous les membres du village recouvre leurs pouvoirs pour le tour suivant)",
+        messageNo: "Le village décide de ne pas accéder à sa requête et lui demande de partir. Peu avant son départ, elle marmonne des mots obscurs. Quelques jours plus tard, l'entièreté du village ne se sens pas bien et comprend que la femme leur a lancé un sort. (Tous les membres du village perdent leurs pouvoirs pour le tour suivant)",
+        function: function(hub, choice) {
+            if (choice) {
+                // bon choix
+            } else {
+                // mauvais choix
+            }
 
-    //         return hub;
-    //     }
-    // }
+            return hub;
+        }
+    }
 ]
 
 const TICK_RATE = 30;
@@ -462,8 +462,6 @@ const inputsMap = {};
 let interval;
 
 io.on('connection', (socket) => {
-    console.log(socket.id);
-
     let hub = io.sockets.adapter.rooms.get(socket.room);
 
     // function tick() {
@@ -864,6 +862,7 @@ io.on('connection', (socket) => {
                         player.isTurn = true;
 
                         let data = {
+                            title: "Loup-garou",
                             description: "Vous pouvez tuer un joueur.",
                             role: player.role.name,
                             doNothing: false
@@ -887,6 +886,7 @@ io.on('connection', (socket) => {
 
     function triggerEvent() {
         let target = getRandomPlayer();
+        let str;
 
         if (hub.event.name === "Résurrection aveugle") {
 
@@ -895,6 +895,8 @@ io.on('connection', (socket) => {
             }
 
             target.isDead = false;
+
+            str = "Vous venez d'être ressucité";
 
             sendMessage("server", null, "Evènement : un joueur a été réanimé.");
 
@@ -906,6 +908,8 @@ io.on('connection', (socket) => {
 
             target.isDead = true;
 
+            str = "Vous venez de mourir";
+
             sendMessage("server", null, "Evènement : un joueur a été tué.");
         }
 
@@ -913,7 +917,7 @@ io.on('connection', (socket) => {
 
         room();
 
-        return sendMessage("death", target.socket, "Vous entendez un langage ancien. Vous comprenez que la gitane est en train de lancer un envoûtement qui vous touche de plein fouet. Vous venez de mourir.");
+        return sendMessage("role", target.socket, "Vous entendez un langage ancien. Vous comprenez que la gitane est en train de lancer un envoûtement qui vous touche de plein fouet.. " + str);
     }
 
     function day() {
@@ -1089,29 +1093,33 @@ io.on('connection', (socket) => {
             return time(120);
         }
 
-        if (hub.nbTurn % 6 === 0 && !hub.randomEvents['title']) {
+        // if (hub.nbTurn % 6 === 0 && !hub.randomEvents['title']) {
 
-            let event = randomEvents[Math.floor(Math.random() * randomEvents.length)]
+        //     let event = randomEvents[Math.floor(Math.random() * randomEvents.length)]
 
-            hub.step = "randomEvents";
-            hub.randomEvents['title'] = event.title;
+        //     hub.step = "randomEvents";
+        //     hub.randomEvents['title'] = event.title;
 
-            boxRole(socket.room, {
-                type: "event",
-                title: event.title,
-                description: event.description,
-                setYes: event.responseYes,
-                setNo: event.responseNo
-            })
+        //     boxRole(socket.room, {
+        //         type: "event",
+        //         title: event.title,
+        //         description: event.description,
+        //         setYes: event.responseYes,
+        //         setNo: event.responseNo
+        //     })
 
-            sendMessage('event', null, "Un évènement aléatoire est déclenché");
+        //     sendMessage('event', null, "Un évènement aléatoire est déclenché");
 
-            return time(45);
-        }
+        //     return time(45);
+        // }
 
         hub.step = "village";
 
-        boxRole(socket.room, { title: "Village", description: 'Vous pouvez voter pour exclure un joueur.', doNothing: false });
+        boxRole(socket.room, { 
+            title: "Village",
+            description: 'Vous pouvez voter pour exclure un joueur.',
+            doNothing: false 
+        });
 
         if (hub.roles.includes("L'Horloger")) {
             let player = getPlayerByRole('L\'Horloger');
@@ -1305,9 +1313,9 @@ io.on('connection', (socket) => {
                     return voteMayor();
                 }
 
-                if (hub.step === "randomEvents") {
-                    return events();
-                }
+                // if (hub.step === "randomEvents") {
+                //     return events();
+                // }
 
                 if (hub.step === "village") {
                     return voteVillagers();
@@ -1513,8 +1521,16 @@ io.on('connection', (socket) => {
     function voteMayor() {
         setIsTurnRoom(false);
 
-        let target = null;
+        console.log('test');
+
+        let target;
+        let socketMayor;
         let count = 0;
+        let data = {
+            title: "Garde-champêtre",
+            description: "Désignez un garde-champêtre.",
+            doNothing: false
+        }
 
         hub.mayorDialog.forEach((dialog) => {
             if (dialog.votes.length > count) {
@@ -1533,30 +1549,37 @@ io.on('connection', (socket) => {
             }
         });
 
-        if (!equality && target) {
-            let player = getPlayer(target);
-
-            player.isMayor = true;
-            hub.mayor = player.socket;
-        } else {
-            let index = Math.floor(Math.random() * hub.players.length);
-
-            hub.players[index].isMayor = true;
-            hub.mayor = hub.players[index].socket;
-        }
-
         if (count === 0) {
             let index = Math.floor(Math.random() * hub.players.length);
 
             hub.players[index].isMayor = true;
+            hub.players[index].isTurn = true;
             hub.mayor = hub.players[index].socket;
+
+            socketMayor = hub.players[index].socket;
         }
 
-        hub.step = "day";
+        if (!equality && target) {
+            let player = getPlayer(target);
+
+            player.isMayor = true;
+            player.isTurn = true;
+            hub.mayor = player.socket;
+
+            socketMayor = player.socket;
+        } else {
+            let index = Math.floor(Math.random() * hub.players.length);
+
+            hub.players[index].isMayor = true;
+            hub.players[index].isTurn = true;
+            hub.mayor = hub.players[index].socket;
+
+            socketMayor = hub.players[index].socket;
+        }
 
         room();
 
-        return day();
+        return boxRole(socketMayor, data);
     }
 
     socket.on("voteMayor", name => {
@@ -1585,6 +1608,20 @@ io.on('connection', (socket) => {
         dialog.votes.push(player.name);
 
         return room();
+    })
+
+    socket.on('setParkerRanger', (targetID) => {
+        let player = getPlayer(targetID);
+
+        player.isParkRanger = true;
+
+        sendMessage('server', null, player.name + " devient Garde-champêtre jusqu'à ce que le maire le remplace.");
+
+        hub.step = "day";
+
+        room();
+
+        return day();
     })
 
     socket.on('setRandomEvent', bool => {
@@ -1620,6 +1657,7 @@ io.on('connection', (socket) => {
             player.isHair = false
             player.isActor = false
             player.isScapegoat = false
+            player.isParkRanger = false
         })
 
         hub.roles = [];
@@ -2396,6 +2434,7 @@ io.on('connection', (socket) => {
             isHair: false,
             isActor: false,
             isScapegoat: false,
+            isParkRanger: false
         }
 
         // inputsMap[socket.id] = {
@@ -2457,6 +2496,7 @@ io.on('connection', (socket) => {
             isHair: false,
             isActor: false,
             isScapegoat: false,
+            isParkRanger: false
         }];
         hub.sockets = [socket.id];
         hub.roles = [];

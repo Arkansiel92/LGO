@@ -48,6 +48,7 @@ export interface player {
     isRaven: boolean,
     isProtected: boolean,
     isInfected: boolean,
+    isParkRanger: boolean,
     healthPotion: boolean,
     deathPotion: boolean
 }
