@@ -1050,8 +1050,7 @@ io.on('connection', (socket) => {
             }
         }
 
-        //time(120);
-        time(10);
+        time(120);
 
         return room();
     }
