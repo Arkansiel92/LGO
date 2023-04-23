@@ -6,12 +6,13 @@ import './Game.css';
 import Player from '../../component/Player/Player';
 import Topbar from '../../component/Topbar/Topbar';
 import BoxRole from '../../component/BoxRole/BoxRole';
-import { event } from '../../component/Event/Event';
+import { eventGypsy } from '../../component/EventGypsy/EventGypsy';
 import Votes from '../../component/Votes/Votes';
 import Cloud from '../../component/Cloud/Cloud';
 import Mayor from '../../component/Mayor/Mayor';
 import Options from '../../component/Options/Options';
 import Win from '../../component/Win/Win';
+import { eventParkRanger } from '../../component/EventParkRanger/EventParkRanger';
 
 type Params = {
     id: string
@@ -96,7 +97,8 @@ interface boxRole {
     setNo?: boolean
     textarea?: boolean
     doNothing: boolean
-    eventsGypsy?: event[]
+    eventsGypsy?: eventGypsy[]
+    eventsParkRanger?: eventParkRanger[]
     actor?: roles[]
 }
 
@@ -171,6 +173,7 @@ function Game() {
                 setYes={boxRole?.setYes}
                 setNo={boxRole?.setNo}
                 eventsGypsy={boxRole?.eventsGypsy}
+                eventsParkRanger={boxRole?.eventsParkRanger}
                 actor={boxRole?.actor}
                 textarea={boxRole?.textarea}
                 doNothing={boxRole?.doNothing} />}

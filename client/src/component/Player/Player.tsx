@@ -23,13 +23,17 @@ function Player({player, selfPlayer, step}: props) {
     }
 
     const handleSubmit = () => {
+        console.log(step);
+        
         if (selfPlayer?.isTurn) {
-            if (step === "village" && selfPlayer?.isVote) {
+            if ((step === "village" && selfPlayer?.isVote) || (step === "parkRanger" && selfPlayer?.isVote)) {
                 socket.emit('voteVillage', player.socket);
             } else if (step === "werewolf") {
                 socket.emit('voteWolf', player.socket);
             } else if (step === "mayor") {
-                socket.emit('setParkerRanger', player.socket)
+                if (selfPlayer.isMayor) {
+                    socket.emit('setParkerRanger', player.socket)
+                }
             } else {
                 socket.emit('set' + selfPlayer?.role?.name_function, player.socket);
             }

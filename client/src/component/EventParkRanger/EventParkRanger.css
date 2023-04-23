@@ -1,0 +1,9 @@
+.eventParkRanger {
+    padding: 5px;
+}
+
+.eventParkRanger:hover {
+    border-radius: 10px;
+    background-color: rgb(71, 71, 71, 0.6);
+    cursor: pointer;
+}

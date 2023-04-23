@@ -16,48 +16,6 @@ function Message(props: props) {
 
     return (
         <div>
-            {/* {
-                !props.msg.sister && !props.msg.loved && !props.sister && !props.loved ?
-                <div>
-                    {
-                        props.msg.author !== "server" && props.msg.recipient === null && !props.msg.isDead &&
-                        <div className="message-container chat px-4">
-                            <span className="author fw-bold">{props.msg.author}</span> 
-                            <div className="message">{props.msg.msg}</div>
-                        </div>
-                    }
-                    {
-                        props.msg.author === "server" &&  <div className="message-container server m-2 py-2 px-4"><i>{props.msg.msg}</i></div>
-                    }
-                    {
-                        props.msg.recipient === socket.id && <div className="message-container role m-2 py-2 px-4"><i>{props.msg.msg}</i></div>
-                    }
-                    {
-                        props.msg.isDead && props.msg.author !== "server" && 
-                        <div className="message-container chat px-4">
-                            <span className="author-dead fw-bold">{props.msg.author}</span> 
-                            <div className="dead">{props.msg.msg}</div>
-                        </div>
-                    }
-                </div>
-                :
-                <div>
-                    {
-                        props.msg.sister && props.sister && 
-                        <div className="message-container chat px-4">
-                            <span className="author fw-bold">{props.msg.author}</span> 
-                            <div className="message">{props.msg.msg}</div>
-                        </div>
-                    }
-                    {
-                        props.msg.loved && props.loved && 
-                        <div className="message-container chat px-4">
-                            <span className="author fw-bold">{props.msg.author}</span> 
-                            <div className="message">{props.msg.msg}</div>
-                        </div>
-                    }
-                </div>
-            } */}
             {
                 (props.sister === false && props.loved === false && props.msg.type !== "love" && props.msg.type !== "sister") &&
                 <div>
@@ -72,13 +30,16 @@ function Message(props: props) {
                                     props.msg.type !== "chat" &&
                                     <div className="col-1">
                                         {
+                                            props.msg.type === "eventParkRanger" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M7.36,13.43h0a1,1,0,0,1-.72,0h0a9.67,9.67,0,0,1-6.14-9V1.5a1,1,0,0,1,1-1h11a1,1,0,0,1,1,1V4.42A9.67,9.67,0,0,1,7.36,13.43Z" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></path><rect x="4.5" y="5.5" width="5" height="4" rx="1" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></rect><path d="M8.5,5.5v-1a1.5,1.5,0,1,0-3,0v1" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
+                                        }
+                                        {
                                             props.msg.type === "join" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="5" cy="2.75" r="2.25" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><path d="M4.5,12.5H.5V11A4.51,4.51,0,0,1,7,7" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></path><line x1="10.5" y1="7.5" x2="10.5" y2="13.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></line><line x1="7.5" y1="10.5" x2="13.5" y2="10.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></line></g></svg>
                                         }
                                         {
                                             props.msg.type === "leave" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="5" cy="3.75" r="2.25" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></circle><path d="M6.5,13.5H.5V12A4.5,4.5,0,0,1,7.89,8.55" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path><line x1="8.5" y1="11.5" x2="13.5" y2="11.5" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></line></g></svg>
                                         }
                                         {
-                                            props.msg.type === "server" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><g><circle cx="7" cy="7" r="6.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><line x1="7" y1="7" x2="7" y2="10.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></line><circle cx="7" cy="4.5" r="0.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle></g></svg>
+                                            props.msg.type === "server" && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="7" cy="7" r="6.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><line x1="7" y1="7" x2="7" y2="10.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></line><circle cx="7" cy="4.5" r="0.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle></g></svg>
                                         }
                                         {
                                             props.msg.type === "vote" && <svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" height="17" width="17"><path d="M.5,12.5C3.423,10.027,4.142,9,7,9H8.5v3l5-5.5-5-5v3h-1C2.5,4.5,1.5,9.5.5,12.5Z" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></path></svg>

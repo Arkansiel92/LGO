@@ -1,9 +1,10 @@
 import { useContext, useState } from "react";
 import { ExtendedSocket, socketContext } from "../../context/socket";
-import Event, { event } from "../Event/Event";
+import EventGypsy, { eventGypsy } from "../EventGypsy/EventGypsy";
 import Actor from "../Actor/Actor";
 import { roles } from "../../screen/Game/Game";
 import "./BoxRole.css";
+import EventParkRanger, { eventParkRanger } from "../EventParkRanger/EventParkRanger";
 
 interface boxRole {
     description: string | undefined
@@ -18,11 +19,12 @@ interface boxRole {
     setNo?: boolean
     textarea?: boolean
     doNothing: boolean | undefined
-    eventsGypsy?: event[]
+    eventsGypsy?: eventGypsy[]
+    eventsParkRanger?: eventParkRanger[]
     actor?: roles[]
 }
 
-function BoxRole({description, victim, name_function, type, title, health, death, setYes, setNo, eventsGypsy, actor, textarea, doNothing}: boxRole) {
+function BoxRole({description, victim, name_function, type, title, health, death, setYes, setNo, eventsGypsy, eventsParkRanger, actor, textarea, doNothing}: boxRole) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
     const [textareaInput, setTextareaInput] = useState("");
@@ -79,8 +81,14 @@ function BoxRole({description, victim, name_function, type, title, health, death
                     }
                     {
                         eventsGypsy &&
-                        eventsGypsy.map((event: event) => (
-                            <Event name={event.name} description={event.description} />
+                        eventsGypsy.map((event: eventGypsy) => (
+                            <EventGypsy name={event.name} description={event.description} />
+                        ))
+                    }
+                    {
+                        eventsParkRanger &&
+                        eventsParkRanger.map((event: eventParkRanger) => (
+                            <EventParkRanger name={event.name} description={event.description} />
                         ))
                     }
                     {
@@ -98,12 +106,12 @@ function BoxRole({description, victim, name_function, type, title, health, death
                     }
                 </div>
             </div>
-            {
+            {/* {
                 doNothing &&
                 <div className="card-footer">
                     <button onClick={() => {handleSubmit(false)}} className="btn btn-lg btn-secondary">Ne rien faire</button>
                 </div>
-            }
+            } */}
         </div>
     )
 }

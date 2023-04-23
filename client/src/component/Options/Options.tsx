@@ -18,9 +18,9 @@ function Options({ room }: props) {
                 {
                     room?.roles?.length === 0
                         ? <p>Aucun rôle</p>
-                        : <div>
+                        : <div className="d-inline">
                             {room?.roles?.map((role) => (
-                                <p>- {role}</p>
+                                <span>{role}, </span>
                             ))}
                         </div>
                 }

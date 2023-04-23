@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 import { socketContext, ExtendedSocket} from "../../context/socket";
-import "./Event.css";
+import "./EventGypsy.css";
 
-export interface event {
+export interface eventGypsy {
     name: string,
     description: string
 }
 
-function Event({name, description}: event) {
+function EventGypsy({name, description}: eventGypsy) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
 
@@ -23,4 +23,4 @@ function Event({name, description}: event) {
     )
 }
 
-export default Event;
+export default EventGypsy;
