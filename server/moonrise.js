@@ -596,7 +596,7 @@ io.on('connection', (socket) => {
                 }
             }
 
-            if (!player.isCharmed) {
+            if (!p.isCharmed) {
                 isFlute = false;
             }
         })
@@ -803,7 +803,7 @@ io.on('connection', (socket) => {
 
                 let socketTarget = null;
 
-                while (socketTarget === null || socketTarget === mercenary.socket) {
+                while (socketTarget === null || socketTarget === mercenary.socket || socketTarget.isDead) {
                     socketTarget = hub.sockets[Math.floor(Math.random() * hub.sockets.length)];
                 }
 
@@ -815,8 +815,10 @@ io.on('connection', (socket) => {
         }
 
         if (hub.protected === hub.voteWolf) {
-            hub.voteWolf = null
-            hub.protected = null;
+
+            delete hub.kills[hub.protected]
+
+            hub.voteWolf = null;
         }
 
         if (hub.roles.includes("Chasseur") && hub.roles.includes("Le Chaperon Rouge")) {
@@ -890,6 +892,11 @@ io.on('connection', (socket) => {
                     lover.isDead = true;
 
                     str += "par amour " + lover.name + " (" + lover.role.name + ") s'est donné la mort. ";
+                }
+
+                if (player.socket === hub.executioner) {
+                    hub.optionsEventsParkRanger['executioner'] = false;
+                    hub.executioner = null;
                 }
             })
 
@@ -1107,7 +1114,6 @@ io.on('connection', (socket) => {
         hub.kills = {};
         hub.voteWolf = null;
         hub.infected = null;
-        hub.protected = null;
         hub.dictator = false;
         hub.mentalist = false;
         hub.ravenSocket = null;
@@ -1300,6 +1306,12 @@ io.on('connection', (socket) => {
                 } else {
                     sendMessage("death", null, "Le village a décidé d'exclure " + target.name + " qui était " + target.role.name + ' (infecté).');
                 }
+
+                if (target.socket === hub.executioner) {
+                    hub.optionsEventsParkRanger['executioner'] = false;
+                    hub.executioner = null;
+                }
+
                 target.isDead = true;
             }
 
@@ -1736,7 +1748,7 @@ io.on('connection', (socket) => {
             sendMessage("vote", wolf.socket, "Vote retiré");
         } else {
             wolf.voteWolf = target.socket;
-            sendMessage("vote", wolf.socket, target.name);
+            sendMessage("vote", wolf.socket, wolf.name + " vote pour " + target.name);
         }
 
         return room();
