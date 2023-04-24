@@ -23,8 +23,6 @@ function Player({player, selfPlayer, step}: props) {
     }
 
     const handleSubmit = () => {
-        console.log(step);
-        
         if (selfPlayer?.isTurn) {
             if ((step === "village" && selfPlayer?.isVote) || (step === "parkRanger" && selfPlayer?.isVote)) {
                 socket.emit('voteVillage', player.socket);

@@ -8,12 +8,12 @@ const fs = require('fs');
 
 app.use(cors());
 
-const server = https.createServer({
-    key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
-    cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
-}, app);
+// const server = https.createServer({
+//     key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
+//     cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
+// }, app);
 
-//const server = http.createServer(app);
+const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
@@ -534,7 +534,7 @@ io.on('connection', (socket) => {
     function sendMessage(type, recipient, msg) {
         let player = getPlayer(socket.id)
 
-        hub.messages.push({
+        hub.messages.unshift({
             socket: socket.id,
             author: type === "chat" ? player.name : null,
             type: type,
@@ -1708,6 +1708,7 @@ io.on('connection', (socket) => {
     socket.on('voteVillage', (targetID) => {
         const target = getPlayer(targetID);
         const player = getPlayer(socket.id);
+
         let indexMayor = 1;
 
         if (player.isMayor) {
@@ -1727,7 +1728,7 @@ io.on('connection', (socket) => {
             player.vote = targetID;
 
             if (player.isMayor) {
-                target.votes.push(player.name, player.name);
+                target.votes.push(player.name, player.name + " (Vote du maire)");
             } else {
                 target.votes.push(player.name);
             }

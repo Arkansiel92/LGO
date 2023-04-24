@@ -53,7 +53,7 @@ function Chat(props: props) {
     
     return (
         <div>
-            <div id="containerMessages" className="">
+            <div id="containerMessages" className="d-flex flex-column-reverse">
                 {props.messages?.map((msg, index: number) => (
                     <Message 
                         msg={msg}
