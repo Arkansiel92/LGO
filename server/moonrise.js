@@ -1706,35 +1706,37 @@ io.on('connection', (socket) => {
     });
 
     socket.on('voteVillage', (targetID) => {
-        const target = getPlayer(targetID);
-        const player = getPlayer(socket.id);
+        let target = getPlayer(targetID);
+        let player = getPlayer(socket.id);
+        let oldTarget;
 
-        let indexMayor = 1;
+        if (targetID === player.vote) {
 
-        if (player.isMayor) {
-            indexMayor = 2;
+            target.votes.splice(target.votes.indexOf(player.name), !player.isMayor ? 1 : 2);
+            player.vote = null;
+
+            return room();
         }
 
         if (player.vote) {
-            let oldTarget = getPlayer(player.vote);
-            oldTarget.votes.splice(oldTarget.votes.indexOf(player.name), indexMayor);
+            oldTarget = getPlayer(player.vote);
+
+            player.vote = null;
+
+            oldTarget.votes.splice(oldTarget.votes.indexOf(player.name), !player.isMayor ? 1 : 2);
         }
 
-        if (targetID === player.vote) {
-            player.vote = null;
-            let index = target.votes.indexOf(player.name);
-            target.votes.splice(index, indexMayor);
+        if (player.isMayor) {
+            player.vote = target.socket;
+
+            target.votes.push(player.name, player.name + " (Vote du maire)");
+            sendMessage("vote", null, player.name + " a voté pour " + target.name + ". (vote double du maire)");
         } else {
-            player.vote = targetID;
+            player.vote = target.socket;
 
-            if (player.isMayor) {
-                target.votes.push(player.name, player.name + " (Vote du maire)");
-            } else {
-                target.votes.push(player.name);
-            }
-
+            target.votes.push(player.name);
             sendMessage("vote", null, player.name + " a voté pour " + target.name + ".");
-        };
+        }
 
         return room();
     })
