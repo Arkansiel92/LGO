@@ -114,7 +114,7 @@ const roles = [
     {
         name: "Ancien du village",
         name_function: "OldMan",
-        description: "L’ancien possède deux vies durant la nuit. La première fois qu'il doit mourir, il en perd une. Le matin, il se réveille avec les autres, mais dévoile son rôle (la seconde fois qu’il est attaqué par les loups garous alors il meurt normalement). Si l’ancien est chassé du village par le vote des villageois il meurt directement et tous les rôles des villageois perdent leurs pouvoirs.",
+        description: "L’ancien possède deux vies durant la nuit. La première fois qu'il doit mourir, il en perd une. Le matin, il se réveille avec les autres, mais dévoile son rôle (la seconde fois qu’il est attaqué par les loups garous alors il meurt normalement). Si l’ancien est chassé du village par le vote des villageois il meurt directement et tous les villageois perdent leurs pouvoirs.",
         side: "village",
         step: null,
         descriptionInGame: null,
@@ -2566,22 +2566,18 @@ io.on('connection', (socket) => {
 
     socket.on('clear', () => {
         if (hub) {
+            let player = getPlayer(socket.id);
+
             hub.sockets.splice(hub.sockets.indexOf(socket.id), 1);
+            hub.players.splice(hub.players.indexOf(player.name), 1);
 
-            hub.players.forEach((player, index) => {
-                if (player.socket === socket.id) {
-                    hub.players.splice(index, 1);
-                    hub.votes.splice(index, 1);
+            socket.leave(socket.room);
 
-                    socket.leave(room);
-
-                    if (player.isMayor) {
-                        hub.players[0].isMayor = true;
-                    }
-
-                    sendMessage('leave', null, player.name + " a quitté la partie.");
-                }
-            })
+            if (player.isMayor) {
+                hub.players[0].isMayor = true;
+            }
+            
+            sendMessage('leave', null, player.name + " a quitté la partie.");
 
             return room();
         }
@@ -2591,22 +2587,18 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         if (hub) {
+            let player = getPlayer(socket.id);
+
             hub.sockets.splice(hub.sockets.indexOf(socket.id), 1);
+            hub.players.splice(hub.players.indexOf(player.name), 1);
 
-            hub.players.forEach((player, index) => {
-                if (player.socket === socket.id) {
-                    hub.players.splice(index, 1);
-                    hub.votes.splice(index, 1);
+            socket.leave(socket.room);
 
-                    socket.leave(room);
-
-                    if (player.isMayor) {
-                        hub.players[0].isMayor = true;
-                    }
-
-                    sendMessage('leave', null, player.name + " a quitté la partie.");
-                }
-            })
+            if (player.isMayor) {
+                hub.players[0].isMayor = true;
+            }
+            
+            sendMessage('leave', null, player.name + " a quitté la partie.");
 
             return room();
         }
