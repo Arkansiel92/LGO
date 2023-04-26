@@ -148,7 +148,7 @@ function Game() {
         <div id="container" style={style}>
             <div id="loader"></div>
 
-            <Topbar room={room} player={player} />
+            <Topbar player={player} />
 
             <div className='position-absolute'>
                 {
