@@ -902,6 +902,8 @@ io.on('connection', (socket) => {
 
             sendMessage("death", null, str);
 
+            io.to(socket.room).emit('playAudio', 'easterEggs');
+
             if (hub.roles.includes("Chasseur")) {
                 let hunter = getPlayerByRole('Chasseur');
 
@@ -2354,7 +2356,6 @@ io.on('connection', (socket) => {
     })
 
     socket.on('addRole', role => {
-
         const roleObject = roles.find((roleObject) => {
             return roleObject.name === role;
         })

@@ -34,7 +34,7 @@
 }
 
 .death {
-    color: rgb(250, 120, 120);
+    background-color: rgb(141, 27, 27, .7);
 }
 
 .dead {

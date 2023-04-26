@@ -1,6 +1,7 @@
 
 import { socketContext, ExtendedSocket } from "../../context/socket";
 import { useContext } from "react";
+import useSound from 'use-sound'
 import "./Role.css";
 
 interface role {
@@ -18,6 +19,7 @@ interface role {
 function Role({ name, name_function, description, side, max, img, roleArray, author, inGame }: role) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
+    const [addSound] = useSound("assets/sounds/add.wav");
 
     const nbRole = roleArray?.filter((role) => {
         return role === name
@@ -26,6 +28,7 @@ function Role({ name, name_function, description, side, max, img, roleArray, aut
     function setRole(name: string) {
         
         if (nbRole !== max) {
+            addSound();
             socket.emit('addRole', name);
         } else {
             socket.emit('deleteRole', name);
