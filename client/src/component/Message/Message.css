@@ -17,7 +17,6 @@
 
 .server {
     color: rgb(236, 233, 226);
-    font-size: 15px;
 }
 
 .join {
@@ -25,7 +24,7 @@
 }
 
 .role {
-    color: rgb(255, 255, 255);
+    background-color: rgba(86, 27, 141, 0.7);
 }
 
 .author-dead {

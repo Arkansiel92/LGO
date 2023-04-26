@@ -114,6 +114,10 @@ function Game() {
         setSideBar(bool);
     }
 
+    socket.on('playAudio', audio => {
+        return new Audio(audio).play();
+    })
+
     socket.on('getRoom', room => {
         setRoom(room);
 

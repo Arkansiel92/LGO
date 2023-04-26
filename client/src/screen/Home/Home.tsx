@@ -33,8 +33,7 @@ function Home() {
     })
 
     const handleSubmit = () => {
-        let id: string = Date.now().toString();
-        socket.emit('setRoom', { id: id, pseudo: pseudo })
+        socket.emit('setRoom', pseudo)
     }
 
     const join = () => {

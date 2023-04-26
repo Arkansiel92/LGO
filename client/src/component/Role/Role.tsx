@@ -19,16 +19,16 @@ interface role {
 function Role({ name, name_function, description, side, max, img, roleArray, author, inGame }: role) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
-    const [addSound] = useSound("assets/sounds/add.wav");
+    const [dropSound] = useSound("assets/sounds/drop.ogg", { volume: 0.15 });
 
     const nbRole = roleArray?.filter((role) => {
         return role === name
     }).length
 
     function setRole(name: string) {
-        
+        dropSound();
+
         if (nbRole !== max) {
-            addSound();
             socket.emit('addRole', name);
         } else {
             socket.emit('deleteRole', name);
@@ -44,7 +44,7 @@ function Role({ name, name_function, description, side, max, img, roleArray, aut
     }
 
     return (
-        <div className={`p-2 my-3 mx-1 ${side} row`}>
+        <div className={`p-1 my-3 mx-1 ${side} row`}>
             <div className="d-flex align-items-center justify-content-between">
                 <div className="d-flex">
                     <h4 className="fw-bold">{name}</h4>
@@ -67,12 +67,12 @@ function Role({ name, name_function, description, side, max, img, roleArray, aut
                             ? <div className="d-flex">
                                 <div>
                                     {
-                                        author === socket.id && <button className=" m-1 btn-add" onClick={() => { addRole(name) }}>
+                                        author === socket.id && <button className=" m-1 btn-add" onClick={() => { addRole(name); dropSound(); }}>
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><path d="M13.5,6.5a1,1,0,0,0-1-1h-4v-4a1,1,0,0,0-1-1h-1a1,1,0,0,0-1,1v4h-4a1,1,0,0,0-1,1v1a1,1,0,0,0,1,1h4v4a1,1,0,0,0,1,1h1a1,1,0,0,0,1-1v-4h4a1,1,0,0,0,1-1Z" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></path></svg>
                                         </button>
                                     }
                                     {
-                                        author === socket.id && <button className="m-1 btn-delete" onClick={() => { deleteRole(name) }}>
+                                        author === socket.id && <button className="m-1 btn-delete" onClick={() => { deleteRole(name); dropSound(); }}>
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="15" width="15"><path d="M13.19,3.05a1.06,1.06,0,0,0,0-1.49L12.44.81A1.06,1.06,0,0,0,11,.81L7,4.76,3.05.81a1.06,1.06,0,0,0-1.49,0l-.75.75a1.06,1.06,0,0,0,0,1.49l4,4L.81,11a1.06,1.06,0,0,0,0,1.49l.75.75a1.06,1.06,0,0,0,1.49,0L7,9.24,11,13.19a1.06,1.06,0,0,0,1.49,0l.75-.75a1.06,1.06,0,0,0,0-1.49L9.24,7Z" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></path></svg>
                                         </button>
                                     }

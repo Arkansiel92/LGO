@@ -312,7 +312,7 @@ const roles = [
     {
         name: "Nécromancien",
         name_function: "Necromancer",
-        description: "Vaincre les loups-garous est son objectif. La nuit, il peut communiquer avec les morts, afin d'en tirer des informations capitales...",
+        description: "Vaincre les loups-garous est son objectif. La nuit, il peut communiquer avec les morts, afin d'en tirer des informations capitales.",
         side: "village",
         step: null,
         descriptionInGame: "C'est la nuit, vous pouvez communiquer avec les morts",
@@ -386,6 +386,11 @@ const roles = [
         needVictim: false,
         img: "card-time.svg"
     }
+]
+
+const compositions = [
+    [],
+    []
 ]
 
 const eventsGypsy = [
@@ -902,7 +907,7 @@ io.on('connection', (socket) => {
 
             sendMessage("death", null, str);
 
-            io.to(socket.room).emit('playAudio', 'easterEggs');
+            io.to(socket.room).emit('playAudio', 'assets/sounds/death.ogg');
 
             if (hub.roles.includes("Chasseur")) {
                 let hunter = getPlayerByRole('Chasseur');
@@ -1687,7 +1692,7 @@ io.on('connection', (socket) => {
         hub.winner = null;
         hub.step = "start";
 
-        sendMessage('server', null, "Le jeu est en bêta-test. Merci de report les bugs/améliorations sur le discord. Coeur sur vous et votre famille.");
+        sendMessage('server', null, "Le jeu est en bêta-test. Merci de report les bugs/améliorations sur le discord.");
 
         return room();
     })
@@ -2316,6 +2321,8 @@ io.on('connection', (socket) => {
 
             player.role = roleToPlayer // attribution du rôle
 
+            sendMessage('role', player.socket, "Votre rôle : " + player.role.name.toUpperCase() + ". Vous pouvez passer votre souris sur votre rôle pour avoir la description de celui-ci.");
+
             io.to(playerArray[randomPlayer]).emit('getPlayer', player);
 
             roleArray.splice(randomRole, 1);
@@ -2326,7 +2333,7 @@ io.on('connection', (socket) => {
             hub.sockets.forEach(player => {
                 if (getPlayer(player).role.name === "Deux soeurs") {
                     getPlayer(player).isSister = true;
-                    sendMessage("role", player.socket, "Vous avez le rôle Soeur, vous avez un chat disponible pour parler à votre frangine.");
+                    sendMessage("role", player.socket, "vous avez un chat disponible pour parler à votre frangine.");
                 }
             })
 
@@ -2344,6 +2351,7 @@ io.on('connection', (socket) => {
                 sendMessage("server", null, "Le voleur décide du joueur à voler.");
                 thief.isTurn = true;
                 boxRole(thief.socket, {
+                    title: thief.role.name,
                     description: thief.role.descriptionInGame,
                     doNothing: true
                 });
@@ -2445,7 +2453,9 @@ io.on('connection', (socket) => {
         return navigate(id);
     })
 
-    socket.on('setRoom', ({ id, pseudo }) => {
+    socket.on('setRoom', (pseudo) => {
+        let id = Date.now().toString();
+
         socket.name = pseudo
         socket.room = id;
         socket.join(id);
@@ -2589,6 +2599,8 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         if (hub) {
             let player = getPlayer(socket.id);
+
+            console.log(player);
 
             hub.sockets.splice(hub.sockets.indexOf(socket.id), 1);
             hub.players.splice(hub.players.indexOf(player.name), 1);
