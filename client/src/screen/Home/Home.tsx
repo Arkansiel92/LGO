@@ -69,13 +69,13 @@ function Home() {
                     <div className="mt-5">
                         {
                             card === "create"
-                                ? <button className="btn btn-lg btn-primary rounded-pill m-1">Créer une partie</button>
-                                : <button className="btn btn-lg btn-primary rounded-pill m-1" onClick={() => { setCard('create') }}>Créer une partie</button>
+                                ? <button className="btn btn-lg btn-primary m-1">Créer une partie</button>
+                                : <button className="btn btn-lg btn-primary m-1" onClick={() => { setCard('create') }}>Créer une partie</button>
                         }
                         {
                             card === "join"
-                                ? <button className="btn btn-lg btn-primary rounded-pill m-1">Rejoindre</button>
-                                : <button className="btn btn-lg btn-primary rounded-pill m-1" onClick={() => { setCard('join') }}>Rejoindre</button>
+                                ? <button className="btn btn-lg btn-primary m-1">Rejoindre</button>
+                                : <button className="btn btn-lg btn-primary m-1" onClick={() => { setCard('join') }}>Rejoindre</button>
                         }
                     </div>
                     {

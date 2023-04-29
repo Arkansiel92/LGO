@@ -3,13 +3,13 @@ import { player } from "../../screen/Game/Game";
 import { ExtendedSocket, socketContext } from '../../context/socket';
 import "./Player.css";
 
-interface props{
+interface props {
     player: player,
     selfPlayer: player | undefined,
     step: string
 }
 
-function Player({player, selfPlayer, step}: props) {
+function Player({ player, selfPlayer, step }: props) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
 
@@ -40,8 +40,6 @@ function Player({player, selfPlayer, step}: props) {
 
     return (
         <div>
-        {
-        !player.isDead && 
             <div style={style} onClick={handleSubmit} className='position-absolute'>
                 <div className="d-flex align-items-center rounded p-1 my-1" id="player-banner">
                     {
@@ -64,9 +62,13 @@ function Player({player, selfPlayer, step}: props) {
                     }
                     {player.name}
                 </div>
-                <img src="assets/img/sprites/player3.png" className='mx-auto d-block' alt="" />
+                {
+                    !player.isDead
+                        ? <img src="assets/img/sprites/player3.png" className='mx-auto d-block' alt="" />
+                        : <img src="assets/img/sprites/player3_dead.png" className='mx-auto d-block' alt="" />
+                }
+
             </div>
-        }
         </div>
     )
 };

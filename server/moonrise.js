@@ -389,8 +389,14 @@ const roles = [
 ]
 
 const compositions = [
-    [],
-    []
+    {
+        title: "",
+        composition: []
+    },
+    {
+        title: "",
+        composition: []
+    }
 ]
 
 const eventsGypsy = [
