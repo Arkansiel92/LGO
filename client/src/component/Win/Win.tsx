@@ -1,7 +1,8 @@
 import { room } from "../../screen/Game/Game";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import "./Win.css";
 import { ExtendedSocket, socketContext } from "../../context/socket";
+import useSound from "use-sound";
 
 interface props {
     room: room
@@ -12,6 +13,11 @@ interface props {
 function Win({room, author, side}: props) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
+    const [winSound] = useSound('assets/sounds/win.ogg', { volume: .15 });
+
+    // useEffect(() => {
+    //     winSound();
+    // })
 
     return (
         <div id="win" className="card w-50 m-auto bg-dark text-center">

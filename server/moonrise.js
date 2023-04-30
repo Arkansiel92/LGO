@@ -747,7 +747,7 @@ io.on('connection', (socket) => {
                         player.isTurn = true;
 
                         let data = {
-                            title: "Loup-garou",
+                            title: "L'appel des loups-garous",
                             description: "Vous pouvez tuer un joueur.",
                             role: player.role.name,
                             doNothing: false
@@ -762,7 +762,7 @@ io.on('connection', (socket) => {
         room();
 
         if (check) {
-            return time(15);
+            return time(25);
         } else {
             hub.step = order();
             return stepNight();
@@ -2605,8 +2605,6 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         if (hub) {
             let player = getPlayer(socket.id);
-
-            console.log(player);
 
             hub.sockets.splice(hub.sockets.indexOf(socket.id), 1);
             hub.players.splice(hub.players.indexOf(player.name), 1);

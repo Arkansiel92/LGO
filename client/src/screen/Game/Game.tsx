@@ -213,10 +213,10 @@ function Game() {
                         {
                             !room?.inGame &&
                             <div>
-                                <div onClick={() => { navigator.clipboard.writeText("https://" + window.location.host + "?id=" + id) }} className='id-room my-5 p-3 w-25 m-auto' data-bs-toggle="tooltip" data-bs-placement="top" title="copier le lien" data-bs-custom-class="tooltip">
+                                <div onClick={() => { navigator.clipboard.writeText(window.location.origin + "?id=" + id) }} className='id-room my-5 p-3 w-25 m-auto' data-bs-toggle="tooltip" data-bs-placement="top" title="copier le lien" data-bs-custom-class="tooltip">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><path d="M12.5,10a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V1.5a1,1,0,0,1,1-1H9.5l3,3Z" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path><path d="M9.5,13.5h-7a1,1,0,0,1-1-1v-9" fill="none" stroke="#fefefe" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
                                     <span className='mx-2'>
-                                        https://{window.location.host}?id={id}
+                                        {window.location.origin}?id={id}
                                     </span>
                                 </div>
                                 <div className='w-25 m-auto my-5'>
