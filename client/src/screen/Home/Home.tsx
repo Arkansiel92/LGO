@@ -58,26 +58,42 @@ function Home() {
             {
                 alert && <div className='container text-center alert alert-danger'>{alert}</div>
             }
-            <div className='my-5'>
+            <header style={{
+                backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/maps/background-game.svg'})`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center bottom',
+                backgroundSize: 'cover',
+                height: '100%',
+                width: '100%',
+                backgroundColor: "#87CEEB"
+            }} className='py-5 container-fluid text-center'>
+                <h1 className='fw-light'>Moonrise</h1>
+                <div className="row">
+                    <div className='col-lg-6 col-md-8 mx-auto'>
+                        <p className='lead'>Nouveau jeu de loup-garou en ligne inspiré du célèbre jeu de société "Loup Garou de Thiercelieux". Ce jeu captivant est conçu pour les passionnés de jeux de rôles, de mystères et d'intrigues. La version en ligne du jeu offre une expérience unique, qui permet aux joueurs de se plonger dans un univers fascinant rempli de rebondissements. Que vous soyez un joueur expérimenté ou un novice, notre jeu de loup-garou est parfait pour vous.</p>
+                    </div>
+                </div>
+                <div className="mt-5">
+                    {
+                        card === "create"
+                            ? <button className="btn btn-lg btn-success mx-1">Créer une partie</button>
+                            : <button className="btn btn-lg btn-primary mx-1" onClick={() => { setCard('create') }}>Créer une partie</button>
+                    }
+                    {
+                        card === "join"
+                            ? <button className="btn btn-lg btn-success mx-1">Rejoindre</button>
+                            : <button className="btn btn-lg btn-primary mx-1" onClick={() => { setCard('join') }}>Rejoindre</button>
+                    }
+                </div>
+            </header>
+            {/* <div className='my-5'>
                 <Cloud nb={1} animationDelay={15} left={10} top={10} />
                 <Cloud nb={2} animationDelay={25} left={40} top={9} />
                 <Cloud nb={3} animationDelay={20} left={100} top={8} />
                 <img className='sun mx-2' src="/assets/img/sprites/sun.png" alt="moon" />
-            </div>
-            <div>
-                <div className="m-auto w-50">
-                    <div className="mt-5">
-                        {
-                            card === "create"
-                                ? <button className="btn btn-lg btn-primary m-1">Créer une partie</button>
-                                : <button className="btn btn-lg btn-primary m-1" onClick={() => { setCard('create') }}>Créer une partie</button>
-                        }
-                        {
-                            card === "join"
-                                ? <button className="btn btn-lg btn-primary m-1">Rejoindre</button>
-                                : <button className="btn btn-lg btn-primary m-1" onClick={() => { setCard('join') }}>Rejoindre</button>
-                        }
-                    </div>
+            </div> */}
+            <div className='container my-5'>
+                <div>
                     {
                         card === "create"
                             ? <div>
@@ -127,8 +143,8 @@ function Home() {
                         <p className='lead'>Avec un pseudo et un code, vous pouvez rejoindre n'importe quelle partie et jouer directement sans attente ou création de compte.</p>
                     </div>
                 </div>
-                <Footer />
             </div>
+            <Footer />
         </div>
     )
 }
