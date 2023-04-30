@@ -8,12 +8,12 @@ const fs = require('fs');
 
 app.use(cors());
 
-// const server = https.createServer({
-//     key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
-//     cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
-// }, app);
+const server = https.createServer({
+    key: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/moonrise-game.fr/cert.pem"),
+}, app);
 
-const server = http.createServer(app);
+//const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
@@ -684,7 +684,7 @@ io.on('connection', (socket) => {
 
         let check = false;
 
-        //console.log("ETAPE : " + hub.step);
+        //("ETAPE : " + hub.step);
         if (hub.step !== "werewolf") {
             hub.players.forEach((player) => {
                 if (player.role.step === hub.step) {
