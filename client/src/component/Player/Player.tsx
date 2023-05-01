@@ -64,7 +64,7 @@ function Player({ player, selfPlayer, step }: props) {
                         }
                         <span>{player.name}</span>
                     </div>
-                    <Title title='vendeur de shit' color='#108355' />
+                    <Title title='Bêta-testeur' color='#108355' />
                 </div>
                 {
                     !player.isDead
