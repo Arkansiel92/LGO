@@ -2369,6 +2369,69 @@ io.on('connection', (socket) => {
         return stepNight();
     })
 
+    socket.on('addBot', () => {
+
+        let usernameBot = "Joueur " + (hub.players.length + 1);
+        let socketBot = "bot" + (hub.players.length + 1);
+
+        const player = {
+            name: usernameBot,
+            socket: socketBot,
+            sprite: getRandomNumber(1, 4),
+            x: getRandomNumber(20, 80),
+            y: getRandomNumber(70, 90),
+            frameX: 0,
+            frameY: 0,
+            vote: null,
+            votes: [],
+            voteWolf: null,
+            role: null,
+            isMayor: false,
+            isVote: true,
+            isDead: false,
+            isTurn: false,
+            isPower: true,
+            isCouple: false,
+            isSister: false,
+            isCharmed: false,
+            isHair: false,
+            isActor: false,
+            isScapegoat: false,
+            isParkRanger: false
+        }
+
+        hub.players.push(player);
+        hub.sockets.push(socketBot);
+
+        sendMessage('join', null, usernameBot + " (bot) vient d'arriver dans la partie !");
+
+        io.to(socket.room).emit('getRoom', hub);
+        room();
+
+    })
+
+    socket.on('deleteBot', () => {
+
+        let socket_bot, username_bot;
+
+        for (let i = 0; i < hub.players.length; i++) {
+            if (hub.sockets[i].includes("bot")) {
+                username_bot = hub.players[i].name;
+                socket_bot = hub.sockets[i];
+            }   
+        }
+
+        let index = hub.sockets.indexOf(socket_bot);
+
+        hub.players.splice(index, 1);
+        hub.sockets.splice(index, 1);
+
+        sendMessage('leave', null, username_bot + " (bot) vient de quitter la partie !");
+
+        io.to(socket.room).emit('getRoom', hub);
+        room();
+    })
+
     socket.on('addRole', role => {
         const roleObject = roles.find((roleObject) => {
             return roleObject.name === role;
@@ -2423,6 +2486,7 @@ io.on('connection', (socket) => {
         const player = {
             name: pseudo,
             socket: socket.id,
+            sprite: sprite,
             x: getRandomNumber(20, 80),
             y: getRandomNumber(70, 90),
             frameX: 0,
@@ -2459,7 +2523,7 @@ io.on('connection', (socket) => {
         return navigate(id);
     })
 
-    socket.on('setRoom', (pseudo) => {
+    socket.on('setRoom', ({pseudo, sprite}) => {
         let id = Date.now().toString();
 
         socket.name = pseudo
@@ -2473,6 +2537,7 @@ io.on('connection', (socket) => {
         hub.players = [{
             name: pseudo,
             socket: socket.id,
+            sprite: sprite,
             x: getRandomNumber(20, 80),
             y: getRandomNumber(70, 90),
             frameX: 0,
