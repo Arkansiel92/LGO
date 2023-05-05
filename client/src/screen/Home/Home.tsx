@@ -12,6 +12,7 @@ function Home() {
     const [loading, setLoading] = useState<boolean>(false);
     const [pseudo, setPseudo] = useState<string>('');
     const [room, setRoom] = useState<string>('');
+    const [sprite, setSprite] = useState<string>("1");
     const [alert, setAlert] = useState<string>('');
     const [card, setCard] = useState<string>('create');
 
@@ -33,11 +34,17 @@ function Home() {
     })
 
     const handleSubmit = () => {
-        socket.emit('setRoom', pseudo)
+        socket.emit('setRoom', {pseudo: pseudo, sprite: sprite})
     }
 
     const join = () => {
-        socket.emit('join', { id: room, pseudo: pseudo });
+        let data = { 
+            id: room, 
+            pseudo: pseudo, 
+            sprite: sprite 
+        }
+
+        socket.emit('join', data);
     }
 
     useEffect(() => {
@@ -55,9 +62,6 @@ function Home() {
                 loading && <div id="loader-home"></div>
             }
             <Navbar />
-            {
-                alert && <div className='container text-center alert alert-danger'>{alert}</div>
-            }
             <header style={{
                 backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/maps/background-game.svg'})`,
                 backgroundRepeat: 'no-repeat',
@@ -76,16 +80,19 @@ function Home() {
                 <div className="mt-5">
                     {
                         card === "create"
-                            ? <button className="btn btn-lg btn-success mx-1">Créer une partie</button>
-                            : <button className="btn btn-lg btn-primary mx-1" onClick={() => { setCard('create') }}>Créer une partie</button>
+                        ? <button className="btn btn-lg btn-success mx-1">Créer une partie</button>
+                        : <button className="btn btn-lg btn-primary mx-1" onClick={() => { setCard('create') }}>Créer une partie</button>
                     }
                     {
                         card === "join"
-                            ? <button className="btn btn-lg btn-success mx-1">Rejoindre</button>
-                            : <button className="btn btn-lg btn-primary mx-1" onClick={() => { setCard('join') }}>Rejoindre</button>
+                        ? <button className="btn btn-lg btn-success mx-1">Rejoindre</button>
+                        : <button className="btn btn-lg btn-primary mx-1" onClick={() => { setCard('join') }}>Rejoindre</button>
                     }
                 </div>
             </header>
+            {
+                alert && <div className='container text-center alert alert-danger'>{alert}</div>
+            }
             {/* <div className='my-5'>
                 <Cloud nb={1} animationDelay={15} left={10} top={10} />
                 <Cloud nb={2} animationDelay={25} left={40} top={9} />
@@ -100,6 +107,17 @@ function Home() {
                                 <div className="form-group mt-3">
                                     <input type="text" className='form-control form-control-lg' value={pseudo} placeholder="Entrez votre nom" onChange={(e) => { setPseudo(e.target.value) }} />
                                 </div>
+
+                                <div className="form-group my-3">
+                                    <label htmlFor="sprite">Apparence : </label>
+                                    <select value={sprite} onChange={(e) => { setSprite(e.target.value) }} className='form-select' name="sprite" id="sprite">
+                                        <option value="1">Joueur bleu</option>
+                                        <option value="2">Joueur gris</option>
+                                        <option value="3">Joueur rouge</option>
+                                        <option value="4">Joueur vert</option>
+                                    </select>
+                                </div>
+
                                 <div className='my-3 d-grid'>
                                     {
                                         pseudo === ''
@@ -116,6 +134,17 @@ function Home() {
                                 <div className="form-group my-3">
                                     <input type="text" className='form-control form-control-lg' value={room} placeholder="ID du lobby" onChange={(e) => { setRoom(e.target.value) }} />
                                 </div>
+
+                                <div className="form-group my-3">
+                                    <label htmlFor="sprite">Apparence : </label>
+                                    <select className='form-select' name="sprite" id="sprite">
+                                        <option value="1">Joueur bleu</option>
+                                        <option value="2">Joueur gris</option>
+                                        <option value="3">Joueur rouge</option>
+                                        <option value="4">Joueur vert</option>
+                                    </select>
+                                </div>
+
                                 <div className='my-3 d-grid'>
                                     {
                                         pseudo === '' || room === ''

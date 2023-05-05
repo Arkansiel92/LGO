@@ -4,6 +4,7 @@ import { socketContext, ExtendedSocket } from '../../context/socket';
 import "./ManagementRoom.css";
 import Role from "../Role/Role";
 import Chat from "../Chat/Chat";
+import SettingsInGame from "../SettingsInGame/SettingsInGame";
 
 interface props {
     room: room | null
@@ -33,7 +34,7 @@ function ManagementRoom({ room, player, inGame, sideBar, handleChange }: props) 
     return (
         <div className={`col-md-3 sidebar-${sideBar} px-2`}>
             <div className="my-3 d-flex justify-content-between">
-                <div>
+                <div className="d-flex">
                     <button className='btn-home' onClick={() => (setRoleScreen(false))}>
                         <div className='d-flex justify-content-around align-items-center'>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="17" width="17"><g><circle cx="3.5" cy="7" r="0.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><circle cx="6.75" cy="7" r="0.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><circle cx="10" cy="7" r="0.5" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></circle><path d="M7,.5A6.5,6.5,0,0,0,1.59,10.6L.5,13.5l3.65-.66A6.5,6.5,0,1,0,7,.5Z" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"></path></g></svg>
@@ -50,6 +51,7 @@ function ManagementRoom({ room, player, inGame, sideBar, handleChange }: props) 
                             </span>
                         </div>
                     </button>
+                    <SettingsInGame />
                 </div>
                 <button className="btn-sidebar" onClick={() => { handleChange(false) }}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" height="25" width="25"><g><line x1="10" y1="7" x2="4" y2="7" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></line><polyline points="5.5 5.5 4 7 5.5 8.5" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></polyline><circle cx="7" cy="7" r="6.5" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round"></circle></g></svg>

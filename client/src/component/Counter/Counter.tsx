@@ -1,5 +1,5 @@
 import { socketContext, ExtendedSocket} from "../../context/socket";
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import './Counter.css';
 import useSound from "use-sound";
 
@@ -7,13 +7,20 @@ function Counter() {
 
     const socket = useContext<ExtendedSocket>(socketContext);
     const [time, setTime] = useState<number>(0);
-    const [timerSound] = useSound("assets/sounds/timer.ogg", { volume: 0.15 });
+    const [timerSound, { stop }] = useSound("assets/sounds/timer.ogg", { volume: 0.10 });
 
     socket.on('counter', (time) => {
         setTime(time);
-
-        if (time < 10) return timerSound();
     })
+
+    useEffect(() => {
+        if (time < 10) {
+            stop();
+
+            return timerSound();
+        }
+        
+    }, [time])
 
     return (
         <h3 className="d-flex align-items-center justify-content-center">

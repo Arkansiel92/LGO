@@ -15,7 +15,6 @@ function Player({ player, selfPlayer, step }: props) {
     const socket = useContext<ExtendedSocket>(socketContext);
 
     const style: CSSProperties = {
-        display: 'inline-block',
         position: 'absolute',
         left: player.x + "%",
         top: player.y + "%",
@@ -41,7 +40,7 @@ function Player({ player, selfPlayer, step }: props) {
 
     return (
         <div>
-            <div style={style} onClick={handleSubmit} className='position-absolute'>
+            <div style={style} onClick={handleSubmit}>
                 <div id="player-banner" className='rounded p-1 my-1'>
                     <div className="d-flex align-items-center justify-content-around">
                         {
@@ -64,12 +63,16 @@ function Player({ player, selfPlayer, step }: props) {
                         }
                         <span>{player.name}</span>
                     </div>
-                    <Title title='Bêta-testeur' color='#108355' />
+                    {
+                        player.name === "Arkansiel"
+                        ? <Title title='Dev Moonrise' color='#b52222' />
+                        : <Title title='Bêta-testeur' color='#108355' />
+                    }
                 </div>
                 {
                     !player.isDead
-                        ? <img src="assets/img/sprites/player3.png" className='mx-auto d-block' alt="" />
-                        : <img src="assets/img/sprites/player3_dead.png" className='mx-auto d-block' alt="" />
+                        ? <img src={`assets/img/sprites/player${player.sprite}/player${player.sprite}.png`} className='mx-auto d-block' alt="" />
+                        : <img src={`assets/img/sprites/player${player.sprite}/player${player.sprite}_dead.png`} className='mx-auto d-block' alt="" />
                 }
 
             </div>

@@ -11,11 +11,12 @@ function Title({title, color}: props) {
     const style: CSSProperties = {
         fontSize: "14px",
         fontStyle: "italic",
+        textAlign: "center",
         color: color
     }
 
     return (
-        <span style={style}>« {title} »</span>
+        <h6 className='' style={style}>« {title} »</h6>
     )
 };
 

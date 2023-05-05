@@ -3,7 +3,7 @@ import "./Navbar.css";
 
 function Navbar() {
     return (
-        <nav className="navbar navbar-dark navbar-expand-lg bg-dark">
+        <nav id='navbar' className="navbar navbar-dark navbar-expand-lg bg-dark">
             <div className="container-fluid">
                 <NavLink to="/" className={'navbar-brand'}>
                     <img src="wolf-howl.svg" width={25} alt="" />

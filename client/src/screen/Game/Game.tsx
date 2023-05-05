@@ -31,6 +31,7 @@ export interface roles {
 export interface player {
     name: string,
     socket: string,
+    sprite: string,
     x: number,
     y: number,
     frameX: number,
