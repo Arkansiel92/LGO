@@ -913,7 +913,7 @@ io.on('connection', (socket) => {
 
             sendMessage("death", null, str);
 
-            io.to(socket.room).emit('playAudio', 'assets/sounds/death.ogg');
+            io.to(socket.room).emit('playAudio');
 
             if (hub.roles.includes("Chasseur")) {
                 let hunter = getPlayerByRole('Chasseur');
@@ -1010,22 +1010,24 @@ io.on('connection', (socket) => {
             }
         });
 
-        if (hub.nbTurn === 2 && !hub.mayor) {
-            sendMessage("server", null, "Election du maire !");
-
-            hub.step = "mayor";
-
-            hub.players.forEach((player) => {
-                player.isTurn = true;
-                boxRole(player.socket, {
-                    title: "Election",
-                    description: "Vous pouvez vous présenter.",
-                    textarea: true,
-                    doNothing: true
-                });
-            })
-
-            return time(20);
+        if (hub.options.mayor) {
+            if (hub.nbTurn === 2 && !hub.mayor) {
+                sendMessage("server", null, "Election du maire ! (son avis comptera double lors des votes du village)");
+    
+                hub.step = "mayor";
+    
+                hub.players.forEach((player) => {
+                    player.isTurn = true;
+                    boxRole(player.socket, {
+                        title: "Election",
+                        description: "Vous pouvez vous présenter.",
+                        textarea: true,
+                        doNothing: true
+                    });
+                })
+    
+                return time(20);
+            }
         }
 
         if (hub.optionsEventsParkRanger['executioner'] && !hub.executioner) {
@@ -1549,9 +1551,14 @@ io.on('connection', (socket) => {
 
         room();
 
-        sendMessage('server', null, "Le maire doit choisir un garde-champêtre");
+        if (hub.options.parkRanger) {
+            sendMessage('server', null, "Le maire doit choisir un garde-champêtre");
+    
+            return boxRole(socketMayor, data);
+        } else {
+            return day();
+        }
 
-        return boxRole(socketMayor, data);
     }
 
     socket.on("voteMayor", name => {
@@ -2327,7 +2334,7 @@ io.on('connection', (socket) => {
 
             player.role = roleToPlayer // attribution du rôle
 
-            sendMessage('role', player.socket, "Votre rôle : " + player.role.name.toUpperCase() + ". Vous pouvez passer votre souris sur votre rôle pour avoir la description de celui-ci.");
+            sendMessage('role', player.socket, "Votre rôle : " + player.role.name.toUpperCase() + ". Vous pouvez passer votre souris sur votre rôle pour avoir sa description.");
 
             io.to(playerArray[randomPlayer]).emit('getPlayer', player);
 
@@ -2379,7 +2386,7 @@ io.on('connection', (socket) => {
             socket: socketBot,
             sprite: getRandomNumber(1, 4),
             x: getRandomNumber(20, 80),
-            y: getRandomNumber(70, 90),
+            y: getRandomNumber(70, 80),
             frameX: 0,
             frameY: 0,
             vote: null,
@@ -2467,6 +2474,14 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('setOptions', ({option, bool}) => {
+        hub.options[option] = bool;
+
+        if (!hub.options.mayor) hub.options['parkRanger'] = false;
+
+        return room();
+    })
+
     socket.on("setMessage", ({ msg, type }) => sendMessage(type, null, msg));
 
     socket.on('getRoles', () => io.to(socket.id).emit('getRoles', roles));
@@ -2488,7 +2503,7 @@ io.on('connection', (socket) => {
             socket: socket.id,
             sprite: sprite,
             x: getRandomNumber(20, 80),
-            y: getRandomNumber(70, 90),
+            y: getRandomNumber(70, 80),
             frameX: 0,
             frameY: 0,
             vote: null,
@@ -2539,7 +2554,7 @@ io.on('connection', (socket) => {
             socket: socket.id,
             sprite: sprite,
             x: getRandomNumber(20, 80),
-            y: getRandomNumber(70, 90),
+            y: getRandomNumber(70, 80),
             frameX: 0,
             frameY: 0,
             vote: null,
@@ -2563,6 +2578,11 @@ io.on('connection', (socket) => {
         hub.roles = [];
         hub.votes = [];
         hub.kills = {};
+        hub.options = {
+            events: false,
+            parkRanger: true,
+            mayor: true
+        }
         hub.event = null;
         hub.healthPotion = true;
         hub.deathPotion = true;

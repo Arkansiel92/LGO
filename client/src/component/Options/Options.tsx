@@ -1,7 +1,7 @@
 import { room } from "../../screen/Game/Game";
 import { useContext } from "react";
-import "./Options.css";
 import { ExtendedSocket, socketContext } from "../../context/socket";
+import "./Options.css";
 
 interface props {
     room: room | null
@@ -10,6 +10,10 @@ interface props {
 function Options({ room }: props) {
 
     const socket = useContext<ExtendedSocket>(socketContext);
+
+    const handleSubmit = (option: string, bool: boolean) => {
+        socket.emit('setOptions', {option: option, bool: bool});
+    }
 
     return (
         <div className="card bg-dark">
@@ -25,9 +29,11 @@ function Options({ room }: props) {
                         </div>
                 }
             </div>
-            <div>
+            <div id="option-game">
                 <h3>Options de la partie</h3>
-                <p className="fst-italic">En cours de débug</p>
+                <p onClick={() => {handleSubmit("mayor", !room?.options.mayor)}}>Maire : {room?.options.mayor ? <span className="text-success">Activé</span> : <span className="text-danger">Désactivé</span>}</p>
+                <p onClick={() => {handleSubmit("parkRanger", !room?.options.parkRanger)}}>Garde-champêtre : {room?.options.parkRanger ? <span className="text-success">Activé</span> : <span className="text-danger">Désactivé</span>}</p>
+                <p className="text-muted">Evènement aléatoire : {room?.options.events ? <span className="text-success">Activé</span> : <span className="text-danger">Désactivé</span>} (soon)</p>
             </div>
             {
                 socket.id === room?.author &&

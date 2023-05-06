@@ -110,7 +110,7 @@ function Home() {
 
                                 <div className="form-group my-3">
                                     <label htmlFor="sprite">Apparence : </label>
-                                    <select value={sprite} onChange={(e) => { setSprite(e.target.value) }} className='form-select' name="sprite" id="sprite">
+                                    <select className='form-select form-select-lg' value={sprite} onChange={(e) => { setSprite(e.target.value) }} name="sprite" id="sprite">
                                         <option value="1">Joueur bleu</option>
                                         <option value="2">Joueur gris</option>
                                         <option value="3">Joueur rouge</option>
@@ -137,7 +137,7 @@ function Home() {
 
                                 <div className="form-group my-3">
                                     <label htmlFor="sprite">Apparence : </label>
-                                    <select className='form-select' name="sprite" id="sprite">
+                                    <select className='form-select form-select-lg' value={sprite} onChange={(e) => { setSprite(e.target.value) }} name="sprite" id="sprite">
                                         <option value="1">Joueur bleu</option>
                                         <option value="2">Joueur gris</option>
                                         <option value="3">Joueur rouge</option>

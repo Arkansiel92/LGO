@@ -13,6 +13,7 @@ import Mayor from '../../component/Mayor/Mayor';
 import Options from '../../component/Options/Options';
 import Win from '../../component/Win/Win';
 import { eventParkRanger } from '../../component/EventParkRanger/EventParkRanger';
+import useSound from 'use-sound';
 
 type Params = {
     id: string
@@ -70,12 +71,19 @@ export interface mayor {
     votes: string[]
 }
 
+interface options {
+    events: boolean,
+    parkRanger: boolean,
+    mayor: boolean
+}
+
 export interface room {
     status: string,
     author: string,
     players: player[],
     roles: string[],
     votes: string[],
+    options: options,
     mayorDialog: mayor[],
     messages: message[],
     night: boolean,
@@ -109,14 +117,17 @@ function Game() {
     const [player, setPlayer] = useState<player>();
     const [boxRole, setBoxRole] = useState<boxRole | undefined>();
     const [sideBar, setSideBar] = useState<boolean>(true);
+    const [deathSound, {stop}] = useSound('assets/sounds/death.ogg', { volume: 0.10 });
     const socket = useContext<ExtendedSocket>(socketContext);
 
     const handleSidebarChange = (bool: boolean) => {
         setSideBar(bool);
     }
 
-    socket.on('playAudio', audio => {
-        return new Audio(audio).play();
+    socket.on('playAudio', () => {
+        stop();
+
+        return deathSound();
     })
 
     socket.on('getRoom', room => {
