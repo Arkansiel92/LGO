@@ -2428,15 +2428,18 @@ io.on('connection', (socket) => {
             }   
         }
 
-        let index = hub.sockets.indexOf(socket_bot);
+        if (socket_bot && username_bot) {
+            let index = hub.sockets.indexOf(socket_bot);
+    
+            hub.players.splice(index, 1);
+            hub.sockets.splice(index, 1);
+    
+            sendMessage('leave', null, username_bot + " (bot) vient de quitter la partie !");
+    
+            io.to(socket.room).emit('getRoom', hub);
+            room();
+        }
 
-        hub.players.splice(index, 1);
-        hub.sockets.splice(index, 1);
-
-        sendMessage('leave', null, username_bot + " (bot) vient de quitter la partie !");
-
-        io.to(socket.room).emit('getRoom', hub);
-        room();
     })
 
     socket.on('addRole', role => {
