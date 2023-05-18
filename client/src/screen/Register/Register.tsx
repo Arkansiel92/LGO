@@ -6,7 +6,31 @@ function Register() {
     const { handleSubmit, register, formState: { errors } } = useForm();
 
     function onSubmit(data: any) {
-        console.log(data);
+        // if (data.confirm_password === data.plainPassword) {
+        //     fetch('http://localhost:8000/api/users', {
+        //         method: 'POST',
+        //         headers: {
+        //             // "Content-Type": "application/x-www-form-urlencoded"
+        //             "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify(data)
+        //     })
+        //     .then(res => console.log(res))
+        //     .catch(error => {console.log("ERREUR : ", error)})  
+        // }
+
+        fetch('http://localhost:8000/api/auth', {
+            method: "POST",
+            headers: {
+                "accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "email": "admin@moonrise.fr",
+                "password": "admin"
+            })
+        })
+        .then(res => console.log(res))
     }
 
     return (
@@ -26,35 +50,35 @@ function Register() {
                                 <div className="col">
                                     <div className="form-group">
                                         <label htmlFor="" className="form-label">Prénom</label>
-                                        <input type="text" className="form-control" placeholder="John" {...register('first_name')} />
+                                        <input type="text" className="form-control" placeholder="John" {...register('firstName')} />
                                     </div>
                                 </div>
                                 <div className="col">
                                     <div className="form-group">
                                         <label htmlFor="" className="form-label">Nom</label>
-                                        <input type="text" className="form-control" placeholder="Doe" {...register('last_name')} />
+                                        <input type="text" className="form-control" placeholder="Doe" {...register('lastName')} />
                                     </div>
                                 </div>
                             </div>
                             <div className="form-check-inline">
-                                <input type="radio" className="form-check-input" value={"homme"} {...register('gender')} />
+                                <input type="radio" className="form-check-input" value={"male"} {...register('gender')} />
                                 <label htmlFor="" className="form-check-label">Homme</label>
                             </div>
                             <div className="form-check-inline">
-                                <input type="radio" className="form-check-input" value={"femme"} {...register('gender')} />
+                                <input type="radio" className="form-check-input" value={"female"} {...register('gender')} />
                                 <label htmlFor="" className="form-check-label">Femme</label>
                             </div>
 
                             <h3 className="mt-3">Informations en jeu</h3>
                             <div className="form-group">
                                 <label htmlFor="" className="form-label">Pseudo</label>
-                                <input type="text" className="form-control" placeholder="Votre pseudo" {...register("username")} />
+                                <input type="text" className="form-control" placeholder="pseudo" {...register("username")} />
                             </div>
                             <div className="row">
                                 <div className="col">
                                     <div className="form-group">
                                         <label htmlFor="" className="form-label">Mot de passe</label>
-                                        <input type="password" className="form-control" placeholder="mot de passe" {...register("password")} />
+                                        <input type="password" className="form-control" placeholder="mot de passe" {...register("plainPassword")} />
                                     </div>
                                 </div>
                                 <div className="col">
