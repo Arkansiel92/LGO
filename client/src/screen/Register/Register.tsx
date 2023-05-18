@@ -19,7 +19,7 @@ function Register() {
         //     .catch(error => {console.log("ERREUR : ", error)})  
         // }
 
-        fetch('http://localhost:8000/api/auth', {
+        fetch('https://localhost:8000/auth', {
             method: "POST",
             headers: {
                 "accept": "application/json",
@@ -27,10 +27,11 @@ function Register() {
             },
             body: JSON.stringify({
                 "email": "admin@moonrise.fr",
-                "password": "admin"
+                "password": "joeil92250"
             })
         })
-        .then(res => console.log(res))
+        .then(res => res.json())
+        .then(data => console.log(data))
     }
 
     return (
