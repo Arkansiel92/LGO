@@ -70,6 +70,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read', 'user:create'])]
     private ?string $gender = null;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Title $title = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -196,6 +199,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGender(string $gender): self
     {
         $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getTitle(): ?Title
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?Title $title): self
+    {
+        $this->title = $title;
 
         return $this;
     }

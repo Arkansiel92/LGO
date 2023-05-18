@@ -74,7 +74,6 @@ function Player({ player, selfPlayer, step }: props) {
                         ? <img src={`assets/img/sprites/player${player.sprite}/player${player.sprite}.png`} className='mx-auto d-block' alt="" />
                         : <img src={`assets/img/sprites/player${player.sprite}/player${player.sprite}_dead.png`} className='mx-auto d-block' alt="" />
                 }
-
             </div>
         </div>
     )
