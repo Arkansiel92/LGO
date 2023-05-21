@@ -1,5 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import "./Navbar.css";
+import Login from '../Login/Login';
+import Register from '../Register/Register';
 
 function Navbar() {
     return (
@@ -14,9 +16,14 @@ function Navbar() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <NavLink to ="/roles" aria-current="page" className="nav-link">
                                 Liste des rôles (bientôt débug)
+                            </NavLink>
+                        </li> */}
+                        <li className="nav-item">
+                            <NavLink to="/news" aria-current="page" className="nav-link">
+                                Nouveautés
                             </NavLink>
                         </li>
                         <li className='nav-item'>
@@ -27,12 +34,13 @@ function Navbar() {
                     </ul>
                 </div>
                 <div className="d-flex">
-                    <button className='btn btn-primary mx-1'>Se connecter</button>
-                    <NavLink to={"/register"}>
-                        <button className='btn btn-secondary'>S'inscrire</button>
-                    </NavLink>
+                    <button className='btn btn-primary mx-1' data-bs-toggle="modal" data-bs-target="#login">Se connecter</button>
+                    <button className='btn btn-secondary' data-bs-toggle="modal" data-bs-target="#register">S'inscrire</button>
                 </div>
             </div>
+
+            <Login />
+            <Register />
         </nav>
     )
 }

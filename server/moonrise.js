@@ -2354,7 +2354,6 @@ io.on('connection', (socket) => {
         }
 
         resetTurn();
-
         room();
 
         if (hub.roles.includes("Voleur")) {
@@ -2411,10 +2410,6 @@ io.on('connection', (socket) => {
         hub.sockets.push(socketBot);
 
         sendMessage('join', null, usernameBot + " (bot) vient d'arriver dans la partie !");
-
-        io.to(socket.room).emit('getRoom', hub);
-        room();
-
     })
 
     socket.on('deleteBot', () => {
