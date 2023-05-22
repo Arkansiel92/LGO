@@ -1,9 +1,28 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import "./Navbar.css";
 import Login from '../Login/Login';
 import Register from '../Register/Register';
+import { accountServices } from '../../services/Auth';
+import { useContext, useEffect } from 'react';
+import authContext from '../../context/auth';
 
 function Navbar() {
+
+    const navigate = useNavigate();
+    const {authenticated, setAuthenticated} = useContext(authContext);
+
+    function logout() {
+        accountServices.logout();
+
+        setAuthenticated(false);
+
+        return navigate('/');
+    }
+
+    useEffect(() => {
+        console.log(authenticated)
+    }, [authenticated])
+
     return (
         <nav id='navbar' className="navbar navbar-dark navbar-expand-lg bg-dark">
             <div className="container-fluid">
@@ -34,8 +53,16 @@ function Navbar() {
                     </ul>
                 </div>
                 <div className="d-flex">
-                    <button className='btn btn-primary mx-1' data-bs-toggle="modal" data-bs-target="#login">Se connecter</button>
-                    <button className='btn btn-secondary' data-bs-toggle="modal" data-bs-target="#register">S'inscrire</button>
+                    {
+                        !authenticated
+                        ? <div>
+                            <button className='btn btn-primary mx-1' data-bs-toggle="modal" data-bs-target="#login">Se connecter</button>
+                            <button className='btn btn-secondary' data-bs-toggle="modal" data-bs-target="#register">S'inscrire</button>
+                        </div>
+                        : <div>
+                            <button onClick={logout} className="btn btn-danger">Se déconnecter</button>
+                        </div>
+                    }
                 </div>
             </div>
 

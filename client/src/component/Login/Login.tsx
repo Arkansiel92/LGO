@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useContext, useState } from 'react';
+import { set, useForm } from 'react-hook-form';
 import { accountServices } from '../../services/Auth';
 import { useNavigate } from 'react-router-dom';
+import authContext from '../../context/auth';
 
 interface login {
     email: "string",
@@ -12,7 +13,7 @@ function Login() {
 
     const { handleSubmit, register, formState: { errors } } = useForm<login>();
     const [alert, setAlert] = useState({ result: '', msg: '' });
-    const navigate = useNavigate();
+    const {authenticated, setAuthenticated} = useContext(authContext);
 
     function onSubmit(data: login) {
         fetch('https://localhost:8000/auth', {
@@ -32,14 +33,16 @@ function Login() {
                         });
                 } else {
                     return res.json().then(data => {
-                        accountServices.saveToken(data);
+                        accountServices.saveToken(data.token);
                         
                         setAlert({
                             result: 'success',
                             msg: 'Connexion réussi, vous allez être rédirigé.'
                         })
 
-                        return navigate('/');
+                        setAuthenticated(true);
+
+                        // return window.location.reload();
                     });
                 }
             })

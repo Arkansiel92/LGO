@@ -2,6 +2,10 @@ function saveToken(token: string) {
     localStorage.setItem('token', token);
 }
 
+function getToken() {
+    return localStorage.getItem("token");
+}
+
 function logout() {
     localStorage.removeItem('token');
 }
@@ -13,5 +17,5 @@ function isLogged() {
 }
 
 export const accountServices = {
-    saveToken, logout, isLogged
+    saveToken, getToken, logout, isLogged
 }

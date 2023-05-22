@@ -12,6 +12,7 @@ interface props {
 }
 
 function Message(props: props) {
+    
     const socket = useContext<ExtendedSocket>(socketContext);
 
     return (
