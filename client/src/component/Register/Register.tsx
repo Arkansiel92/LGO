@@ -1,40 +1,45 @@
 import { useForm } from 'react-hook-form';
 
+interface credentials {
+    email: string,
+    plainPassword: string,
+    confirm_password: string,
+    username: string,
+    firstName: string,
+    lastName: string
+    gender: string,
+}
+
 function Register() {
 
-    const { handleSubmit, register, formState: { errors } } = useForm();
+    const { handleSubmit, register, formState: { errors } } = useForm<credentials>();
 
-    function onSubmit(data: any) {
-        // if (data.confirm_password === data.plainPassword) {
-        //     fetch('http://localhost:8000/api/users', {
-        //         method: 'POST',
-        //         headers: {
-        //             // "Content-Type": "application/x-www-form-urlencoded"
-        //             "Content-Type": "application/json"
-        //         },
-        //         body: JSON.stringify(data)
-        //     })
-        //     .then(res => console.log(res.json()))
-        //     .then(data => console.log(data))
-        //     .catch(error => {console.log("ERREUR : ", error)})  
-        // }
+    function onSubmit(data: credentials) {
+        if (data.plainPassword === '') return;
 
-        fetch('https://localhost:8000/auth', {
-            method: "POST",
-            headers: {
-                "accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "email": "admin@moonrise.fr",
-                "password": "joeil92250"
+        if (data.confirm_password === data.plainPassword) {
+            fetch('https://localhost:8000/api/users', {
+                method: 'POST',
+                headers: {
+                    // "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
             })
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data.token);
-                localStorage.setItem('token', data.token);
+            .then(res => {
+                if (res.status === 500) return; // adresse mail existe déjà
+
+                if (!res.ok) return;
+                else {
+                    res.json().then(data => {
+                        if (data) return;
+                    });
+                }
             })
+            .catch(error => {console.log("ERREUR : ", error)})  
+        } else {
+            console.log("Les deux mot de passe sont différents.");
+        }
     }
 
     return (
@@ -95,11 +100,6 @@ function Register() {
                                                 <input type="password" className="form-control" placeholder="mot de passe" {...register("confirm_password")} />
                                             </div>
                                         </div>
-                                    </div>
-                                    <p className="lead mt-3">Optionnel : en tant que Bêta-testeur, vous avez la possibilité de créer un nouveau titre.</p>
-                                    <div className="form-group">
-                                        <label htmlFor="" className="form-label">Nouveau titre</label>
-                                        <input type="text" className="form-control" placeholder="ex : Dieu des dieux" max={10} {...register("title")} />
                                     </div>
                                 </section>
                             </div>

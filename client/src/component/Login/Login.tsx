@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { accountServices } from '../../services/Auth';
+import { useNavigate } from 'react-router-dom';
 
 interface login {
     email: "string",
@@ -9,8 +11,8 @@ interface login {
 function Login() {
 
     const { handleSubmit, register, formState: { errors } } = useForm<login>();
-
-    const [alert, setAlert] = useState({result: '', msg: ''});
+    const [alert, setAlert] = useState({ result: '', msg: '' });
+    const navigate = useNavigate();
 
     function onSubmit(data: login) {
         fetch('https://localhost:8000/auth', {
@@ -24,22 +26,24 @@ function Login() {
             .then(res => {
                 if (!res.ok) {
                     return setAlert(
-                        {result: 'danger', 
-                        msg: 'Adresse mail ou mot de passe incorrect.'
+                        {
+                            result: 'danger',
+                            msg: 'Adresse mail ou mot de passe incorrect.'
+                        });
+                } else {
+                    return res.json().then(data => {
+                        accountServices.saveToken(data);
+                        
+                        setAlert({
+                            result: 'success',
+                            msg: 'Connexion réussi, vous allez être rédirigé.'
+                        })
+
+                        return navigate('/');
                     });
                 }
-                
-                return res.json();
             })
-            .then(data => {
-                console.log(data);
-                localStorage.setItem('token', data);
-
-                return setAlert({
-                    result: 'success',
-                    msg: 'Connexion réussi, vous allez être rédirigé.'
-                })
-            })
+            .catch(error => console.log("Une erreur :", error))
     }
 
     return (
