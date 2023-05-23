@@ -11,11 +11,19 @@
 
 body {
     color: #F5F5F5;
-    font-family: 'Corals-Regular', sans-serif;
+    font-family: sans-serif, 'Corals-Regular', sans-serif;
     font-size: 18px;
     margin: 0;
     padding: 0;
     height: 100%;
+}
+
+.left-click {
+    cursor: pointer;
+}
+
+.navbar {
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 ::-webkit-scrollbar {

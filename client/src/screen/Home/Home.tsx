@@ -34,14 +34,14 @@ function Home() {
     })
 
     const handleSubmit = () => {
-        socket.emit('setRoom', {pseudo: pseudo, sprite: sprite})
+        socket.emit('setRoom', { pseudo: pseudo, sprite: sprite })
     }
 
     const join = () => {
-        let data = { 
-            id: room, 
-            pseudo: pseudo, 
-            sprite: sprite 
+        let data = {
+            id: room,
+            pseudo: pseudo,
+            sprite: sprite
         }
 
         socket.emit('join', data);
@@ -62,7 +62,7 @@ function Home() {
                 loading && <div id="loader-home"></div>
             }
             <Navbar />
-            <header style={{
+            {/* <header style={{
                 backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/maps/background-game.svg'})`,
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center bottom',
@@ -89,6 +89,18 @@ function Home() {
                         : <button className="btn btn-lg btn-primary mx-1" onClick={() => { setCard('join') }}>Rejoindre</button>
                     }
                 </div>
+            </header> */}
+            <header className='m-5 text-center'>
+                <h1 className='fw-light'>Moonrise</h1>
+                <p className='lead'>Nouveau jeu de loup-garou en ligne inspiré du célèbre jeu de société "Loup Garou de Thiercelieux". Ce jeu captivant est conçu pour les passionnés de jeux de rôles, de mystères et d'intrigues. La version en ligne du jeu offre une expérience unique, qui permet aux joueurs de se plonger dans un univers fascinant rempli de rebondissements. Que vous soyez un joueur expérimenté ou un novice, notre jeu de loup-garou est parfait pour vous.</p>
+                <div className="text-center">
+                    <button className="btn btn-lg btn-warning">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                        Créer une partie
+                    </button>
+                </div>
             </header>
             {
                 alert && <div className='container text-center alert alert-danger'>{alert}</div>
@@ -99,7 +111,26 @@ function Home() {
                 <Cloud nb={3} animationDelay={20} left={100} top={8} />
                 <img className='sun mx-2' src="/assets/img/sprites/sun.png" alt="moon" />
             </div> */}
-            <div className='container my-5'>
+            <div className='container-fluid px-5'>
+                <div className="row">
+                    <div className="col rounded" style={{
+                        // backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/maps/background-game.svg'})`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center bottom',
+                        backgroundSize: 'cover',
+                        height: '100%',
+                        width: '100%',
+                        backgroundColor: "#87CEEB"
+                    }}>
+                        <img src="/assets/maps/background-game.svg" alt="" />
+                    </div>
+                    <div className="col text-center">
+                        <h2>Nouvelle map disponible !</h2>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam, adipisci neque? Quae quaerat ullam soluta expedita sunt odit ex doloremque, saepe excepturi. Aliquid placeat aut autem at magnam minima delectus.</p>
+                    </div>
+                </div>
+            </div>
+            <div className='container-fluid p-5 rounded my-5'>
                 <div>
                     {
                         card === "create"

@@ -21,22 +21,19 @@ function Register() {
             fetch('https://localhost:8000/api/users', {
                 method: 'POST',
                 headers: {
-                    // "Content-Type": "application/x-www-form-urlencoded"
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(data)
             })
-            .then(res => {
-                if (res.status === 500) return; // adresse mail existe déjà
-
-                if (!res.ok) return;
-                else {
-                    res.json().then(data => {
-                        if (data) return;
-                    });
-                }
-            })
-            .catch(error => {console.log("ERREUR : ", error)})  
+                .then(res => {
+                    if (res.status === 500) return; // adresse mail existe déjà
+                    else {
+                        res.json().then(data => {
+                            if (data) return;
+                        });
+                    }
+                })
+                .catch(error => { console.log("ERREUR : ", error) })
         } else {
             console.log("Les deux mot de passe sont différents.");
         }
@@ -46,12 +43,8 @@ function Register() {
         <div className="modal fade" id="register" tabIndex={-1} aria-labelledby="register" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content bg-dark">
-                    <div className="modal-header">
-                        <h1 className="modal-title fs-5">Inscription Moonrise</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className="modal-body">
+                    <div className="modal-body">
+                        <form onSubmit={handleSubmit(onSubmit)}>
                             <div>
                                 <section className="container">
                                     <h3>Informations personnelles</h3>
@@ -74,7 +67,7 @@ function Register() {
                                         </div>
                                     </div>
                                     <div className="form-check-inline">
-                                        <input type="radio" className="form-check-input" value={"male"} {...register('gender')} />
+                                        <input type="radio" className="form-check-input" value={"male"} {...register('gender')} checked />
                                         <label htmlFor="" className="form-check-label">Homme</label>
                                     </div>
                                     <div className="form-check-inline">
@@ -103,11 +96,11 @@ function Register() {
                                     </div>
                                 </section>
                             </div>
-                        </div>
-                        <div className="modal-footer">
-                            <input type="submit" className="btn btn-primary" value="S'inscrire" />
-                        </div>
-                    </form>
+                            <div className="text-center">
+                                <input type="submit" className="btn btn-lg btn-primary my-3" value="Inscription" />
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div >
