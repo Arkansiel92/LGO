@@ -5,9 +5,11 @@ import Navbar from "../../component/Navbar/Navbar";
 import './Home.css';
 import Cloud from '../../component/Cloud/Cloud';
 import Footer from '../../component/Footer/Footer';
+import { AuthContext } from '../../context/auth';
 
 function Home() {
     const socket = useContext<ExtendedSocket>(socketContext);
+    const auth = useContext(AuthContext);
     const navigate = useNavigate();
     const [loading, setLoading] = useState<boolean>(false);
     const [pseudo, setPseudo] = useState<string>('');
@@ -34,13 +36,13 @@ function Home() {
     })
 
     const handleSubmit = () => {
-        socket.emit('setRoom', { pseudo: pseudo, sprite: sprite })
+        socket.emit('setRoom', { pseudo: auth.authState.user?.username, sprite: sprite })
     }
 
     const join = () => {
         let data = {
             id: room,
-            pseudo: pseudo,
+            pseudo: auth.authState.user?.username,
             sprite: sprite
         }
 

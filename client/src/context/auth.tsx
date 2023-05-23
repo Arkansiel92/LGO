@@ -1,11 +1,11 @@
 // AuthContext.tsx
 
 import { createContext, useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
 
 interface User {
-  id: string;
-  email: string;
-  token: string;
+  username: string;
+  roles: string[];
 }
 
 interface AuthState {
@@ -17,7 +17,7 @@ interface AuthState {
 
 interface AuthContextProps {
   authState: AuthState;
-  login: (email: string, token: string) => void;
+  login: (token: string) => void;
   logout: () => void;
 }
 
@@ -38,17 +38,20 @@ export const AuthProvider = ({ children }: any) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    if (token) setAuthState({user : null, isAuthenticated : true})
+    if (token) login(token);
   }, [])
 
-  const login = (email: string, token: string) => {
+  const decodeJwt = (token: string) => jwt_decode(token);
+
+  const login = (token: string) => {
     
     localStorage.setItem('token', token);
 
+    const decode_user: any = decodeJwt(token);
+
     const user: User = {
-      id: "1",
-      email: email,
-      token: token
+      username: decode_user.username,
+      roles: decode_user.roles
     };
 
     setAuthState({ user, isAuthenticated: true });

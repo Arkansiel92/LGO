@@ -23,27 +23,33 @@ function Login() {
             },
             body: JSON.stringify(credentials)
         })
-            .then(res => {
-                if (res.status === 401) {
-                    return setAlert(
-                        {
-                            result: 'danger',
-                            msg: 'Adresse mail ou mot de passe incorrect.'
-                        });
-                } else {
-                    return res.json().then(data => {
-                        auth.login(credentials.email, data.token);
-
-                        setAlert({
-                            result: 'success',
-                            msg: 'Connexion réussi, vous allez être rédirigé.'
-                        })
-
-                        return window.location.reload();
+        .then(res => {
+            if (res.status === 401) {
+                return setAlert(
+                    {
+                        result: 'danger',
+                        msg: 'Adresse mail ou mot de passe incorrect.'
                     });
-                }
-            })
-            .catch(error => console.log("Une erreur :", error))
+            } else if (res.status === 500) {
+                return setAlert(
+                    {
+                        result: 'danger',
+                        msg: 'Le serveur est off. Merci de patentier.'
+                    });
+            } else {
+                return res.json().then(data => {
+                    auth.login(data.token);
+
+                    setAlert({
+                        result: 'success',
+                        msg: 'Connexion réussi, vous allez être rédirigé.'
+                    })
+
+                    return window.location.reload();
+                });
+            }
+        })
+        .catch(error => console.log("Une erreur :", error))
     }
 
     return (
@@ -77,7 +83,6 @@ function Login() {
                             </div>
                             <div className="text-center">
                                 <input type="submit" className="btn btn-lg btn-primary" value="Connexion" />
-
                             </div>
                         </form>
                     </div>
