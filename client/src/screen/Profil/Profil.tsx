@@ -1,8 +1,7 @@
-import "./News.css";
 import Navbar from "../../component/Navbar/Navbar";
+import "./Profil.css";
 
-
-function News() {
+function Profil() {
     return (
         <div>
             <Navbar />
@@ -10,4 +9,4 @@ function News() {
     )
 }
 
-export default News;
+export default Profil;

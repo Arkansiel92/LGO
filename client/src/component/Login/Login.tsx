@@ -13,8 +13,10 @@ function Login() {
     const { handleSubmit, register, formState: { errors } } = useForm<login>();
     const auth = useContext(AuthContext);
     const [alert, setAlert] = useState({ result: '', msg: '' });
+    const [sendForm, setSendForm] = useState(false);
 
     function onSubmit(credentials: login) {
+        setSendForm(true);
         fetch('https://localhost:8000/auth', {
             method: "POST",
             headers: {
@@ -23,33 +25,42 @@ function Login() {
             },
             body: JSON.stringify(credentials)
         })
-        .then(res => {
-            if (res.status === 401) {
-                return setAlert(
-                    {
-                        result: 'danger',
-                        msg: 'Adresse mail ou mot de passe incorrect.'
+            .then(res => {
+                if (res.status === 401) {
+                    setSendForm(false);
+                    return setAlert(
+                        {
+                            result: 'danger',
+                            msg: 'Adresse mail ou mot de passe incorrect.'
+                        });
+                } else if (res.status === 500) {
+                    setSendForm(false);
+                    return setAlert(
+                        {
+                            result: 'danger',
+                            msg: 'Le serveur est off. Merci de patentier.'
+                        });
+                } else {
+                    return res.json().then(data => {
+                        auth.login(data.token);
+
+                        setAlert({
+                            result: 'success',
+                            msg: 'Connexion réussi, vous allez être rédirigé.'
+                        })
+
+                        return window.location.reload();
                     });
-            } else if (res.status === 500) {
+                }
+            })
+            .catch(() => {
+                setSendForm(false);
                 return setAlert(
                     {
                         result: 'danger',
                         msg: 'Le serveur est off. Merci de patentier.'
                     });
-            } else {
-                return res.json().then(data => {
-                    auth.login(data.token);
-
-                    setAlert({
-                        result: 'success',
-                        msg: 'Connexion réussi, vous allez être rédirigé.'
-                    })
-
-                    return window.location.reload();
-                });
-            }
-        })
-        .catch(error => console.log("Une erreur :", error))
+            })
     }
 
     return (
@@ -82,7 +93,14 @@ function Login() {
                                 <input className='form-control' placeholder='mot de passe' type="password" {...register('password')} />
                             </div>
                             <div className="text-center">
-                                <input type="submit" className="btn btn-lg btn-primary" value="Connexion" />
+                                {
+                                    !sendForm
+                                        ? <input type="submit" className="btn btn-lg btn-primary" value="Connexion" />
+                                        : <div className="spinner-border" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                }
+
                             </div>
                         </form>
                     </div>

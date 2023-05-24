@@ -70,7 +70,18 @@ function Navbar() {
                                     <span className="mx-1">S'inscrire</span>
                                 </div>
                             </div>
-                            : <div onClick={logout} className="text-danger left-click">Se déconnecter</div>
+                            : <div className="collapse navbar-collapse">
+                                <ul className="navbar-nav">
+                                    <li className="nav-item">
+                                        <NavLink to={"/profil"} className={"nav-link"}>
+                                            Profil
+                                        </NavLink>
+                                    </li>
+                                    <li className="nav-item nav-link text-danger left-click" onClick={logout}>
+                                        Se déconnecter
+                                    </li>
+                                </ul>
+                            </div>
 
                     }
                 </div>
