@@ -73,6 +73,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Title $title = null;
 
+    #[ORM\Column(options: ['default' => 0 ])]
+    private ?int $points = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -211,6 +214,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTitle(?Title $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getPoints(): ?int
+    {
+        return $this->points;
+    }
+
+    public function setPoints(int $points): self
+    {
+        $this->points = $points;
 
         return $this;
     }

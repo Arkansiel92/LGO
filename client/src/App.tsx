@@ -18,7 +18,7 @@ function App() {
             <Route path="/profil" element={<Profil />} />
             <Route path='/leaderboard' element={<Leaderboard />} />
             <Route path="/roles" element={<Roles />} />
-            <Route path=":id" element={<Game />} />
+            <Route path="/game/:id" element={<Game />} />
           </Routes>
         </BrowserRouter>
       </socketContext.Provider>
