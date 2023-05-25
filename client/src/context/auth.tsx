@@ -28,8 +28,8 @@ const initialAuthState: AuthState = {
 
 export const AuthContext = createContext<AuthContextProps>({
   authState: initialAuthState,
-  login: () => { },
-  logout: () => { },
+  login: () => {},
+  logout: () => {}
 });
 
 export const AuthProvider = ({ children }: any) => {

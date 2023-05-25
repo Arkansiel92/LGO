@@ -18,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
+    order: ["points" => "ASC"],
     operations: [
         new GetCollection(),
         new Post(processor: UserPasswordHasher::class, validationContext: ['groups' => ['Default', 'user:create']]),
@@ -74,6 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Title $title = null;
 
     #[ORM\Column(options: ['default' => 0 ])]
+    #[Groups(['user:read', 'user:update'])]
     private ?int $points = null;
 
     public function getId(): ?int

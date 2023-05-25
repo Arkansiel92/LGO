@@ -6,20 +6,33 @@ import './Home.css';
 import Cloud from '../../component/Cloud/Cloud';
 import Footer from '../../component/Footer/Footer';
 import { AuthContext } from '../../context/auth';
+import News from '../../component/News/News';
+import Spinner from '../../component/Spinner/Spinner';
+
+export interface news {
+    id: number,
+    title: string,
+    type: string,
+    content: string,
+    createdAt: string
+}
+
+interface bestPlayer {
+    username: string,
+    points: number
+}
 
 function Home() {
     const socket = useContext<ExtendedSocket>(socketContext);
     const auth = useContext(AuthContext);
     const navigate = useNavigate();
     const [loading, setLoading] = useState<boolean>(false);
+    const [news, setNews] = useState<news[] | null>(null);
+    const [bestPlayer, setBestPlayer] = useState<bestPlayer | null>(null);
+    const [accounts, setAccounts] = useState<number | null>(null);
     const [room, setRoom] = useState<string>('');
     const [sprite, setSprite] = useState<string>("1");
     const [alert, setAlert] = useState<string>('');
-    const [card, setCard] = useState<string>('create');
-
-
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const params = Object.fromEntries(urlSearchParams.entries());
 
     socket.on('navigate', (id: string) => {
         setLoading(true);
@@ -48,6 +61,40 @@ function Home() {
 
     useEffect(() => {
         socket.emit('clear');
+
+        if (!news) {
+            fetch('https://localhost:8000/api/news', {
+                method: "GET"
+            })
+                .then(res => res.json())
+                .then(data => {
+                    setNews(data['hydra:member'])
+                })
+        }
+
+        if (!bestPlayer) {
+            fetch('https://localhost:8000/api/users', {
+                method: "GET"
+            }) 
+            .then (res => res.json())
+            .then(data => {
+                console.log(data['hydra:member'][0]);
+
+                setBestPlayer({
+                    username: data['hydra:member'][0].username,
+                    points: data['hydra:member'][0].points
+                })
+            })
+        }
+
+        if (!accounts) {
+            fetch('https://localhost:8000/api/users', {
+                method: "GET"
+            })
+            .then(res => res.json())
+            .then(data => setAccounts(data['hydra:totalItems']))
+        }
+        
     }, [socket])
 
     return (
@@ -61,12 +108,12 @@ function Home() {
                     alert && <div className='container text-center alert alert-danger'>{alert}</div>
                 }
                 <header className='my-5 text-center card bg-dark box-shadow p-5'>
-                    <h1 className='fw-light'>Moonrise</h1>
-                    <p className='lead'>Nouveau jeu de loup-garou en ligne inspiré du célèbre jeu de société "Loup Garou de Thiercelieux". Ce jeu captivant est conçu pour les passionnés de jeux de rôles, de mystères et d'intrigues. La version en ligne du jeu offre une expérience unique, qui permet aux joueurs de se plonger dans un univers fascinant rempli de rebondissements. Que vous soyez un joueur expérimenté ou un novice, notre jeu de loup-garou est parfait pour vous.</p>
+                    <h1 className='fw-light mb-4'>Moonrise</h1>
+                    <p className='lead'>Nouveau jeu de loup-garou en ligne inspiré du célèbre jeu de société <span className='fw-bold'>"Loup Garou de Thiercelieux"</span>. Ce jeu captivant est conçu pour les passionnés de jeux de rôles, de mystères et d'intrigues. La version en ligne du jeu offre une expérience unique, qui permet aux joueurs de se plonger dans un univers fascinant rempli de rebondissements. Que vous soyez un joueur expérimenté ou un novice, notre jeu de loup-garou est parfait pour vous.</p>
                     {
                         auth.authState.isAuthenticated
                             ?
-                            <div className="text-center">
+                            <div className="text-center mt-4">
                                 <button onClick={handleSubmit} className="btn btn-warning mx-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
@@ -74,7 +121,7 @@ function Home() {
                                     Créer une partie
                                 </button>
                             </div>
-                            : <p className='lead'>Prêt à jouer ? <span className='text-warning left-click' data-bs-toggle="modal" data-bs-target="#login">Connectez-vous !</span></p>
+                            : <p className='lead mt-4'>Déjà un compte ? <span className='text-warning left-click' data-bs-toggle="modal" data-bs-target="#login">Connectez-vous</span></p>
                     }
                 </header>
                 <div className="row">
@@ -86,7 +133,7 @@ function Home() {
                                 </svg>
                                 <div>
                                     <h4>Nombre de joueurs</h4>
-                                    <p className='lead'><span className='text-danger'>0</span> comptes crées</p>
+                                    <p className='lead'><span className='text-danger'>{accounts}</span> comptes crées</p>
                                 </div>
                             </div>
                         </div>
@@ -122,76 +169,17 @@ function Home() {
                 <div className="news my-5">
                     <h2>LES NEWS</h2>
                     <ul className="list-group">
-                        <li className="list-group-item bg-dark box-shadow text-white">
-                            <div className="row">
-                                <div className="col-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                                    </svg>
-                                </div>
-                                <div className="col">
-                                    <h5 className='text-warning'>Les titres sont arrivés !</h5>
-                                    <p className='text-muted'>Le nouveau système de titre est arrivé. une vingtaine de titre disponible en jeu.</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li className="list-group-item bg-dark box-shadow text-white">
-                            <div className="row">
-                                <div className="col-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                                    </svg>
-                                </div>
-                                <div className="col">
-                                    <h5 className='text-warning'>Ajout des skins de joueur</h5>
-                                    <p className='text-muted'>Ajout de 4 skins de joueur.</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li className="list-group-item bg-dark box-shadow text-white">
-                            <div className="row">
-                                <div className="col-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                                    </svg>
-                                </div>
-                                <div className="col">
-                                    <h5 className='text-warning'>Ajout des sons</h5>
-                                    <p className='text-muted'>Ajout de plusieurs sons. Notamment ceux quand un joueur mort, et quand le compte à rebour arrive vers la fin.</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li className="list-group-item bg-dark box-shadow text-white">
-                            <div className="row">
-                                <div className="col-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
-                                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
-                                    </svg>
-                                </div>
-                                <div className="col">
-                                    <h5 className='text-warning'>Fix des bugs et crash</h5>
-                                    <p className='text-muted'>De nombreux crashs ont été fix. D'autres arriveront prochainement.</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li className="list-group-item bg-dark box-shadow text-white">
-                            <div className="row">
-                                <div className="col-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
-                                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
-                                    </svg>
-                                </div>
-                                <div className="col">
-                                    <h5 className='text-warning'>Fix des bugs</h5>
-                                    <p className='text-muted'>De nombreux crashs ont été fix. D'autres arriveront prochainement.</p>
-                                </div>
-                            </div>
-                        </li>
+                        {!news && <Spinner />}
+                        {news?.map((n: news, index: number) => (
+                            <News
+                                key={index}
+                                id={n.id}
+                                title={n.title}
+                                type={n.type}
+                                content={n.content}
+                                createdAt={n.createdAt}
+                            />
+                        ))}
                     </ul>
                 </div>
                 <div className='rounded'>

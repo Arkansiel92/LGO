@@ -7,7 +7,7 @@ use App\Repository\NewsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: NewsRepository::class)]
-#[ApiResource]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
 class News
 {
     #[ORM\Id]
@@ -24,7 +24,7 @@ class News
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $content = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int

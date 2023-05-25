@@ -23,7 +23,7 @@ class Title
     #[ORM\Column(length: 10)]
     private ?string $color = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToMany(mappedBy: 'title', targetEntity: User::class)]
