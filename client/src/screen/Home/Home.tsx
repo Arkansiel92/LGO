@@ -22,6 +22,7 @@ interface bestPlayer {
 }
 
 function Home() {
+    
     const socket = useContext<ExtendedSocket>(socketContext);
     const auth = useContext(AuthContext);
     const navigate = useNavigate();

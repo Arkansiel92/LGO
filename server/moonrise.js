@@ -2462,7 +2462,8 @@ io.on('connection', (socket) => {
         const index = hub.roles.indexOf(role);
 
         if (index > -1) {
-            if (role === "Deux soeurs") { // les deux soeurs se jouent à deux, on supprime 2 index
+            // les deux soeurs se jouent à deux, on supprime 2 index
+            if (role === "Deux soeurs") { 
                 hub.roles.splice(index, 2);
             } else {
                 hub.roles.splice(index, 1);
@@ -2475,6 +2476,7 @@ io.on('connection', (socket) => {
     socket.on('setOptions', ({option, bool}) => {
         hub.options[option] = bool;
 
+        // Si il n'y a pas de maire, il n'y a pas de garde-champêtre
         if (!hub.options.mayor) hub.options['parkRanger'] = false;
 
         return room();
@@ -2499,7 +2501,7 @@ io.on('connection', (socket) => {
         const player = {
             name: pseudo,
             socket: socket.id,
-            sprite: sprite,
+            sprite: "1",
             x: getRandomNumber(20, 80),
             y: getRandomNumber(70, 80),
             frameX: 0,
@@ -2531,8 +2533,8 @@ io.on('connection', (socket) => {
 
         sendMessage('join', null, pseudo + " vient d'arriver dans la partie !");
 
-        io.to(socket.room).emit('getRoom', hub);
         room();
+
         return navigate("/game/" + id);
     })
 

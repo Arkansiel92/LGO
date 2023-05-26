@@ -199,7 +199,12 @@ function Game() {
                 doNothing={boxRole?.doNothing} />}
 
 
-            <ManagementRoom room={room} player={player} inGame={room?.inGame} sideBar={sideBar} handleChange={handleSidebarChange} />
+            <ManagementRoom 
+                room={room} 
+                player={player} 
+                inGame={room?.inGame} 
+                sideBar={sideBar} 
+                handleChange={handleSidebarChange} />
 
             {
                 sideBar === false &&
