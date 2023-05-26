@@ -19,10 +19,10 @@ function Join() {
         return navigate(path);
     })
 
+
+    
     useEffect(() => {
         if (!localStorage.getItem('token')) return navigate('/');
-
-        console.log(id);
         
         if (id) socket.emit('join', {
             id: id, 

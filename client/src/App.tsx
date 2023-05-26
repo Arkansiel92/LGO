@@ -18,7 +18,7 @@ function App() {
             <Route path="/profil" element={<Profil />} />
             <Route path='/leaderboard' element={<Leaderboard />} />
             <Route path="/roles" element={<Roles />} />
-            <Route path='/join' element={<Join />} />
+            <Route path='/join/:id' element={<Join />} />
             <Route path="/game/:id" element={<Game />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>
