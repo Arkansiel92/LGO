@@ -1,5 +1,3 @@
-// AuthContext.tsx
-
 import { createContext, useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 
@@ -12,8 +10,6 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
 }
-
-
 
 interface AuthContextProps {
   authState: AuthState;

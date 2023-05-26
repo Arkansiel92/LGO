@@ -16,7 +16,7 @@ function Options({ room }: props) {
     }
 
     return (
-        <div className="card bg-dark">
+        <div className="card bg-dark box-shadow">
             <div>
                 <h3>Composition ({room?.roles.length} / {room?.players.length})</h3>
                 {

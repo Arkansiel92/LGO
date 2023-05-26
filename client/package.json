@@ -51,6 +51,7 @@
     ]
   },
   "devDependencies": {
+    "file-loader": "^6.2.0",
     "tmx-parser": "^1.5.0"
   },
   "browser": {

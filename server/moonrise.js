@@ -2529,11 +2529,11 @@ io.on('connection', (socket) => {
         socket.room = id;
         socket.join(id);
 
-        sendMessage('join', null, pseudo.toLowerCase() === "xprolive" || pseudo.toLowerCase() === "prolive" | pseudo.toLowerCase() === "alexis" ? pseudo + " vient d'arriver dans la partie ! (il sera loup-garou à la prochaine partie)" : pseudo + " vient d'arriver dans la partie !");
+        sendMessage('join', null, pseudo + " vient d'arriver dans la partie !");
 
         io.to(socket.room).emit('getRoom', hub);
         room();
-        return navigate(id);
+        return navigate("/game/" + id);
     })
 
     socket.on('setRoom', ({pseudo, sprite}) => {
@@ -2657,7 +2657,7 @@ io.on('connection', (socket) => {
 
         sendMessage('server', null, "Le jeu est en bêta-test. Merci de report les bugs/améliorations sur le discord. Coeur sur vous et votre famille.");
 
-        return navigate(id);
+        return navigate("/game/" + id);
     })
 
     // socket.on('inputs', inputs => {

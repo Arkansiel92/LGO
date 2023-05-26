@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { socketContext, ExtendedSocket } from '../../context/socket';
 import Navbar from "../../component/Navbar/Navbar";
 import './Home.css';
-import Cloud from '../../component/Cloud/Cloud';
 import Footer from '../../component/Footer/Footer';
 import { AuthContext } from '../../context/auth';
 import News from '../../component/News/News';
@@ -34,10 +33,10 @@ function Home() {
     const [sprite, setSprite] = useState<string>("1");
     const [alert, setAlert] = useState<string>('');
 
-    socket.on('navigate', (id: string) => {
+    socket.on('navigate', (path: string) => {
         setLoading(true);
         setTimeout(() => {
-            navigate("/game/" + id);
+            navigate(path);
         }, 1500)
     })
 
@@ -78,8 +77,6 @@ function Home() {
             }) 
             .then (res => res.json())
             .then(data => {
-                console.log(data['hydra:member'][0]);
-
                 setBestPlayer({
                     username: data['hydra:member'][0].username,
                     points: data['hydra:member'][0].points
@@ -95,7 +92,7 @@ function Home() {
             .then(data => setAccounts(data['hydra:totalItems']))
         }
         
-    }, [socket])
+    }, [socket, accounts, bestPlayer, news])
 
     return (
         <div>

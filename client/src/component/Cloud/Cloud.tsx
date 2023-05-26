@@ -1,14 +1,14 @@
 import { CSSProperties } from 'react';
 import "./Cloud.css";
+import cloud from "../../assets/img/sprites/cloud.png";
 
 interface props {
-    nb: number
     animationDelay: number
     left: number
     top: number
 }
 
-function Cloud({nb, animationDelay, left, top}: props) {
+function Cloud({animationDelay, left, top}: props) {
 
     const style: CSSProperties = {
         position: 'absolute',
@@ -18,7 +18,7 @@ function Cloud({nb, animationDelay, left, top}: props) {
     }
 
     return (
-        <img style={style} className="cloud" src={`assets/img/sprites/cloud${nb}.png`} alt="cloud" />
+        <img style={style} className="cloud" src={`${cloud}`} alt="cloud" />
     )
 };
 

@@ -44,7 +44,7 @@ function BoxRole({description, victim, name_function, type, title, health, death
     }
 
     return (
-        <div id="boxDialog" className="bg-dark card text-center lead m-auto">
+        <div id="boxDialog" className="bg-dark card text-center lead m-auto box-shadow">
             {
                 title && 
                 <div className="card-header">
