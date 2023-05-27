@@ -5,6 +5,7 @@ const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const fs = require('fs');
+const {Room, Player} = require('./class.js');
 
 app.use(cors());
 
@@ -67,17 +68,6 @@ const roles = [
         needVictim: false,
         img: "card-cupidon.svg",
     },
-    // {
-    //     name: "Petite fille",
-    //     name_function: "LittleGirl",
-    //     description: "La petite fille est un villageois qui peut se réveiller au moment où les loups garous sont appelés.",
-    //     side: "village",
-    //     step: null,
-    //     descriptionInGame: "",
-    //     max: 1,
-    //     needVictim: false,
-    //     img: "card-littleGirl.svg",
-    // },
     {
         name: "Sorcière",
         name_function: "Witch",
@@ -265,17 +255,6 @@ const roles = [
         needVictim: true,
         img: "card-BlackWerewolf.svg",
     },
-    // {
-    //     name: "Juge bègue",
-    //     name_function: "Judge",
-    //     description: "Ce pouvoir ne peut être utilisé qu'une fois dans la partie. Après le vote du village, le juge bègue décide si il faut refaire le vote. Dans ce cas, un nouveau vote à lieu, immédiatement et sans débat.",
-    //     side: "village",
-    //     step: null,
-    //     descriptionInGame: "Voulez-vous déclencher un second vote ?",
-    //     max: 1,
-    //     needVictim: false,
-    //     img: "card-judge.svg",
-    // },
     {
         name: "Renard",
         name_function: "Fox",
@@ -287,17 +266,6 @@ const roles = [
         needVictim: false,
         img: "card-fox.svg",
     },
-    // {
-    //     name: "Servante Dévouée",
-    //     name_function: "Servant",
-    //     description: "Une fois dans la partie, elle peut choisir de prendre le rôle d'un des morts jusqu'à la fin de la partie sauf si elle est en couple, car son amour est plus fort que sa volonté de changer de rôle",
-    //     side: "village",
-    //     step: "start",
-    //     descriptionInGame: "Voulez-vous prendre le rôle d'un mort ?",
-    //     max: 1,
-    //     needVictim: false,
-    //     img: "card-servant.svg",
-    // },
     {
         name: "Mercenaire",
         name_function: "Mercenary",
