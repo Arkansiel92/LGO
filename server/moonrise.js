@@ -2509,6 +2509,8 @@ io.on('connection', (socket) => {
     socket.on('setRoom', ({pseudo, sprite}) => {
         let id = Date.now().toString();
 
+        socket.room = new Room(id, socket.id, true);
+
         socket.name = pseudo
         socket.room = id;
         socket.join(id);

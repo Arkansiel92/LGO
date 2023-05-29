@@ -1,7 +1,8 @@
 class Room {
-    constructor(type, author) {
-        this.private = type
+    constructor(id, author, type) {
+        this.id = id
         this.author = author
+        this.private = type
         this.players = []
         this.sockets = []
         this.roles = []
@@ -85,6 +86,25 @@ class Room {
         this.inGame = false
         this.winner = null
         this.step = "start"
+    }
+
+    getId() {
+        return this.id;
+    } 
+
+    join(player, socket) {
+        if (this.sockets.includes(socket)) return false;
+        
+        this.sockets.push(socket);
+        this.players.push(player);
+
+        return true;
+    }
+
+    leave(socket) {
+        if (!this.sockets.includes(socket)) return false;
+        
+        return true;
     }
 }
 
