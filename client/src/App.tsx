@@ -2,10 +2,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { socket, socketContext } from './context/socket';
 import Game from './screen/Game/Game';
 import Home from './screen/Home/Home';
-import Roles from './screen/Roles/Roles';
 import Leaderboard from './screen/Leaderboard/Leaderboard';
 import Profil from './screen/Profil/Profil';
 import Admin from './screen/Admin/Admin';
+import Clan from './screen/Clan/Clan';
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/profil" element={<Profil />} />
             <Route path='/leaderboard' element={<Leaderboard />} />
-            <Route path="/roles" element={<Roles />} />
+            <Route path='/clan' element={<Clan />} />
             <Route path="/game/:id" element={<Game />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>

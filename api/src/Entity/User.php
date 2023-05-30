@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -25,9 +27,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(),
         new Put(processor: UserPasswordHasher::class),
         new Patch(processor: UserPasswordHasher::class),
-        new Delete(),
+        // new Delete(),
     ],
-    // normalizationContext: ['groups' => ['user:read']],
+    normalizationContext: ['groups' => ['user:read']],
     // denormalizationContext: ['groups' => ['user:create', 'user:update']],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -77,6 +79,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(options: ['default' => 0 ])]
     #[Groups(['user:read', 'user:update'])]
     private ?int $points = null;
+
+    #[ORM\Column(options: ['default' => 0])]
+    #[Groups(['user:read', 'user:update'])]
+    private ?int $win = null;
+
+    #[ORM\Column(options: ['default' => 0])]
+    #[Groups(['user:read', 'user:update'])]
+    private ?int $loose = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[Groups(['user:read', 'user:update'])]
+    private ?Clan $clan = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: HistoricGames::class, orphanRemoval: true)]
+    #[Groups(['user:read', 'user:update'])]
+    private Collection $historicGames;
+
+    public function __construct()
+    {
+        $this->historicGames = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -228,6 +251,72 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPoints(int $points): self
     {
         $this->points = $points;
+
+        return $this;
+    }
+
+    public function getWin(): ?int
+    {
+        return $this->win;
+    }
+
+    public function setWin(int $win): self
+    {
+        $this->win = $win;
+
+        return $this;
+    }
+
+    public function getLoose(): ?int
+    {
+        return $this->loose;
+    }
+
+    public function setLoose(int $loose): self
+    {
+        $this->loose = $loose;
+
+        return $this;
+    }
+
+    public function getClan(): ?Clan
+    {
+        return $this->clan;
+    }
+
+    public function setClan(?Clan $clan): self
+    {
+        $this->clan = $clan;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HistoricGames>
+     */
+    public function getHistoricGames(): Collection
+    {
+        return $this->historicGames;
+    }
+
+    public function addHistoricGame(HistoricGames $historicGame): self
+    {
+        if (!$this->historicGames->contains($historicGame)) {
+            $this->historicGames->add($historicGame);
+            $historicGame->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHistoricGame(HistoricGames $historicGame): self
+    {
+        if ($this->historicGames->removeElement($historicGame)) {
+            // set the owning side to null (unless already changed)
+            if ($historicGame->getUser() === $this) {
+                $historicGame->setUser(null);
+            }
+        }
 
         return $this;
     }

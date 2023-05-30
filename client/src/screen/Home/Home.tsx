@@ -1,8 +1,8 @@
+import './Home.css';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { socketContext, ExtendedSocket } from '../../context/socket';
 import Navbar from "../../component/Navbar/Navbar";
-import './Home.css';
 import Footer from '../../component/Footer/Footer';
 import { AuthContext } from '../../context/auth';
 import News from '../../component/News/News';
@@ -30,8 +30,6 @@ function Home() {
     const [news, setNews] = useState<news[] | null>(null);
     const [bestPlayer, setBestPlayer] = useState<bestPlayer | null>(null);
     const [accounts, setAccounts] = useState<number | null>(null);
-    const [room, setRoom] = useState<string>('');
-    const [sprite, setSprite] = useState<string>("1");
     const [alert, setAlert] = useState<string>('');
 
     socket.on('navigate', (path: string) => {
@@ -46,17 +44,7 @@ function Home() {
     })
 
     const handleSubmit = () => {
-        socket.emit('setRoom', { pseudo: auth.authState.user?.username, sprite: sprite })
-    }
-
-    const join = () => {
-        let data = {
-            id: room,
-            pseudo: auth.authState.user?.username,
-            sprite: sprite
-        }
-
-        socket.emit('join', data);
+        socket.emit('setRoom', { pseudo: auth.authState.user?.username, sprite: "1" })
     }
 
     useEffect(() => {
@@ -64,33 +52,42 @@ function Home() {
 
         if (!news) {
             fetch('https://localhost:8000/api/news', {
-                method: "GET"
+                method: "GET",
+                headers: {
+                    'accept':'application/json'
+                }
             })
                 .then(res => res.json())
                 .then(data => {
-                    setNews(data['hydra:member'])
+                    setNews(data)
                 })
         }
 
         if (!bestPlayer) {
             fetch('https://localhost:8000/api/users', {
-                method: "GET"
+                method: "GET",
+                headers: {
+                    'accept':'application/json'
+                }
             }) 
             .then (res => res.json())
             .then(data => {
                 setBestPlayer({
-                    username: data['hydra:member'][0].username,
-                    points: data['hydra:member'][0].points
+                    username: data[0].username,
+                    points: data[0].points
                 })
             })
         }
 
         if (!accounts) {
             fetch('https://localhost:8000/api/users', {
-                method: "GET"
+                method: "GET",
+                headers: {
+                    'accept':'application/json'
+                }
             })
             .then(res => res.json())
-            .then(data => setAccounts(data['hydra:totalItems']))
+            .then(data => setAccounts(data.length))
         }
         
     }, [socket, accounts, bestPlayer, news])

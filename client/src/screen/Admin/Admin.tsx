@@ -18,7 +18,7 @@ function Admin() {
 
     const onSubmit = (news: newsForm) => {
         if (news.title !== "" && news.content !== "" && news.type !== "") {
-            news.createdAt = new Date();
+            // news.createdAt = new Date();
 
             fetch('https://localhost:8000/api/news', {
                 method: "POST",
@@ -43,13 +43,7 @@ function Admin() {
     }
 
     useEffect(() => {
-        if (!news) {
-            fetch('https://localhost:8000/api/news', {
-                method: "GET"
-            })
-                .then(res => res.json())
-                .then(data => setNews(data['hydra:member']))
-        }
+
     })
 
     return (
@@ -62,8 +56,8 @@ function Admin() {
                         <input className="form-control my-3" type="text" placeholder="Titre" {...register('title')} />
                         <div className="form-group my-3">
                             <label htmlFor="type">Type</label>
-                            <select className="form-select" {...register('type')}>
-                                <option value="feature" selected>Nouvelle feature</option>
+                            <select defaultValue={"feature"} className="form-select" {...register('type')}>
+                                <option value="feature" >Nouvelle feature</option>
                                 <option value="fix">Fix bugs</option>
                                 <option value="various">Divers</option>
                             </select>

@@ -356,17 +356,6 @@ const roles = [
     }
 ]
 
-const compositions = [
-    {
-        title: "",
-        composition: []
-    },
-    {
-        title: "",
-        composition: []
-    }
-]
-
 const eventsGypsy = [
     {
         name: "Résurrection aveugle",
@@ -2456,20 +2445,24 @@ io.on('connection', (socket) => {
 
     socket.on('getRoom', () => io.to(socket.id).emit('getRoom', hub));
 
-    socket.on('join', ({ id, pseudo }) => {
+    socket.on('join', (data) => {
 
-        if (!io.sockets.adapter.rooms.get(id)) {
-            return socket.emit('alert', 'Ce lobby n\'existe pas ou a été supprimé !');
-        }
+        // if (!io.sockets.adapter.rooms.get(id)) {
+        //     return socket.emit('alert', 'Ce lobby n\'existe pas ou a été supprimé !');
+        // }
 
-        if (io.sockets.adapter.rooms.get(id).inGame) {
-            return socket.emit('alert', 'La partie a déjà démarré !');
-        }
+        // if (io.sockets.adapter.rooms.get(id).inGame) {
+        //     return socket.emit('alert', 'La partie a déjà démarré !');
+        // }
+
+        console.log(data);
+
+        if (io.sockets.adapter.rooms.get(data.id).sockets.includes(socket.id)) return room();
 
         const player = {
-            name: pseudo,
+            name: data.pseudo,
             socket: socket.id,
-            sprite: "1",
+            sprite: data.sprite,
             x: getRandomNumber(20, 80),
             y: getRandomNumber(70, 80),
             frameX: 0,
@@ -2492,18 +2485,18 @@ io.on('connection', (socket) => {
             isParkRanger: false
         }
 
-        hub = io.sockets.adapter.rooms.get(id);
+        hub = io.sockets.adapter.rooms.get(data.id);
         hub.players.push(player);
         hub.sockets.push(socket.id);
-        socket.name = pseudo;
-        socket.room = id;
-        socket.join(id);
+        socket.name = data.pseudo;
+        socket.room = data.id;
+        socket.join(data.id);
 
-        sendMessage('join', null, pseudo + " vient d'arriver dans la partie !");
+        sendMessage('join', null, data.pseudo + " vient d'arriver dans la partie !");
 
         room();
 
-        return navigate("/game/" + id);
+        return navigate("/game/" + data.id);
     })
 
     socket.on('setRoom', ({pseudo, sprite}) => {

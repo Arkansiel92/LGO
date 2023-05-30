@@ -19,7 +19,7 @@ class Composition
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: Types::JSON)]
     private array $roles = [];
 
     public function getId(): ?int

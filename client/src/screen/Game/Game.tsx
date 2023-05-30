@@ -14,6 +14,7 @@ import Options from '../../component/Options/Options';
 import Win from '../../component/Win/Win';
 import { eventParkRanger } from '../../component/EventParkRanger/EventParkRanger';
 import useSound from 'use-sound';
+import { AuthContext } from '../../context/auth';
 
 type Params = {
     id: string
@@ -120,6 +121,7 @@ function Game() {
     const [deathSound, {stop}] = useSound('assets/sounds/death.ogg', { volume: 0.10 });
 
     const socket = useContext<ExtendedSocket>(socketContext);
+    const auth = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSidebarChange = (bool: boolean) => {
@@ -133,12 +135,10 @@ function Game() {
     })
 
     socket.on('getRoom', room => {
+        
+        const player = room?.players.find((player: player) => player.socket === socket.id)
+        
         setRoom(room);
-
-        const player = room?.players.find((player: player) => {
-            return player.socket === socket.id
-        })
-
         setPlayer(player);
     })
 
@@ -148,11 +148,37 @@ function Game() {
 
     useEffect(() => {
         if (!localStorage.getItem('token')) return navigate('/');
-    
-        if (!room) {
-            socket.emit('getRoom');
+
+        function checkAuth() {
+            if (!auth.authState.user) {
+                setTimeout(checkAuth, 1000);
+            } else {
+                if (!room) {     
+                    let data = {
+                        id: id,
+                        pseudo: auth.authState.user?.username,
+                        sprite: "1"
+                    }
+                    
+                    socket.emit('join', data)
+                }
+            }
+
         }
-    }, [socket, room]);
+
+        checkAuth();
+    
+        socket.on('join', room => {
+            const player = room?.players.find((player: player) => player.socket === socket.id)
+            
+            setRoom(room);
+            setPlayer(player);
+        })
+
+        return () => {
+            socket.off('join');
+        }
+    }, [socket, room, id, auth, navigate]);
 
     const style = {
         backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/maps/background-game.svg'})`,
