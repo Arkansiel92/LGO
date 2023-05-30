@@ -7,6 +7,7 @@ use App\Repository\TitleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TitleRepository::class)]
 #[ApiResource]
@@ -15,12 +16,15 @@ class Title
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 10)]
+    #[Groups(['user:read'])]
     private ?string $color = null;
 
     #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]

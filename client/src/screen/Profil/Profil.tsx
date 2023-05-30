@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import Navbar from "../../component/Navbar/Navbar";
 import "./Profil.css";
 import { useNavigate } from "react-router-dom";
+import TitlesModal from "../../component/TitlesModal/TitlesModal";
+
+interface title {
+    id: number,
+    title: string,
+    color: string,
+}
 
 interface profil {
     username: string
@@ -9,7 +16,10 @@ interface profil {
     last_name: string,
     gender: string,
     roles: string[],
-    title: string
+    points: number,
+    win: number,
+    loose: number,
+    title: title
 }
 
 function Profil() {
@@ -55,20 +65,24 @@ function Profil() {
                                 <h5 className="mb-1">{profil?.username}</h5>
                                 {
                                     profil?.title
-                                    ? <p className="text-muted mb-4">{profil?.title}</p>
+                                    ? <p className="text-muted mb-4">{profil?.title.title}</p>
                                     : <p className="text-muted fst-italic mb-4">Aucun titre</p>
                                 }
                                 <div className="d-flex justify-content-center mb-2">
                                     <button type="button" disabled className="btn btn-warning">Modifier profil</button>
-                                    <button type="button" className="btn btn-outline-warning ms-1">Changer de titre</button>
+                                    <button type="button" className="btn btn-outline-warning ms-1" data-bs-toggle="modal" data-bs-target="#title">Changer de titre</button>
                                 </div>
                             </div>
                         </div>
 
                         <div className="card bg-dark box-shadow my-3">
                             <div className="card-body text-center">
-                                <h5 className="text-muted mb-1">Taux de victoire</h5>
-                                <h1>36%</h1>
+                                <h5 className="text-muted mb-1">Taux de victoire (W: {profil?.win} / L: {profil?.loose})</h5>
+                                {
+                                    profil && (profil?.win > 0 || profil?.loose > 0)
+                                    ? <h1>{Math.floor((profil.win / (profil.win + profil.loose)) * 100)}%</h1>
+                                    : <h1>0%</h1>
+                                }
                             </div>
                         </div>
 
@@ -140,7 +154,7 @@ function Profil() {
                                         <p className="mb-0">Points</p>
                                     </div>
                                     <div className="col-sm-9">
-                                        <p className="mb-0">0</p>
+                                        <p className="mb-0">{profil?.points}</p>
                                     </div>
                                 </div>
                             </div>
@@ -165,6 +179,7 @@ function Profil() {
                     </div>
                 </div>
             </div>
+            <TitlesModal />
         </div>
     )
 }
