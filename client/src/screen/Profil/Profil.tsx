@@ -1,13 +1,21 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Navbar from "../../component/Navbar/Navbar";
 import "./Profil.css";
 import { useNavigate } from "react-router-dom";
 import TitlesModal from "../../component/TitlesModal/TitlesModal";
+import { AuthContext } from "../../context/auth";
+import HistoricGame from "../../HistoricGame/HistoricGame";
 
 interface title {
     id: number,
     title: string,
     color: string,
+}
+
+export interface game {
+    role: string,
+    isWon: boolean,
+    createdAt: Date
 }
 
 interface profil {
@@ -16,6 +24,7 @@ interface profil {
     last_name: string,
     gender: string,
     roles: string[],
+    historicGames: game[]
     points: number,
     win: number,
     loose: number,
@@ -25,6 +34,7 @@ interface profil {
 function Profil() {
 
     const [profil, setProfil] = useState<profil | null>(null);
+    const auth = useContext(AuthContext);
 
     const navigate = useNavigate();
 
@@ -32,7 +42,7 @@ function Profil() {
         if (!localStorage.getItem('token')) return navigate('/');
 
         if (!profil) {
-            fetch('https://localhost:8000/api/users/1', {
+            fetch('https://localhost:8000/api/users?username='+ auth.authState.user?.username, {
                 method: "GET",
                 headers: {
                     'accept':'application/json'
@@ -40,22 +50,16 @@ function Profil() {
             })
             .then(res => res.json())
             .then(data => {
-                setProfil(data);
+                setProfil(data[0]);
             });
         }
-    }, [navigate, profil]);
+    }, [navigate, profil, auth]);
 
     return (
         <div>
             <Navbar />
             <div className="container">
                 <h1>Mon profil</h1>
-                {
-                    profil?.roles.includes('ROLE_BETA') &&
-                    <div className="text-end">
-                        <button className="btn btn-warning my-2">Avoir tous les titres</button>
-                    </div>
-                }
                 <div className="row">
                     <div className="col-4">
                         <div className="card bg-dark box-shadow">
@@ -164,15 +168,9 @@ function Profil() {
                                 <h3>Mes parties</h3>
                             </div>
                             <div className="card-body">
-                                <div className="d-flex justify-content-between">
-                                    <p>Loup-garou</p>
-                                    <p className="text-success">Gagné</p>
-                                </div>
-                                <hr />
-                                <div className="d-flex justify-content-between">
-                                    <p>Cupidon</p>
-                                    <p className="text-danger">Perdue</p>
-                                </div>
+                                {profil?.historicGames.map((game: game, index: number) => (
+                                    <HistoricGame key={index} role={game.role} isWon={game.isWon} createdAt={game.createdAt} />
+                                ))}
                             </div>
                         </div>
                     </div>

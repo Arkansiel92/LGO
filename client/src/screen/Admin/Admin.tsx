@@ -65,10 +65,6 @@ function Admin() {
                         <textarea className="form-control" id="" cols={30} rows={10} placeholder="Contenu de la MAJ" {...register('content')}></textarea>
                         <input className="btn btn-primary my-3" type="submit" value="Envoyer" />
                     </form>
-
-                    <form action="">
-                        
-                    </form>
                 </div>
             </div>
         </div>
