@@ -40,11 +40,10 @@ function Profil() {
             })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 setProfil(data);
             });
         }
-    }, []);
+    }, [navigate, profil]);
 
     return (
         <div>
@@ -65,7 +64,7 @@ function Profil() {
                                 <h5 className="mb-1">{profil?.username}</h5>
                                 {
                                     profil?.title
-                                    ? <p className="text-muted mb-4">{profil?.title.title}</p>
+                                    ? <p className="mb-4"style={{color: profil?.title.color}}>{profil?.title.title}</p>
                                     : <p className="text-muted fst-italic mb-4">Aucun titre</p>
                                 }
                                 <div className="d-flex justify-content-center mb-2">

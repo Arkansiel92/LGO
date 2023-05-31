@@ -20,7 +20,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
-    order: ["points" => "ASC"],
+    paginationClientItemsPerPage: true,
+    order: ["points" => "DESC"],
     operations: [
         new GetCollection(),
         new Post(processor: UserPasswordHasher::class, validationContext: ['groups' => ['Default', 'user:create']]),
@@ -100,6 +101,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->historicGames = new ArrayCollection();
+        $this->points = 0;
+        $this->win = 0;
+        $this->loose = 0;
+        $this->roles = ['ROLE_USER', 'ROLE_BETA'];
     }
 
     public function getId(): ?int

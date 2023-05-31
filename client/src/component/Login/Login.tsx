@@ -28,26 +28,15 @@ function Login() {
             .then(res => {
                 if (res.status === 401) {
                     setSendForm(false);
-                    return setAlert(
-                        {
-                            result: 'danger',
-                            msg: 'Adresse mail ou mot de passe incorrect.'
-                        });
+                    return setAlert({result: 'danger', msg: 'Adresse mail ou mot de passe incorrect.'});
                 } else if (res.status === 500) {
                     setSendForm(false);
-                    return setAlert(
-                        {
-                            result: 'danger',
-                            msg: 'Le serveur est off. Merci de patentier.'
-                        });
+                    return setAlert({result: 'danger', msg: 'Le serveur est off. Merci de patentier.'});
                 } else {
                     return res.json().then(data => {
                         auth.login(data.token);
 
-                        setAlert({
-                            result: 'success',
-                            msg: 'Connexion réussi, vous allez être rédirigé.'
-                        })
+                        setAlert({result: 'success', msg: 'Connexion réussi, vous allez être rédirigé.'})
 
                         return window.location.reload();
                     });

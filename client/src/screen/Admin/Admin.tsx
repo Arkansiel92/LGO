@@ -2,6 +2,7 @@ import { useEffect, useContext, useState } from "react";
 import Navbar from "../../component/Navbar/Navbar";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../context/auth";
+import { useNavigate } from "react-router-dom";
 
 interface newsForm {
     title: string,
@@ -15,11 +16,10 @@ function Admin() {
     const [news, setNews] = useState(null);
     const auth = useContext(AuthContext);
     const { handleSubmit, register, formState: { errors } } = useForm<newsForm>();
+    const navigate = useNavigate();
 
     const onSubmit = (news: newsForm) => {
         if (news.title !== "" && news.content !== "" && news.type !== "") {
-            // news.createdAt = new Date();
-
             fetch('https://localhost:8000/api/news', {
                 method: "POST",
                 headers: {
@@ -43,7 +43,7 @@ function Admin() {
     }
 
     useEffect(() => {
-
+        if (!auth.authState.user?.roles.includes('ROLE_ADMIN')) return navigate('/');
     })
 
     return (
@@ -64,6 +64,10 @@ function Admin() {
                         </div>
                         <textarea className="form-control" id="" cols={30} rows={10} placeholder="Contenu de la MAJ" {...register('content')}></textarea>
                         <input className="btn btn-primary my-3" type="submit" value="Envoyer" />
+                    </form>
+
+                    <form action="">
+                        
                     </form>
                 </div>
             </div>

@@ -1,9 +1,9 @@
+import "./Alert.css";
 
-interface alert {
+export interface alert {
     type: string,
     msg: string
 }
-
 
 function Alert({type, msg}: alert) {
     return (

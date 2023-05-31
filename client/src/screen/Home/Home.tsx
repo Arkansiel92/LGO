@@ -51,7 +51,7 @@ function Home() {
         socket.emit('clear');
 
         if (!news) {
-            fetch('https://localhost:8000/api/news', {
+            fetch('https://localhost:8000/api/news?itemsPerPage=5', {
                 method: "GET",
                 headers: {
                     'accept':'application/json'
@@ -64,7 +64,7 @@ function Home() {
         }
 
         if (!bestPlayer) {
-            fetch('https://localhost:8000/api/users', {
+            fetch('https://localhost:8000/api/users?itemsPerPage=1', {
                 method: "GET",
                 headers: {
                     'accept':'application/json'
@@ -155,7 +155,7 @@ function Home() {
                                 </svg>
                                 <div>
                                     <h4>Joueur numéro #1</h4>
-                                    <p className='lead text-danger'>Arkansiel (1256 pts)</p>
+                                    <p className='lead text-danger'>{bestPlayer?.username} ({bestPlayer?.points} pts)</p>
                                 </div>
                             </div>
                         </div>

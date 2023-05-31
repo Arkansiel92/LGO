@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import "./TitlesModal.css";
 import { useEffect, useState } from "react";
+import Alert, { alert } from "../Alert/Alert";
+
+
 
 interface title {
     id: number,
@@ -14,11 +17,25 @@ interface credentials {
 function TitlesModal() {
 
     const [titles, setTitles] = useState<title[] | null>(null);
+    const [alert, setAlert] = useState<alert | null>(null);
 
     const { handleSubmit, register, formState: { errors } } = useForm<credentials>();
 
     const onSubmit = (credentials: credentials) => {
-        console.log(credentials);
+        if (credentials.title !== '') {
+            fetch('https://localhost:8000/api/users/1', {
+                method:'PATCH',
+                headers: {
+                    'Content-Type': 'application/merge-patch+json'
+                },
+                body: JSON.stringify(credentials)
+            })
+            .then(res => {
+                if(res.status === 200) {
+                    setAlert({type: "success", msg: "Ton titre a été changé avec succès !"})
+                }
+            })
+        }
     }
 
     useEffect(() => {
@@ -30,7 +47,6 @@ function TitlesModal() {
         })
         .then(res => res.json())
         .then(data => {
-            console.log(data);
             setTitles(data)
         })
     }, [])
@@ -40,13 +56,16 @@ function TitlesModal() {
             <div className="modal-dialog">
                 <div className="modal-content bg-dark">
                     <div className="modal-header">
-                        <h3>Titres</h3>
+                        <h3 className="modal-title">Titres</h3>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
+                        {alert && <Alert type={alert.type} msg={alert.msg} />}
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <select className="form-select" {...register('title')}>
+                                <option value="">Choisir un titre</option>
                                 {titles?.map((title: title, index: number) => (
-                                    <option value={title.id}>{title.title}</option>
+                                    <option key={index} value={"api/titles/" + title.id}>{title.title}</option>
                                 ))}
                             </select>
                             <div className="text-end">
