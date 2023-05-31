@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\HistoricGamesRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: HistoricGamesRepository::class)]
 #[ApiResource]
@@ -21,12 +22,15 @@ class HistoricGames
     private ?User $user = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $role = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $result = null;
+    #[ORM\Column]
+    #[Groups(['user:read'])]
+    private ?bool $isWon = null;
 
     #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Groups(['user:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function __construct() 
@@ -63,14 +67,14 @@ class HistoricGames
         return $this;
     }
 
-    public function getResult(): ?string
+    public function isIsWon(): ?bool
     {
-        return $this->result;
+        return $this->isWon;
     }
 
-    public function setResult(string $result): self
+    public function setIsWon(bool $isWon): self
     {
-        $this->result = $result;
+        $this->isWon = $isWon;
 
         return $this;
     }
@@ -86,4 +90,5 @@ class HistoricGames
 
         return $this;
     }
+
 }
