@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ClanRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClanRepository::class)]
@@ -17,21 +18,32 @@ class Clan
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, unique: true)]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(options: ['default' => 1])]
-    private ?int $level = null;
+    private ?int $points = null;
 
     #[ORM\OneToMany(mappedBy: 'clan', targetEntity: User::class)]
     private Collection $users;
 
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $banner = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $emblem = null;
+
+    #[ORM\OneToMany(mappedBy: 'clan', targetEntity: MembersClan::class, orphanRemoval: true)]
+    private Collection $membersClans;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->points = 0;
+        $this->membersClans = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -63,14 +75,14 @@ class Clan
         return $this;
     }
 
-    public function getLevel(): ?int
+    public function getPoints(): ?int
     {
-        return $this->level;
+        return $this->points;
     }
 
-    public function setLevel(int $level): self
+    public function setPoints(int $points): self
     {
-        $this->level = $level;
+        $this->points = $points;
 
         return $this;
     }
@@ -99,6 +111,60 @@ class Clan
             // set the owning side to null (unless already changed)
             if ($user->getClan() === $this) {
                 $user->setClan(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getBanner(): ?string
+    {
+        return $this->banner;
+    }
+
+    public function setBanner(string $banner): self
+    {
+        $this->banner = $banner;
+
+        return $this;
+    }
+
+    public function getEmblem(): ?string
+    {
+        return $this->emblem;
+    }
+
+    public function setEmblem(string $emblem): self
+    {
+        $this->emblem = $emblem;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MembersClan>
+     */
+    public function getMembersClans(): Collection
+    {
+        return $this->membersClans;
+    }
+
+    public function addMembersClan(MembersClan $membersClan): self
+    {
+        if (!$this->membersClans->contains($membersClan)) {
+            $this->membersClans->add($membersClan);
+            $membersClan->setClan($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMembersClan(MembersClan $membersClan): self
+    {
+        if ($this->membersClans->removeElement($membersClan)) {
+            // set the owning side to null (unless already changed)
+            if ($membersClan->getClan() === $this) {
+                $membersClan->setClan(null);
             }
         }
 

@@ -5,7 +5,9 @@ import Home from './screen/Home/Home';
 import Leaderboard from './screen/Leaderboard/Leaderboard';
 import Profil from './screen/Profil/Profil';
 import Admin from './screen/Admin/Admin';
-import Clan from './screen/Clan/Clan';
+import CreateClan from './screen/Clan/CreateClan/CreateClan';
+import InfoClan from './screen/Clan/InfoClan/InfoClan';
+import LeaderboardClan from './screen/Clan/LeaderboardClan/LeaderboardClan';
 
 function App() {
   return (
@@ -16,8 +18,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/profil" element={<Profil />} />
             <Route path='/leaderboard' element={<Leaderboard />} />
-            <Route path='/clan' element={<Clan />} />
             <Route path="/game/:id" element={<Game />} />
+            <Route path="/clan/create" element={<CreateClan />} />
+            <Route path="/clan/info/:id" element={<InfoClan />} />
+            <Route path="/clan/leaderboard" element={<LeaderboardClan />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>
         </BrowserRouter>

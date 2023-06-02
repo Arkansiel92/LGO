@@ -104,7 +104,7 @@ const roles = [
     {
         name: "Ancien du village",
         name_function: "OldMan",
-        description: "L’ancien possède deux vies durant la nuit. La première fois qu'il doit mourir, il en perd une. Le matin, il se réveille avec les autres, mais dévoile son rôle (la seconde fois qu’il est attaqué par les loups garous alors il meurt normalement). Si l’ancien est chassé du village par le vote des villageois il meurt directement et tous les villageois perdent leurs pouvoirs.",
+        description: "L'ancien possède deux vies durant la nuit. La première fois qu'il doit mourir, il en perd une. Le matin, il se réveille avec les autres, mais dévoile son rôle (la seconde fois qu’il est attaqué par les loups garous alors il meurt normalement). Si l’ancien est chassé du village par le vote des villageois il meurt directement et tous les villageois perdent leurs pouvoirs.",
         side: "village",
         step: null,
         descriptionInGame: null,

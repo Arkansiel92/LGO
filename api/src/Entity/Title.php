@@ -33,9 +33,13 @@ class Title
     #[ORM\OneToMany(mappedBy: 'title', targetEntity: User::class)]
     private Collection $users;
 
+    #[ORM\OneToMany(mappedBy: 'title', targetEntity: Challenge::class)]
+    private Collection $challenges;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->challenges = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -103,6 +107,36 @@ class Title
             // set the owning side to null (unless already changed)
             if ($user->getTitle() === $this) {
                 $user->setTitle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Challenge>
+     */
+    public function getChallenges(): Collection
+    {
+        return $this->challenges;
+    }
+
+    public function addChallenge(Challenge $challenge): self
+    {
+        if (!$this->challenges->contains($challenge)) {
+            $this->challenges->add($challenge);
+            $challenge->setTitle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChallenge(Challenge $challenge): self
+    {
+        if ($this->challenges->removeElement($challenge)) {
+            // set the owning side to null (unless already changed)
+            if ($challenge->getTitle() === $this) {
+                $challenge->setTitle(null);
             }
         }
 

@@ -93,13 +93,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read', 'user:update'])]
     private ?int $loose = null;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    #[Groups(['user:read', 'user:update'])]
-    private ?Clan $clan = null;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: HistoricGames::class, orphanRemoval: true)]
     #[Groups(['user:read', 'user:update'])]
     private Collection $historicGames;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ChallengesUser::class)]
+    #[Groups(['user:read', 'user:update'])]
+    private Collection $challengesUsers;
 
     public function __construct()
     {
@@ -108,6 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->win = 0;
         $this->loose = 0;
         $this->roles = ['ROLE_USER', 'ROLE_BETA'];
+        $this->challengesUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -288,18 +289,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getClan(): ?Clan
-    {
-        return $this->clan;
-    }
-
-    public function setClan(?Clan $clan): self
-    {
-        $this->clan = $clan;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, HistoricGames>
      */
@@ -324,6 +313,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($historicGame->getUser() === $this) {
                 $historicGame->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ChallengesUser>
+     */
+    public function getChallengesUsers(): Collection
+    {
+        return $this->challengesUsers;
+    }
+
+    public function addChallengesUser(ChallengesUser $challengesUser): self
+    {
+        if (!$this->challengesUsers->contains($challengesUser)) {
+            $this->challengesUsers->add($challengesUser);
+            $challengesUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChallengesUser(ChallengesUser $challengesUser): self
+    {
+        if ($this->challengesUsers->removeElement($challengesUser)) {
+            // set the owning side to null (unless already changed)
+            if ($challengesUser->getUser() === $this) {
+                $challengesUser->setUser(null);
             }
         }
 

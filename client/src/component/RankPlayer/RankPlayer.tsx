@@ -1,23 +1,28 @@
+import { useContext } from "react";
 import { user } from "../../screen/Leaderboard/Leaderboard";
+import { AuthContext } from "../../context/auth";
 
 
 function RankPlayer({index, username, points, win, loose}: user) {
+
+    const auth = useContext(AuthContext);
+
     return (
-        <div className="row">
+        <div className={auth.authState.user?.username === username ? "row text-danger" : "row" }>
             <div className="col">
-                {index}
+                <p>{index}</p>
             </div>
             <div className="col">
-                {username}
+                <p>{username}</p>
             </div>
             <div className="col">
-                {points}
+                <p>{points}</p>
             </div>
             <div className="col">
-                {win}
+                <p>{win}</p>
             </div>
             <div className="col">
-                {loose}
+                <p>{loose}</p>
             </div>
         </div>
     )

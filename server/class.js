@@ -88,10 +88,6 @@ class Room {
         this.step = "start"
     }
 
-    getId() {
-        return this.id;
-    } 
-
     join(player, socket) {
         if (this.sockets.includes(socket)) return false;
         
