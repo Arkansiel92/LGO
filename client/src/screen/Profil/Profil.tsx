@@ -173,7 +173,10 @@ function Profil() {
                                 <h3>Mes parties</h3>
                             </div>
                             <div className="card-body">
-                                {profil?.historicGames.length === 0 && <p className="fst-italic text-muted">Vos parties jouées s'afficheront ici !</p>}
+                                {
+                                    profil?.historicGames.length === 0 && 
+                                    <p className="fst-italic text-muted">Les parties jouées s'afficheront ici !</p>
+                                }
                                 {profil?.historicGames.map((game: game, index: number) => (
                                     <HistoricGame key={index} role={game.role} isWon={game.isWon} createdAt={game.createdAt} />
                                 ))}

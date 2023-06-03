@@ -38,26 +38,22 @@ function Leaderboard() {
                     users
                         ? <div className="card bg-dark box-shadow">
                             <div className="card-body">
-                                <div className="row my-3 fw-bold">
-                                    <div className="col">
-                                        #
-                                    </div>
-                                    <div className="col">
-                                        Nom
-                                    </div>
-                                    <div className="col">
-                                        Points
-                                    </div>
-                                    <div className="col">
-                                        Victoires
-                                    </div>
-                                    <div className="col">
-                                        Défaites
-                                    </div>
-                                </div>
-                                {users?.map((user: user, index: number) => (
-                                    <RankPlayer key={index} username={user.username} points={user.points} win={user.win} loose={user.loose} index={index + 1} />
-                                ))}
+                                <table className="table text-white">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Nom</th>
+                                            <th scope="col">Points</th>
+                                            <th scope="col">Victoires</th>
+                                            <th scope="col">Défaites</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {users?.map((user: user, index: number) => (
+                                            <RankPlayer key={index} username={user.username} points={user.points} win={user.win} loose={user.loose} index={index + 1} />
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         : <div className="text-center">

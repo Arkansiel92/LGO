@@ -64,21 +64,21 @@ function Roles() {
             {alert && <Alert type={alert.type} msg={alert.msg} />}
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row">
-                    <div className="col form-group">
+                    <div className="col">
                         <label htmlFor="name" className="form-label">Nom</label>
                         <input type="text" className="form-control" placeholder="Nom du rôle" {...register('name')} />
                     </div>
-                    <div className="col form-group">
+                    <div className="col">
                         <label htmlFor="name_function" className="form-label">Nom fonction</label>
                         <input type="text" className="form-control" placeholder="fonction qui sera utilisé dans le serveur Node" {...register('nameFunction')} />
                     </div>
                 </div>
-                <div className="form-group">
+                <div className="">
                     <label htmlFor="description" className="form-label">Description</label>
                     <textarea cols={30} rows={5} className="form-control" placeholder="Description du rôle" {...register('description')}></textarea>
                 </div>
                 <div className="row">
-                    <div className="col form-group">
+                    <div className="col ">
                         <label htmlFor="side" className="form-label">Camp du rôle</label>
                         <select className="form-select" {...register('side')}>
                             <option value={""}>Choisir un camp</option>
@@ -87,7 +87,7 @@ function Roles() {
                             <option value="seul">rôle seul</option>
                         </select>
                     </div>
-                    <div className="col form-group">
+                    <div className="col ">
                         <label htmlFor="step" className="form-label">Etape de jeu</label>
                         <select className="form-select" {...register('step')}>
                             <option value="">Choisir une étape</option>
@@ -99,11 +99,11 @@ function Roles() {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col form-group">
+                    <div className="col ">
                         <label htmlFor="description_in_game" className="form-label">Description en jeu</label>
                         <input type="text" className="form-control" placeholder="description en jeu" {...register('descriptionInGame')} />
                     </div>
-                    <div className="col form-group">
+                    <div className="col ">
                         <label htmlFor="max" className="form-label">Nombre de rôle dans une partie</label>
                         <select className="form-select" {...register('max')}>
                             <option value="">Choisir un nombre</option>
@@ -112,7 +112,7 @@ function Roles() {
                         </select>
                     </div>
                 </div>
-                <div className="form-group">
+                <div className="">
                     <label htmlFor="img" className="form-label">Image du rôle</label>
                     <input type="text" className="form-control" placeholder="exemple.svg" {...register('img')} />
                 </div>

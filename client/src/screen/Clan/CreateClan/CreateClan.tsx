@@ -175,6 +175,7 @@ function CreateClan() {
     const onSubmit = (credentials: credentials) => {
         credentials.banner = banner;
         credentials.emblem = emblem;
+        
 
         fetch('https://localhost:8000/api/clans', {
             method:'POST',

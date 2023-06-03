@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface newsForm {
@@ -9,7 +8,6 @@ interface newsForm {
 }
 
 function News() {
-    const [news, setNews] = useState(null);
     const { handleSubmit, register, formState: { errors } } = useForm<newsForm>();
 
     const onSubmit = (news: newsForm) => {
@@ -17,8 +15,6 @@ function News() {
             fetch('https://localhost:8000/api/news', {
                 method: "POST",
                 headers: {
-                    // "Authorization": "Bearer " + localStorage.getItem("token"),
-                    "accept": "application/json",
                     "Content-type": "application/json"
                 },
                 body: JSON.stringify(news)
@@ -34,25 +30,23 @@ function News() {
         }
     }
 
-    useEffect(() => {
-
-    }, [])
-
     return (
         <div>
             <h1>News</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <input className="form-control my-3" type="text" placeholder="Titre" {...register('title')} />
-                <div className="form-group my-3">
-                    <label htmlFor="type">Type</label>
+                <div className="my-3">
                     <select defaultValue={"feature"} className="form-select" {...register('type')}>
+                        <option value="">Type de news</option>
                         <option value="feature" >Nouvelle feature</option>
                         <option value="fix">Fix bugs</option>
                         <option value="various">Divers</option>
                     </select>
                 </div>
                 <textarea className="form-control" id="" cols={20} rows={5} placeholder="Contenu de la MAJ" {...register('content')}></textarea>
-                <input className="btn btn-primary my-3" type="submit" value="Envoyer" />
+                <div className="text-end">
+                    <input className="btn btn-warning my-3" type="submit" value="Envoyer" />
+                </div>
             </form>
         </div>
     )
