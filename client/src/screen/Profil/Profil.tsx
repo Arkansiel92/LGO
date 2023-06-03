@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import Navbar from "../../component/Navbar/Navbar";
 import "./Profil.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TitlesModal from "../../component/TitlesModal/TitlesModal";
 import { AuthContext } from "../../context/auth";
 import HistoricGame from "../../HistoricGame/HistoricGame";
+import logo from "../../assets/img/role/card-werewolf.svg";
 
 interface title {
     id: number,
@@ -37,12 +38,13 @@ function Profil() {
     const auth = useContext(AuthContext);
 
     const navigate = useNavigate();
+    const {id} = useParams();
 
     useEffect(() => {
         if (!localStorage.getItem('token')) return navigate('/');
 
         if (!profil) {
-            fetch('https://localhost:8000/api/users?username='+ auth.authState.user?.username, {
+            fetch('https://localhost:8000/api/users/' + id, {
                 method: "GET",
                 headers: {
                     'accept':'application/json'
@@ -50,10 +52,10 @@ function Profil() {
             })
             .then(res => res.json())
             .then(data => {
-                setProfil(data[0]);
+                setProfil(data);
             });
         }
-    }, [navigate, profil, auth]);
+    }, [navigate, profil, auth, id]);
 
     return (
         <div>
@@ -64,17 +66,20 @@ function Profil() {
                     <div className="col-4">
                         <div className="card bg-dark box-shadow">
                             <div className="card-body text-center">
-                                <img src="assets/img/role/card-werewolf.svg" alt="avatar" className="rounded-circle img-fluid" width={250} />
+                                <img src={logo} alt="avatar" className="rounded-circle img-fluid" width={250} />
                                 <h5 className="mb-1">{profil?.username}</h5>
                                 {
                                     profil?.title
                                     ? <p className="mb-4"style={{color: profil?.title.color}}>{profil?.title.title}</p>
                                     : <p className="text-muted fst-italic mb-4">Aucun titre</p>
                                 }
-                                <div className="d-flex justify-content-center mb-2">
-                                    <button type="button" disabled className="btn btn-warning">Modifier profil</button>
-                                    <button type="button" className="btn btn-outline-warning ms-1" data-bs-toggle="modal" data-bs-target="#title">Changer de titre</button>
-                                </div>
+                                {
+                                    auth.authState.user?.username === profil?.username &&
+                                    <div className="d-flex justify-content-center mb-2">
+                                        <button type="button" disabled className="btn btn-warning">Modifier profil</button>
+                                        <button type="button" className="btn btn-outline-warning ms-1" data-bs-toggle="modal" data-bs-target="#title">Changer de titre</button>
+                                    </div>
+                                }
                             </div>
                         </div>
 

@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 
 interface User {
+  id: number;
   username: string;
   roles: string[];
 }
@@ -39,13 +40,23 @@ export const AuthProvider = ({ children }: any) => {
     localStorage.setItem('token', token);
     
     const decode_user: any = decodeJwt(token);
-    
-    const user: User = {
-      username: decode_user.username,
-      roles: decode_user.roles
-    };
-    
-    setAuthState({ user, isAuthenticated: true });
+
+    fetch('https://localhost:8000/api/users?username=' + decode_user.username, {
+      method: 'GET',
+      headers: {
+        'accept':'application/json'
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const user: User = {
+        id: data[0].id,
+        username: decode_user.username,
+        roles: decode_user.roles
+      };
+
+      setAuthState({ user, isAuthenticated: true });
+    })
   };
   
   const logout = () => {
@@ -56,7 +67,9 @@ export const AuthProvider = ({ children }: any) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    if (token) login(token);
+    if (token) {
+      login(token);
+    };
   }, [])
 
   return (

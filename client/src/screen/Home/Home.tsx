@@ -107,7 +107,7 @@ function Home() {
                 .then(res => res.json())
                 .then(data => {
                     setBestClan({
-                        name: data[0].username,
+                        name: data[0].name,
                         points: data[0].points,
                         banner: data[0].banner,
                         emblem: data[0].emblem
@@ -139,7 +139,7 @@ function Home() {
                 });
         }
 
-    }, [socket, accounts, bestPlayer, news, roles])
+    }, [socket, accounts, bestPlayer, bestClan, news, roles])
 
     return (
         <div>
@@ -157,8 +157,8 @@ function Home() {
                     {
                         auth.authState.isAuthenticated
                             ?
-                            <div className="text-center mt-4">
-                                <button onClick={handleSubmit} className="btn btn-warning mx-2">
+                            <div className="d-grid gap-2 col-4 mx-auto my-3">
+                                <button onClick={handleSubmit} className="btn btn-lg btn-warning mx-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                     </svg>
@@ -185,12 +185,13 @@ function Home() {
                     <div className="col">
                         <div className="card bg-dark box-shadow">
                             <div className='d-flex justify-content-around align-items-center p-2'>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146ZM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5Z" />
-                                </svg>
+                                <div className="position-relative">
+                                    <img className="banner-village" src={bestClan?.banner} alt="" width={25} />
+                                    <img className="emblem-village" src={bestClan?.emblem} alt="" width={10} />
+                                </div>
                                 <div>
                                     <h4>Village numéro #1</h4>
-                                    <p className="lead"><span className="text-danger">Arkansiel's gang</span> (200pts)</p>
+                                    <p className="lead"><span className="text-danger">{bestClan?.name}</span> ({bestClan?.points}pts)</p>
                                 </div>
                             </div>
                         </div>

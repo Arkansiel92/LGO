@@ -16,7 +16,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/profil" element={<Profil />} />
+            <Route path="/profil/:id" element={<Profil />} />
             <Route path='/leaderboard' element={<Leaderboard />} />
             <Route path="/game/:id" element={<Game />} />
             <Route path="/clan/create" element={<CreateClan />} />

@@ -197,15 +197,14 @@ function CreateClan() {
                         rankClan: 'api/rank_clans/1'
                     })
                 })
-                .then(res => {if(res.ok) return navigate('/')})
-                .catch(e => console.log(e))
+                .then(res => {if(res.ok) return navigate('/clan/info/' + data.id)})
             }
         })
     }
 
     useEffect(() => {
         if (!player) {
-            fetch('https://localhost:8000/api/users?username=' + auth.authState.user?.username, {
+            fetch('https://localhost:8000/api/users/' + auth.authState.user?.id, {
                 method: 'GET',
                 headers: {
                     'accept' : 'application/json'
@@ -213,9 +212,8 @@ function CreateClan() {
             })
             .then(res => res.json())
             .then(data => {
-                setPlayer(data[0])
+                setPlayer(data);
             })
-
         }
     })
 
