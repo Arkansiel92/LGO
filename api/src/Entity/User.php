@@ -44,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['user:read', 'user:create', 'user:update'])]
+    #[Groups(['user:read', 'user:create', 'user:update', 'clan:read'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -62,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, unique: true)]
     #[ApiFilter(SearchFilter::class, strategy: 'partial')]
-    #[Groups(['user:read', 'user:create', 'user:update'])]
+    #[Groups(['user:read', 'user:create', 'user:update', 'clan:read'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
@@ -82,7 +82,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Title $title = null;
 
     #[ORM\Column(options: ['default' => 0 ])]
-    #[Groups(['user:read', 'user:update'])]
+    #[Groups(['user:read', 'user:update', 'clan:read'])]
     private ?int $points = null;
 
     #[ORM\Column(options: ['default' => 0])]

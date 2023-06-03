@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\RankClanRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RankClanRepository::class)]
 #[ApiResource()]
@@ -16,9 +17,11 @@ class RankClan
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['clan:read'])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(['clan:read'])]
     private ?int $level = null;
 
     public function getId(): ?int

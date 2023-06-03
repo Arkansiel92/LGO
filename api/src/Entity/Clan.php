@@ -8,40 +8,48 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ClanRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    paginationClientItemsPerPage: true,
+    order: ["points" => "DESC"],
+    normalizationContext: ['groups' => ['clan:read']],
+)]
 class Clan
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['clan:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, unique: true)]
+    #[Groups(['clan:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['clan:read'])]
     private ?string $description = null;
 
     #[ORM\Column(options: ['default' => 1])]
+    #[Groups(['clan:read'])]
     private ?int $points = null;
 
-    #[ORM\OneToMany(mappedBy: 'clan', targetEntity: User::class)]
-    private Collection $users;
-
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['clan:read'])]
     private ?string $banner = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['clan:read'])]
     private ?string $emblem = null;
 
     #[ORM\OneToMany(mappedBy: 'clan', targetEntity: MembersClan::class, orphanRemoval: true)]
+    #[Groups(['clan:read'])]
     private Collection $membersClans;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
         $this->points = 0;
         $this->membersClans = new ArrayCollection();
     }
@@ -83,36 +91,6 @@ class Clan
     public function setPoints(int $points): self
     {
         $this->points = $points;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setClan($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getClan() === $this) {
-                $user->setClan(null);
-            }
-        }
 
         return $this;
     }
