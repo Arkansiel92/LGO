@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../component/Navbar/Navbar";
-import RankPlayer from "../../component/RankPlayer/RankPlayer";
-import Spinner from "../../component/Spinner/Spinner";
+import Rank from "../../component/Rank/Rank";
 
-export interface user {
+interface user {
     username: string,
     points: string,
     win: number,
@@ -11,12 +10,25 @@ export interface user {
     index?: number
 }
 
+interface member {
+
+}
+
+interface clan {
+    name: string,
+    points: number,
+    membersClans: member[]
+}
+
 function Leaderboard() {
 
     const [users, setUsers] = useState<user[] | null>(null);
+    const [clans, setClans] = useState<clan[] | null>(null);
+    const [leaderboard, setLeaderboard] = useState<string>('players');
 
     useEffect(() => {
-        if (!users) {
+        if (!users && leaderboard === 'players') {
+            setClans(null)
             fetch('https://localhost:8000/api/users?itemsPerPage=30', {
                 method: 'GET',
                 headers: {
@@ -26,7 +38,19 @@ function Leaderboard() {
                 .then(res => res.json())
                 .then(data => setUsers(data))
         }
-    }, [users])
+
+        if (!clans && leaderboard === 'clans') {
+            setUsers(null);
+            fetch('https://localhost:8000/api/clans?itemsPerPage=30', {
+                method: 'GET',
+                headers: {
+                    'accept': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then(data => setClans(data))
+        }
+    }, [users, clans, leaderboard])
 
     return (
         <div>
@@ -34,31 +58,45 @@ function Leaderboard() {
             <div className="container">
                 <h1>Classement</h1>
                 <p>Les meilleurs joueurs de Moonrise !</p>
+                <button onClick={() => { setLeaderboard('players') }} className={`btn ${leaderboard !== "players" ? "btn-outline-warning" : "btn-warning"}  rounded-pill`}>Joueurs</button>
+                <button onClick={() => { setLeaderboard('clans') }} className={`btn ${leaderboard !== "clans" ? "btn-outline-warning" : "btn-warning"} rounded-pill m-1`}>Villages</button>
                 {
-                    users
-                        ? <div className="card bg-dark box-shadow">
-                            <div className="card-body">
-                                <table className="table text-white">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Nom</th>
-                                            <th scope="col">Points</th>
-                                            <th scope="col">Victoires</th>
-                                            <th scope="col">Défaites</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {users?.map((user: user, index: number) => (
-                                            <RankPlayer key={index} username={user.username} points={user.points} win={user.win} loose={user.loose} index={index + 1} />
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        : <div className="text-center">
-                            <Spinner />
-                        </div>
+                    users &&
+                    <table className="table text-white">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Points</th>
+                                <th scope="col">Victoires</th>
+                                <th scope="col">Défaites</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users?.map((user: user, index: number) => (
+                                <Rank key={index} index={index + 1} col1={user.username} col2={user.points} col3={user.win} col4={user.loose} />
+                            ))}
+                        </tbody>
+                    </table>
+                }
+                {
+                    clans &&
+                    <table className="table text-white">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Membres</th>
+                                <th scope="col">Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {clans?.map((clan, index: number) => (
+                                <Rank key={index} index={index + 1} col1={clan.name} col2={clan.membersClans.length} col3={clan.points} />
+                            ))}
+                        </tbody>
+                    </table>
+
                 }
             </div>
         </div>

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Roles from "../../component/Admin/Roles/Roles";
 import News from "../../component/Admin/News/News";
 import Challenges from "../../component/Admin/Challenges/Challenges";
+import Titles from "../../component/Admin/Titles/Titles";
 
 
 function Admin() {
@@ -61,6 +62,9 @@ function Admin() {
                     }
                     {
                         admin === "challenges" && <Challenges />
+                    }
+                    {
+                        admin === "titles" && <Titles />
                     }
                 </div>
             </div>

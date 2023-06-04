@@ -21,11 +21,11 @@ class Clan
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['clan:read'])]
+    #[Groups(['clan:read', 'membersClan:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, unique: true)]
-    #[Groups(['clan:read'])]
+    #[Groups(['clan:read', 'membersClan:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -37,11 +37,11 @@ class Clan
     private ?int $points = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['clan:read'])]
+    #[Groups(['clan:read', 'membersClan:read'])]
     private ?string $banner = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['clan:read'])]
+    #[Groups(['clan:read', 'membersClan:read'])]
     private ?string $emblem = null;
 
     #[ORM\OneToMany(mappedBy: 'clan', targetEntity: MembersClan::class, orphanRemoval: true)]

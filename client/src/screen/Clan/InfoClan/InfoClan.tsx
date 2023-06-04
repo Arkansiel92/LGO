@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../../component/Navbar/Navbar";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface rank {
     name: string,
@@ -8,6 +8,7 @@ interface rank {
 }
 
 interface user {
+    id: number,
     username: string,
     points: number
 }
@@ -30,6 +31,7 @@ interface clan {
 function InfoClan() {
 
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const [clan, setClan] = useState<clan | null>(null);
 
@@ -69,12 +71,12 @@ function InfoClan() {
                             </div>
                             <div className="card-body">
                                 {clan?.membersClans.map((member: member, index: number) => (
-                                    <div className="row">
-                                        <div className="col-sm-3">
-                                            <p>{member.rank_clan.name}</p>
-                                        </div>
+                                    <div key={index} className="row">
                                         <div className="col-sm-9">
-                                            <p className="text-muted">{member.user.username} ({member.user.points}pts)</p>
+                                            <p className="left-click" onClick={() => {navigate('/profil/' + member.user.id)}}>{member.user.username} ({member.user.points}pts)</p>
+                                        </div>
+                                        <div className="col-sm-3">
+                                            <p className="text-muted">{member.rank_clan.name}</p>
                                         </div>
                                     </div>
                                 ))}

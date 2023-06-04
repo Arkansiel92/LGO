@@ -41,8 +41,6 @@ function Roles() {
     }
 
     useEffect(() => {
-        console.log("coucou");
-
         if (alert) {
             fetch('https://localhost:8000/api/roles', {
                 method: "GET",

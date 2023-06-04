@@ -8,28 +8,31 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MembersClanRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    paginationClientItemsPerPage: true,
+    normalizationContext: ['groups' => ['membersClan:read']],
+)]
 class MembersClan
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['clan:read'])]
+    #[Groups(['clan:read', 'membersClan:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['clan:read'])]
+    #[Groups(['clan:read', 'membersClan:read'])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'membersClans')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['clan:read'])]
+    #[Groups(['clan:read', 'membersClan:read'])]
     private ?Clan $clan = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['clan:read'])]
+    #[Groups(['clan:read', 'membersClan:read'])]
     private ?RankClan $rank_clan = null;
 
     public function getId(): ?int
