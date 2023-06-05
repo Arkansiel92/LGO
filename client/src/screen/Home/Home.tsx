@@ -190,7 +190,7 @@ function Home() {
                                     <img className="emblem-village" src={bestClan?.emblem} alt="" width={10} />
                                 </div>
                                 <div>
-                                    <h4>Village numéro #1</h4>
+                                    <h4>Clan numéro #1</h4>
                                     <p className="lead"><span className="text-danger">{bestClan?.name}</span> ({bestClan?.points}pts)</p>
                                 </div>
                             </div>
@@ -210,7 +210,7 @@ function Home() {
                         </div>
                     </div>
                 </div>
-                <div className="news my-5">
+                <div className="my-5">
                     <h2>LES NEWS</h2>
                     <ul className="list-group">
                         {!news && <Spinner />}
@@ -226,16 +226,7 @@ function Home() {
                         ))}
                     </ul>
                 </div>
-                <div className="row my-5">
-                    <h2>Les rôles</h2>
-                    {roles?.map((r: role, index: number) => (
-                        <div onClick={() => { setRoleIndex(index) }} className={`col-sm-2 box-shadow rounded m-3 d-flex ${r.side} left-click`} key={index}>
-                            <img src={"assets/img/role/" + r.img} alt="" width={20} />
-                            <span>{r.name}</span>
-                        </div>
-                    ))}
-                </div>
-
+                <h2>Les rôles</h2>
                 {
                     roles &&
                     <div className="card bg-dark">
@@ -248,6 +239,15 @@ function Home() {
                         </div>
                     </div>
                 }
+                <div className="row">
+                    {roles?.map((r: role, index: number) => (
+                        <div onClick={() => { setRoleIndex(index) }} className={`col-sm-2 box-shadow rounded m-3 d-flex ${r.side} left-click`} key={index}>
+                            <img src={"assets/img/role/" + r.img} alt={r.name} width={20} />
+                            <span>{r.name}</span>
+                        </div>
+                    ))}
+                </div>
+
             </div>
             <Footer />
         </div>

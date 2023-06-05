@@ -55,19 +55,19 @@ function Register() {
                             <div>
                                 <section className="container">
                                     <h3>Informations personnelles</h3>
-                                    <div className="input-group">
+                                    <div className="">
                                         <label htmlFor="email" className="form-label">Adresse e-mail</label>
                                         <input type="email" className="form-control" placeholder="exemple@exemple.com" {...register('email')} />
                                     </div>
                                     <div className="row">
                                         <div className="col">
-                                            <div className="input-group">
+                                            <div className="">
                                                 <label htmlFor="firstName" className="form-label">Prénom</label>
                                                 <input type="text" className="form-control" placeholder="John" {...register('firstName')} />
                                             </div>
                                         </div>
                                         <div className="col">
-                                            <div className="input-group">
+                                            <div className="">
                                                 <label htmlFor="lastName" className="form-label">Nom</label>
                                                 <input type="text" className="form-control" placeholder="Doe" {...register('lastName')} />
                                             </div>
@@ -83,19 +83,19 @@ function Register() {
                                     </div>
 
                                     <h3 className="mt-3">Informations en jeu</h3>
-                                    <div className="input-group">
+                                    <div className="">
                                         <label htmlFor="username" className="form-label">Pseudo</label>
                                         <input type="text" className="form-control" placeholder="pseudo" {...register("username")} />
                                     </div>
                                     <div className="row">
                                         <div className="col">
-                                            <div className="input-group">
+                                            <div className="">
                                                 <label htmlFor="plainPassword" className="form-label">Mot de passe</label>
                                                 <input type="password" className="form-control" placeholder="mot de passe" {...register("plainPassword")} />
                                             </div>
                                         </div>
                                         <div className="col">
-                                            <div className="input-group">
+                                            <div className="">
                                                 <label htmlFor="password" className="form-label">Confirmer mot de passe</label>
                                                 <input type="password" className="form-control" placeholder="mot de passe" {...register("confirm_password")} />
                                             </div>

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MembersClanRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -22,6 +24,7 @@ class MembersClan
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     #[Groups(['clan:read', 'membersClan:read'])]
     private ?User $user = null;
 

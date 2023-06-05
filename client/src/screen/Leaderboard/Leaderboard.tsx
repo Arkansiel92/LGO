@@ -57,7 +57,6 @@ function Leaderboard() {
             <Navbar />
             <div className="container">
                 <h1>Classement</h1>
-                <p>Les meilleurs joueurs de Moonrise !</p>
                 <button onClick={() => { setLeaderboard('players') }} className={`btn ${leaderboard !== "players" ? "btn-outline-warning" : "btn-warning"}  rounded-pill`}>Joueurs</button>
                 <button onClick={() => { setLeaderboard('clans') }} className={`btn ${leaderboard !== "clans" ? "btn-outline-warning" : "btn-warning"} rounded-pill m-1`}>Villages</button>
                 {

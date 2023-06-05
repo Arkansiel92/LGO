@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
 import "./TitlesModal.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Alert, { alert } from "../Alert/Alert";
+import { AuthContext } from "../../context/auth";
 
 
 
@@ -18,12 +19,13 @@ function TitlesModal() {
 
     const [titles, setTitles] = useState<title[] | null>(null);
     const [alert, setAlert] = useState<alert | null>(null);
+    const auth = useContext(AuthContext);
 
     const { handleSubmit, register, formState: { errors } } = useForm<credentials>();
 
     const onSubmit = (credentials: credentials) => {
         if (credentials.title !== '') {
-            fetch('https://localhost:8000/api/users/1', {
+            fetch('https://localhost:8000/api/users/' + auth.authState.user?.id, {
                 method:'PATCH',
                 headers: {
                     'Content-Type': 'application/merge-patch+json'
@@ -32,7 +34,7 @@ function TitlesModal() {
             })
             .then(res => {
                 if(res.status === 200) {
-                    setAlert({type: "success", msg: "Ton titre a été changé avec succès !"})
+                    setAlert({type: "success", msg: "Ton titre a été changé avec succès ! Merci d'actualiser pour voir les changements."})
                 }
             })
         }
