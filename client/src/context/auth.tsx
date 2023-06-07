@@ -3,6 +3,7 @@ import jwt_decode from "jwt-decode";
 
 interface User {
   id: number;
+  clan: number,
   username: string;
   roles: string[];
 }
@@ -51,6 +52,7 @@ export const AuthProvider = ({ children }: any) => {
     .then(data => {
       const user: User = {
         id: data[0].id,
+        clan: data[0].membersClan ? data[0].membersClan.clan.id : null,
         username: decode_user.username,
         roles: decode_user.roles
       };

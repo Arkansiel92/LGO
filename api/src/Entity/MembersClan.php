@@ -23,20 +23,21 @@ class MembersClan
     #[Groups(['clan:read', 'membersClan:read'])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\OneToOne(inversedBy: 'membersClan', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['clan:read', 'membersClan:read'])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'membersClans')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['clan:read', 'membersClan:read'])]
+    #[Groups(['clan:read', 'membersClan:read', 'user:read'])]
     private ?Clan $clan = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['clan:read', 'membersClan:read'])]
     private ?RankClan $rank_clan = null;
+
 
     public function getId(): ?int
     {
@@ -48,7 +49,7 @@ class MembersClan
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 

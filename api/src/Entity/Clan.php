@@ -21,7 +21,7 @@ class Clan
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['clan:read', 'membersClan:read'])]
+    #[Groups(['clan:read', 'membersClan:read', 'user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, unique: true)]

@@ -74,7 +74,7 @@ function InfoClan() {
                                 {clan?.membersClans.map((member: member, index: number) => (
                                     <div key={index} className="row">
                                         <div className="col-sm-9">
-                                            <p className="left-click" onClick={() => {navigate('/profil/' + member.user.id)}}>{member.user.username} ({member.user.points}pts)</p>
+                                            <p className="left-click" onClick={() => { navigate('/profil/' + member.user.id) }}>{member.user.username} ({member.user.points}pts)</p>
                                         </div>
                                         <div className="col-sm-3">
                                             <p className="text-muted">{member.rank_clan.name}</p>

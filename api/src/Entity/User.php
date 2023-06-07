@@ -101,6 +101,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read', 'user:update'])]
     private Collection $challengesUsers;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    #[Groups(['user:read', 'user:update'])]
+    private ?MembersClan $membersClan = null;
+
     public function __construct()
     {
         $this->historicGames = new ArrayCollection();
@@ -345,6 +349,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $challengesUser->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMembersClan(): ?MembersClan
+    {
+        return $this->membersClan;
+    }
+
+    public function setMembersClan(MembersClan $membersClan): self
+    {
+        // set the owning side of the relation if necessary
+        if ($membersClan->getUser() !== $this) {
+            $membersClan->setUser($this);
+        }
+
+        $this->membersClan = $membersClan;
 
         return $this;
     }
