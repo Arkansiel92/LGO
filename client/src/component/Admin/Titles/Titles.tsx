@@ -39,7 +39,7 @@ function Titles() {
                 <input type="text" className="form-control" placeholder="ex: Le fumeur fou" {...register('title')} />
 
                 <label htmlFor="color" className="form-label">Couleur du Titre (héxadécimal)</label>
-                <input type="color" className="form-control form-control-color" {...register('color')} />
+                <input type="color" className="form-control form-control-color" {...register('color')} value={"#108355"} />
 
                 <div className="text-end">
                     <input type="submit" value="Créer le titre" className="btn btn-warning" />

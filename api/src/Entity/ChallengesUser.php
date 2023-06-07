@@ -29,6 +29,14 @@ class ChallengesUser
     #[Groups(['user:read'])]
     private ?string $type = null;
 
+    #[ORM\Column(options:['default' => 0])]
+    #[Groups(['user:read'])]
+    private ?int $step = null;
+    
+    #[ORM\Column(options:['default' => false])]
+    #[Groups(['user:read'])]
+    private ?bool $isFinished = null;
+
     #[ORM\Column(options:['default' => 'CURRENT_TIMESTAMP'])]
     #[Groups(['user:read'])]
     private ?\DateTimeImmutable $createdAt = null;
@@ -36,6 +44,8 @@ class ChallengesUser
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
+        $this->step = 0;
+        $this->isFinished = false;
     }
 
     public function getId(): ?int
@@ -76,6 +86,30 @@ class ChallengesUser
     {
         $this->type = $type;
 
+        return $this;
+    }
+    
+    public function getStep(): ?int
+    {
+        return $this->step;
+    }
+    
+    public function setStep(int $step): self
+    {
+        $this->step = $step;
+        
+        return $this;
+    }
+    
+    public function isIsFinished(): ?bool
+    {
+        return $this->isFinished;
+    }
+
+    public function setIsFinished(bool $isFinished): self
+    {
+        $this->isFinished = $isFinished;
+        
         return $this;
     }
 

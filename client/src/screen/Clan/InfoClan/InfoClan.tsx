@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../../component/Navbar/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
+import s from "./InfoClan.module.css";
 
 interface rank {
     name: string,
@@ -54,12 +55,12 @@ function InfoClan() {
             <div className="container">
                 <h1>{clan?.name}</h1>
                 <p className="lead">{clan?.description}</p>
-                <div className="row">
+                <div className="row my-3">
                     <div className="col-4">
                         <div className="card bg-dark box-shadow">
-                            <div className="position-relative">
-                                <img className="banner-village" src={clan?.banner} alt="" />
-                                <img className="emblem-village" src={clan?.emblem} alt="" />
+                            <div className={s.container_clan}>
+                                <img className={s.banner} src={clan?.banner} alt="" />
+                                <img className={s.emblem} src={clan?.emblem} alt="" />
                             </div>
                             <p className="lead text-center">Points : {clan?.points}</p>
                         </div>
@@ -83,6 +84,10 @@ function InfoClan() {
                             </div>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <h1>Défis de clan</h1>
+                    <p className="text-muted">Arrive bientôt...</p>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import './CreateClan.css';
+import styles from './CreateClan.module.css';
 import Navbar from "../../../component/Navbar/Navbar";
 import green_banner_01 from "../../../assets/img/banner/green/green_banner_01.png";
 import green_banner_02 from "../../../assets/img/banner/green/green_banner_02.png";
@@ -224,8 +224,8 @@ function CreateClan() {
             <div className="container">
                 <div className="row">
                     <div className="col-4 text-center position-relative">
-                        <img className="banner-village" src={banner} alt="" />
-                        <img className="emblem-village" src={emblem} alt="" />
+                        <img className={styles.banner} src={banner} alt="" />
+                        <img className={styles.emblem} src={emblem} alt="" />
                     </div>
                     <div className="col card bg-dark box-shadow">
                         <div className="card-body">

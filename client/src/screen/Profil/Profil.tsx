@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import Navbar from "../../component/Navbar/Navbar";
-import "./Profil.css";
 import { useNavigate, useParams } from "react-router-dom";
 import TitlesModal from "../../component/TitlesModal/TitlesModal";
 import { AuthContext } from "../../context/auth";
-import HistoricGame from "../../HistoricGame/HistoricGame";
+import HistoricGame from "../../component/HistoricGame/HistoricGame";
 import logo from "../../assets/img/role/card-werewolf.svg";
+import Challenges from "../../component/Challenges/Challenges";
 
 interface title {
     id: number,
@@ -19,6 +19,23 @@ export interface game {
     createdAt: Date
 }
 
+interface role {
+    name: string
+}
+
+export interface challenge {
+    description: string,
+    goal: number,
+    role: role[]
+    title: title
+}
+
+export interface challengeUsers {
+    challenge: challenge,
+    step: number,
+    isFinished: boolean
+}
+
 interface profil {
     username: string
     first_name: string,
@@ -26,6 +43,7 @@ interface profil {
     gender: string,
     roles: string[],
     historicGames: game[]
+    challengesUsers: challengeUsers[]
     points: number,
     win: number,
     loose: number,
@@ -94,26 +112,19 @@ function Profil() {
                             </div>
                         </div>
 
-                        <div className="card bg-dark box-shadow my-3">
-                            <div className="card-header">
-                                <h3>Mes défis</h3>
-                            </div>
-                            <div className="card-body">
-                                <div className="my-3">
-                                    <span className="">Gagner 5 parties </span>
-                                    <div className="progress" role="progressbar" aria-label="Basic example" aria-valuenow={60} aria-valuemin={0} aria-valuemax={100}>
-                                        <div className="progress-bar" style={{width: "60%"}}></div>
-                                    </div>
+                        {
+                            auth.authState.user?.username === profil?.username &&
+                            <div className="card bg-dark box-shadow my-3">
+                                <div className="card-header">
+                                    <h3>Mes défis</h3>
                                 </div>
-
-                                <div className="my-3">
-                                    <span>Charmer 10 personnes</span>
-                                    <div className="progress" role="progressbar" aria-label="Basic example" aria-valuenow={10} aria-valuemin={0} aria-valuemax={100}>
-                                        <div className="progress-bar" style={{width: "10%"}}></div>
-                                    </div>
+                                <div className="card-body">
+                                    {profil?.challengesUsers.map((challenge: challengeUsers, index) => (
+                                        <Challenges key={index} challenge={challenge.challenge} step={challenge.step} isFinished={challenge.isFinished} />
+                                    ))}
                                 </div>
                             </div>
-                        </div>
+                        }
                     </div>
                     <div className="col">
                         <div className="card bg-dark box-shadow">
@@ -170,7 +181,7 @@ function Profil() {
 
                         <div className="card bg-dark box-shadow my-3">
                             <div className="card-header">
-                                <h3>Mes parties</h3>
+                                <h3>Historique</h3>
                             </div>
                             <div className="card-body">
                                 {

@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     paginationClientItemsPerPage: true,
     normalizationContext: ['groups' => ['membersClan:read']],
 )]
+#[ApiFilter(SearchFilter::class, properties: ['user' => 'exact'])]
 class MembersClan
 {
     #[ORM\Id]
@@ -24,7 +25,6 @@ class MembersClan
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     #[Groups(['clan:read', 'membersClan:read'])]
     private ?User $user = null;
 

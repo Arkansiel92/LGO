@@ -1,4 +1,4 @@
-import './Home.css';
+import s from './Home.module.css';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { socketContext, ExtendedSocket } from '../../context/socket';
@@ -158,7 +158,7 @@ function Home() {
                         auth.authState.isAuthenticated
                             ?
                             <div className="d-grid gap-2 col-4 mx-auto my-3">
-                                <button onClick={handleSubmit} className="btn btn-lg btn-warning mx-2">
+                                <button onClick={handleSubmit} className="btn btn-lg btn-warning rounded-pill mx-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                     </svg>
@@ -186,8 +186,8 @@ function Home() {
                         <div className="card bg-dark box-shadow">
                             <div className='d-flex justify-content-around align-items-center p-2'>
                                 <div className="position-relative">
-                                    <img className="banner-village" src={bestClan?.banner} alt="" width={25} />
-                                    <img className="emblem-village" src={bestClan?.emblem} alt="" width={10} />
+                                    <img className={s.banner} src={bestClan?.banner} alt="" width={30} />
+                                    <img className={s.emblem} src={bestClan?.emblem} alt="" width={15} />
                                 </div>
                                 <div>
                                     <h4>Clan numéro #1</h4>

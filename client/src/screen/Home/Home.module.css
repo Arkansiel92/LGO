@@ -21,6 +21,16 @@
   }
 }
 
+.banner,
+.emblem {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+}
+
 .btn-home {
   align-items: center;
   background-color: #0A66C2;

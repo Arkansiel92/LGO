@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ChallengeRepository::class)]
 #[ApiResource()]
@@ -16,19 +17,28 @@ class Challenge
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $description = null;
 
     #[ORM\ManyToMany(targetEntity: Role::class)]
+    #[Groups(['user:read'])]
     private Collection $role;
 
     #[ORM\ManyToOne(inversedBy: 'challenges')]
+    #[Groups(['user:read'])]
     private ?Title $title = null;
 
-    #[ORM\Column(options:['default' => 'CURRENT_TIMESTAMP'])]
+    #[ORM\Column]
+    #[Groups(['user:read'])]
+    private ?int $goal = null;
+
+    #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeImmutable $createdAt = null;
+
 
     public function __construct()
     {
@@ -85,6 +95,18 @@ class Challenge
     public function setTitle(?Title $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getGoal(): ?int
+    {
+        return $this->goal;
+    }
+
+    public function setGoal(int $goal): self
+    {
+        $this->goal = $goal;
 
         return $this;
     }

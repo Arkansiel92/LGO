@@ -1,4 +1,4 @@
-import { game } from "../screen/Profil/Profil";
+import { game } from "../../screen/Profil/Profil";
 
 
 function HistoricGame({role, isWon, createdAt}: game) {
@@ -7,8 +7,8 @@ function HistoricGame({role, isWon, createdAt}: game) {
             <p>{role}</p>
             {
                 isWon
-                ? <p className="text-success">Gagné</p>
-                : <p className="text-danger">Perdue</p>
+                ? <p className="text-success">Victoire</p>
+                : <p className="text-danger">Défaite</p>
             }
             <p className="text-muted">{new Date(createdAt).toLocaleDateString('fr')}</p>
         </div>
