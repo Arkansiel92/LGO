@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Navbar from "../../../component/Navbar/Navbar";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import s from "./InfoClan.module.css";
+import { AuthContext } from "../../../context/auth";
+import RankClan from "../../../component/RankClan/RankClan";
 
-interface rank {
+export interface rank {
     name: string,
     level: number
 }
 
-interface user {
+export interface user {
     id: number,
     username: string,
     points: number
@@ -32,9 +34,10 @@ interface clan {
 function InfoClan() {
 
     const { id } = useParams();
-    const navigate = useNavigate();
+    const auth = useContext(AuthContext);
 
     const [clan, setClan] = useState<clan | null>(null);
+    const [myRank, setMyRank] = useState(null);
 
     useEffect(() => {
         if (!clan) {
@@ -47,7 +50,18 @@ function InfoClan() {
                 .then(res => res.json())
                 .then(data => setClan(data))
         }
-    }, [clan, id])
+
+        if (!myRank) {
+            fetch('https://localhost:8000/api/members_clans?user=api/user/' + auth.authState.user?.id, {
+                method: 'GET',
+                headers: {
+                    'accept': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then(data => console.log(data[0].rank_clan));
+        }
+    }, [clan, myRank, id, auth])
 
     return (
         <div>
@@ -72,14 +86,7 @@ function InfoClan() {
                             </div>
                             <div className="card-body">
                                 {clan?.membersClans.map((member: member, index: number) => (
-                                    <div key={index} className="row">
-                                        <div className="col-sm-9">
-                                            <p className="left-click" onClick={() => { navigate('/profil/' + member.user.id) }}>{member.user.username} ({member.user.points}pts)</p>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <p className="text-muted">{member.rank_clan.name}</p>
-                                        </div>
-                                    </div>
+                                    <RankClan key={index} user={member.user} rank={member.rank_clan} />
                                 ))}
                             </div>
                         </div>

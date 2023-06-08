@@ -1,6 +1,3 @@
-import { useContext } from "react";
-import { AuthContext } from "../../context/auth";
-
 interface props {
     index: number,
     col1?: string | number,

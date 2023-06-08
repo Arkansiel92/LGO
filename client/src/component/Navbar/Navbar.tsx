@@ -6,16 +6,10 @@ import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../context/auth';
 import logo from "../../assets/wolf-howl.svg";
 
-interface clan {
-    id: number,
-    name: string
-}
-
 function Navbar() {
 
     const navigate = useNavigate();
     const auth = useContext(AuthContext);
-    const [clan, setClan] = useState<clan | null>(null);
 
     function logout() {
         auth.logout();
@@ -74,8 +68,7 @@ function Navbar() {
                             </li>
                         }
                         {
-                            auth.authState.user?.roles.includes('ROLE_ADMIN')
-                            &&
+                            auth.authState.user?.roles.includes('ROLE_ADMIN') &&
                             <li className='nav-item'>
                                 <NavLink to={"/admin"} aria-current="page" className="nav-link">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -89,7 +82,7 @@ function Navbar() {
                 </div>
                 <div className="d-flex">
                     {
-                        !auth.authState.isAuthenticated
+                        !auth.authState.user
                             ? <div className='d-flex justify-content-around'>
                                 <div className='left-click mx-3' data-bs-toggle="modal" data-bs-target="#login">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -108,6 +101,19 @@ function Navbar() {
                             </div>
                             : <div className="collapse navbar-collapse">
                                 <ul className="navbar-nav">
+                                    {
+                                        auth.authState.user.notifications.length > 0 &&
+                                        <li className="nav-item dropdown">
+                                            <NavLink to={""} className={"nav-link dropdown-toggle text-warning"} role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Notifications
+                                            </NavLink>
+                                            <ul className="dropdown-menu bg-dark">
+                                                <li><a className="dropdown-item" href="#">Action</a></li>
+                                                <li><a className="dropdown-item" href="#">Another action</a></li>
+                                                <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                            </ul>
+                                        </li>
+                                    }
                                     <li className="nav-item">
                                         <NavLink to={"/profil/" + auth.authState.user?.id} className={"nav-link"}>
                                             Profil

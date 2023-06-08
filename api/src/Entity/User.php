@@ -105,6 +105,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read', 'user:update'])]
     private ?MembersClan $membersClan = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
+    #[Groups(['user:read', 'user:update'])]
+    private Collection $notifications;
+
     public function __construct()
     {
         $this->historicGames = new ArrayCollection();
@@ -113,6 +117,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->loose = 0;
         $this->roles = ['ROLE_USER', 'ROLE_BETA'];
         $this->challengesUsers = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -366,6 +371,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->membersClan = $membersClan;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): self
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): self
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getUser() === $this) {
+                $notification->setUser(null);
+            }
+        }
 
         return $this;
     }
