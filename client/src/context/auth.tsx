@@ -56,8 +56,6 @@ export const AuthProvider = ({ children }: any) => {
     })
     .then(res => res.json())
     .then(data => {
-      console.log(data[0]);
-      
       const user: User = {
         id: data[0].id,
         clan: data[0].membersClan ? data[0].membersClan.clan.id : null,

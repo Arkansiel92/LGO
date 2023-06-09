@@ -29,7 +29,7 @@ class Notification
     #[ORM\ManyToOne(inversedBy: 'notifications')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['user:read'])]
-    private ?notificationType $type = null;
+    private ?NotificationType $type = null;
 
     #[ORM\Column]
     #[Groups(['user:read'])]

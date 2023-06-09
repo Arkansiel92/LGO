@@ -42,8 +42,8 @@ interface profil {
     last_name: string,
     gender: string,
     roles: string[],
-    historicGames: game[]
-    challengesUsers: challengeUsers[]
+    historicGames: game[],
+    challengesUsers: challengeUsers[],
     points: number,
     win: number,
     loose: number,
@@ -56,7 +56,7 @@ function Profil() {
     const auth = useContext(AuthContext);
 
     const navigate = useNavigate();
-    const {id} = useParams();
+    const { id } = useParams();
 
     useEffect(() => {
         if (!localStorage.getItem('token')) return navigate('/');
@@ -65,13 +65,13 @@ function Profil() {
             fetch('https://localhost:8000/api/users/' + id, {
                 method: "GET",
                 headers: {
-                    'accept':'application/json'
+                    'accept': 'application/json'
                 }
             })
-            .then(res => res.json())
-            .then(data => {
-                setProfil(data);
-            });
+                .then(res => res.json())
+                .then(data => {
+                    setProfil(data);
+                });
         }
     }, [navigate, profil, auth, id]);
 
@@ -88,8 +88,8 @@ function Profil() {
                                 <h5 className="mb-1">{profil?.username}</h5>
                                 {
                                     profil?.title
-                                    ? <p className="mb-4"style={{color: profil?.title.color}}>{profil?.title.title}</p>
-                                    : <p className="text-muted fst-italic mb-4">Aucun titre</p>
+                                        ? <p className="mb-4" style={{ color: profil?.title.color }}>{profil?.title.title}</p>
+                                        : <p className="text-muted fst-italic mb-4">Aucun titre</p>
                                 }
                                 {
                                     auth.authState.user?.username === profil?.username &&
@@ -106,8 +106,8 @@ function Profil() {
                                 <h5 className="text-muted mb-1">Taux de victoire (W: {profil?.win} / L: {profil?.loose})</h5>
                                 {
                                     profil && (profil?.win > 0 || profil?.loose > 0)
-                                    ? <h1>{Math.floor((profil.win / (profil.win + profil.loose)) * 100)}%</h1>
-                                    : <h1>0%</h1>
+                                        ? <h1>{Math.floor((profil.win / (profil.win + profil.loose)) * 100)}%</h1>
+                                        : <h1>0%</h1>
                                 }
                             </div>
                         </div>
@@ -185,7 +185,7 @@ function Profil() {
                             </div>
                             <div className="card-body">
                                 {
-                                    profil?.historicGames.length === 0 && 
+                                    profil?.historicGames.length === 0 &&
                                     <p className="fst-italic text-muted">Les parties jouées s'afficheront ici !</p>
                                 }
                                 {profil?.historicGames.map((game: game, index: number) => (
