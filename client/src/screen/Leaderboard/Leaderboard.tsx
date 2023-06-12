@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../component/Navbar/Navbar";
 import Rank from "../../component/Rank/Rank";
+import Loader from "../../component/Loader/Loader";
 
 interface user {
     username: string,
@@ -55,49 +56,53 @@ function Leaderboard() {
     return (
         <div>
             <Navbar />
-            <div className="container">
-                <h1>Classement</h1>
-                <button onClick={() => { setLeaderboard('players') }} className={`btn ${leaderboard !== "players" ? "btn-outline-warning" : "btn-warning"}  rounded-pill`}>Joueurs</button>
-                <button onClick={() => { setLeaderboard('clans') }} className={`btn ${leaderboard !== "clans" ? "btn-outline-warning" : "btn-warning"} rounded-pill m-1`}>Villages</button>
-                {
-                    users &&
-                    <table className="table text-white">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nom</th>
-                                <th scope="col">Points</th>
-                                <th scope="col">Victoires</th>
-                                <th scope="col">Défaites</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users?.map((user: user, index: number) => (
-                                <Rank key={index} index={index + 1} col1={user.username} col2={user.points} col3={user.win} col4={user.loose} />
-                            ))}
-                        </tbody>
-                    </table>
-                }
-                {
-                    clans &&
-                    <table className="table text-white">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nom</th>
-                                <th scope="col">Membres</th>
-                                <th scope="col">Points</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {clans?.map((clan, index: number) => (
-                                <Rank key={index} index={index + 1} col1={clan.name} col2={clan.membersClans.length} col3={clan.points} />
-                            ))}
-                        </tbody>
-                    </table>
+            {
+                clans || users
+                    ? <div className="container">
+                        <h1>Classement</h1>
+                        <button onClick={() => { setLeaderboard('players') }} className={`btn ${leaderboard !== "players" ? "btn-outline-warning" : "btn-warning"}  rounded-pill`}>Joueurs</button>
+                        <button onClick={() => { setLeaderboard('clans') }} className={`btn ${leaderboard !== "clans" ? "btn-outline-warning" : "btn-warning"} rounded-pill m-1`}>Villages</button>
+                        {
+                            users &&
+                            <table className="table text-white">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nom</th>
+                                        <th scope="col">Points</th>
+                                        <th scope="col">Victoires</th>
+                                        <th scope="col">Défaites</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {users?.map((user: user, index: number) => (
+                                        <Rank key={index} index={index + 1} col1={user.username} col2={user.points} col3={user.win} col4={user.loose} />
+                                    ))}
+                                </tbody>
+                            </table>
+                        }
+                        {
+                            clans &&
+                            <table className="table text-white">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nom</th>
+                                        <th scope="col">Membres</th>
+                                        <th scope="col">Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {clans?.map((clan, index: number) => (
+                                        <Rank key={index} index={index + 1} col1={clan.name} col2={clan.membersClans.length} col3={clan.points} />
+                                    ))}
+                                </tbody>
+                            </table>
 
-                }
-            </div>
+                        }
+                    </div>
+                    : <Loader />
+            }
         </div>
     )
 }

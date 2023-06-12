@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ManagementRoom from '../../component/ManagementRoom/ManagementRoom';
-import { socketContext, ExtendedSocket } from '../../context/socket';
+import { socketContext,  } from '../../context/socket';
 import './Game.css';
 import Player from '../../component/Player/Player';
 import Topbar from '../../component/Topbar/Topbar';
@@ -120,7 +120,7 @@ function Game() {
     const [sideBar, setSideBar] = useState<boolean>(true);
     const [deathSound, {stop}] = useSound('assets/sounds/death.ogg', { volume: 0.10 });
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
     const auth = useContext(AuthContext);
     const navigate = useNavigate();
 

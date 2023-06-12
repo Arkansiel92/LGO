@@ -1,6 +1,6 @@
 import { room } from "../../screen/Game/Game";
 import { useContext } from "react";
-import { ExtendedSocket, socketContext } from "../../context/socket";
+import { socketContext } from "../../context/socket";
 import "./Options.css";
 
 interface props {
@@ -9,7 +9,7 @@ interface props {
 
 function Options({ room }: props) {
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
 
     const handleSubmit = (option: string, bool: boolean) => {
         socket.emit('setOptions', {option: option, bool: bool});

@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import s from "./InfoClan.module.css";
 import { AuthContext } from "../../../context/auth";
 import RankClan from "../../../component/RankClan/RankClan";
+import Loader from "../../../component/Loader/Loader";
 
 export interface rank {
     name: string,
@@ -37,7 +38,6 @@ function InfoClan() {
     const auth = useContext(AuthContext);
 
     const [clan, setClan] = useState<clan | null>(null);
-    const [myRank, setMyRank] = useState(null);
 
     useEffect(() => {
         if (!clan) {
@@ -50,53 +50,46 @@ function InfoClan() {
                 .then(res => res.json())
                 .then(data => setClan(data))
         }
-
-        if (!myRank) {
-            fetch('https://localhost:8000/api/members_clans?user=api/user/' + auth.authState.user?.id, {
-                method: 'GET',
-                headers: {
-                    'accept': 'application/json'
-                }
-            })
-                .then(res => res.json())
-                .then(data => console.log(data[0].rank_clan));
-        }
-    }, [clan, myRank, id, auth])
+    }, [clan, id, auth])
 
     return (
         <div>
             <Navbar />
-            <div className="container">
-                <h1>{clan?.name}</h1>
-                <p className="lead">{clan?.description}</p>
-                <div className="row my-3">
-                    <div className="col-4">
-                        <div className="card bg-dark box-shadow">
-                            <div className={s.container_clan}>
-                                <img className={s.banner} src={clan?.banner} alt="" />
-                                <img className={s.emblem} src={clan?.emblem} alt="" />
+            {
+                clan
+                    ? <div className="container">
+                        <h1>{clan?.name}</h1>
+                        <p className="lead">{clan?.description}</p>
+                        <div className="row my-3">
+                            <div className="col-4">
+                                <div className="card bg-dark box-shadow">
+                                    <div className={s.container_clan}>
+                                        <img className={s.banner} src={clan?.banner} alt="" />
+                                        <img className={s.emblem} src={clan?.emblem} alt="" />
+                                    </div>
+                                    <p className="lead text-center">Points : {clan?.points}</p>
+                                </div>
                             </div>
-                            <p className="lead text-center">Points : {clan?.points}</p>
+                            <div className="col">
+                                <div className="card bg-dark box-shadow">
+                                    <div className="card-header">
+                                        <h3>Membres</h3>
+                                    </div>
+                                    <div className="card-body">
+                                        {clan?.membersClans.map((member: member, index: number) => (
+                                            <RankClan key={index} user={member.user} rank={member.rank_clan} />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h1>Défis de clan</h1>
+                            <p className="text-muted">Arrive bientôt...</p>
                         </div>
                     </div>
-                    <div className="col">
-                        <div className="card bg-dark box-shadow">
-                            <div className="card-header">
-                                <h3>Membres</h3>
-                            </div>
-                            <div className="card-body">
-                                {clan?.membersClans.map((member: member, index: number) => (
-                                    <RankClan key={index} user={member.user} rank={member.rank_clan} />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <h1>Défis de clan</h1>
-                    <p className="text-muted">Arrive bientôt...</p>
-                </div>
-            </div>
+                    : <Loader />
+            }
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react"
-import { socketContext, ExtendedSocket} from "../../context/socket"
+import { socketContext, } from "../../context/socket"
 import { message, player } from "../../screen/Game/Game";
 import Message from "../Message/Message";
 import "./Chat.css";
@@ -16,7 +16,7 @@ function Chat(props: props) {
     const [sister, setSister] = useState<boolean>(false);
     const [lover, setLover] = useState<boolean>(false);
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
 
     const sendMessage = () => {
         if (!props.night || sister || lover) {

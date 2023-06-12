@@ -1,6 +1,6 @@
 import { CSSProperties, useContext } from 'react';
 import { player } from "../../screen/Game/Game";
-import { ExtendedSocket, socketContext } from '../../context/socket';
+import { socketContext } from '../../context/socket';
 import "./Player.css";
 import Title from '../Title/Title';
 
@@ -12,7 +12,7 @@ interface props {
 
 function Player({ player, selfPlayer, step }: props) {
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
 
     const style: CSSProperties = {
         position: 'absolute',

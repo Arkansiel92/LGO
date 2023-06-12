@@ -1,11 +1,11 @@
-import { socketContext, ExtendedSocket} from "../../context/socket";
+import { socketContext, } from "../../context/socket";
 import { useContext, useEffect, useState } from 'react';
 import './Counter.css';
 import useSound from "use-sound";
 
 function Counter() {
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
     const [time, setTime] = useState<number>(0);
     const [timerSound, { stop }] = useSound("assets/sounds/timer.ogg", { volume: 0.10 });
 

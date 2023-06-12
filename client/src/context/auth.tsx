@@ -39,7 +39,6 @@ export const AuthContext = createContext<AuthContextProps>({
 export const AuthProvider = ({ children }: any) => {
   const [authState, setAuthState] = useState<AuthState>(initialAuthState);
 
-  
   const decodeJwt = (token: string) => jwt_decode(token);
   
   const login = (token: string) => {
@@ -78,6 +77,8 @@ export const AuthProvider = ({ children }: any) => {
 
     if (token) {
       login(token);
+
+      
     };
   }, [])
 

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { socketContext, ExtendedSocket} from "../../context/socket";
+import { socketContext, } from "../../context/socket";
 import "./EventParkRanger.css";
 
 export interface eventParkRanger {
@@ -9,7 +9,7 @@ export interface eventParkRanger {
 
 function EventParkRanger({name, description}: eventParkRanger) {
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
 
     return (
         <div className='eventParkRanger' onClick={() => {socket.emit('setEventParkRanger', name)}}>

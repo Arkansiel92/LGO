@@ -1,5 +1,5 @@
 import { useRef, useEffect, useContext, useState } from 'react';
-import { ExtendedSocket, socketContext } from '../../context/socket';
+import { socketContext } from '../../context/socket';
 import "./Map.css";
 import { room } from '../../screen/Game/Game';
 
@@ -16,7 +16,7 @@ interface props {
 
 function Map({room}: props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const socket = useContext<ExtendedSocket>(socketContext);
+  const socket = useContext(socketContext);
   const [loadMap, setLoadMap] = useState<boolean>(false);
 
   const inputs: inputs = {

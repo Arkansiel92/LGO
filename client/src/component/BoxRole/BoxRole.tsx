@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { ExtendedSocket, socketContext } from "../../context/socket";
+import { socketContext } from "../../context/socket";
 import EventGypsy, { eventGypsy } from "../EventGypsy/EventGypsy";
 import Actor from "../Actor/Actor";
 import { roles } from "../../screen/Game/Game";
@@ -26,7 +26,7 @@ interface boxRole {
 
 function BoxRole({description, victim, name_function, type, title, health, death, setYes, setNo, eventsGypsy, eventsParkRanger, actor, textarea, doNothing}: boxRole) {
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
     const [textareaInput, setTextareaInput] = useState("");
 
     const mayor = () => {

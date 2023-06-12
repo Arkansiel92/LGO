@@ -1,5 +1,5 @@
 import { roles } from "../../screen/Game/Game";
-import { socketContext, ExtendedSocket} from "../../context/socket"
+import { socketContext, } from "../../context/socket"
 import { useContext } from "react"
 import "./Actor.css";
 
@@ -10,7 +10,7 @@ interface props {
 
 function Actor({role}: props) {
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
 
     function sendRole(role: roles) {
         socket.emit('setActor', role);

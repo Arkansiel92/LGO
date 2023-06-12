@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { socketContext, ExtendedSocket} from "../../context/socket";
+import { socketContext, } from "../../context/socket";
 import "./EventGypsy.css";
 
 export interface eventGypsy {
@@ -9,7 +9,7 @@ export interface eventGypsy {
 
 function EventGypsy({name, description}: eventGypsy) {
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
 
     function sendGypsy(choice: string) {
         socket.emit('setGypsy', choice);

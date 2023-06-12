@@ -1,6 +1,6 @@
 import { player, roles, room } from "../../screen/Game/Game";
 import { useContext, useEffect, useState } from 'react';
-import { socketContext, ExtendedSocket } from '../../context/socket';
+import { socketContext,  } from '../../context/socket';
 import "./ManagementRoom.css";
 import Role from "../Role/Role";
 import Chat from "../Chat/Chat";
@@ -18,7 +18,7 @@ function ManagementRoom({ room, player, inGame, sideBar, handleChange }: props) 
 
     const [roleScreen, setRoleScreen] = useState(false);
     const [roles, setRoles] = useState<roles[] | null>(null);
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
 
     socket.on('getRoles', (roles) => {
         setRoles(roles);

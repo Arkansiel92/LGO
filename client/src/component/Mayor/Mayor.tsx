@@ -1,6 +1,6 @@
 import "./Mayor.css";
 import { mayor } from "../../screen/Game/Game";
-import { ExtendedSocket, socketContext } from '../../context/socket';
+import { socketContext } from '../../context/socket';
 import { useContext } from "react";
 
 interface props {
@@ -9,7 +9,7 @@ interface props {
 
 function Mayor({candidates}: props) {
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
 
     function vote(player: string) {
         socket.emit("voteMayor", player);

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { socketContext, ExtendedSocket } from "../../context/socket"
+import { socketContext,  } from "../../context/socket"
 import { message } from "../../screen/Game/Game";
 import "./Message.css";
 
@@ -13,7 +13,7 @@ interface props {
 
 function Message(props: props) {
     
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
 
     return (
         <div>

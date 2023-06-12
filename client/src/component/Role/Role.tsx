@@ -1,5 +1,5 @@
 
-import { socketContext, ExtendedSocket } from "../../context/socket";
+import { socketContext,  } from "../../context/socket";
 import { useContext } from "react";
 import useSound from 'use-sound'
 import "./Role.css";
@@ -18,7 +18,7 @@ interface role {
 
 function Role({ name, name_function, description, side, max, img, roleArray, author, inGame }: role) {
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
     const [dropSound] = useSound("assets/sounds/drop.ogg", { volume: 0.15 });
 
     const nbRole = roleArray?.filter((role) => {

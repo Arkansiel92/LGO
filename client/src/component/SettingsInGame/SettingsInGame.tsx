@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import "./SettingsInGame.css";
-import { ExtendedSocket, socketContext } from "../../context/socket";
+import { socketContext } from "../../context/socket";
 
 function ParamInGame() {
 
-    const socket = useContext<ExtendedSocket>(socketContext);
+    const socket = useContext(socketContext);
 
     return (
         <div className="dropdown">
