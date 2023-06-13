@@ -50,11 +50,11 @@ function Home() {
     const [roleIndex, setRoleIndex] = useState<number>(0);
     const [alert, setAlert] = useState<string>('');
 
-    socket.on('navigate', (path: string) => {
+    socket.on('join-room', (path: string) => {
         setLoading(true);
-        setTimeout(() => {
-            navigate(path);
-        }, 1500)
+        // setTimeout(() => {
+        // }, 1500)
+        navigate(path);
     })
 
     socket.on('alert', (msg: string) => {
@@ -62,11 +62,18 @@ function Home() {
     })
 
     const handleSubmit = () => {
-        socket.emit('setRoom', { pseudo: auth.authState.user?.username, sprite: "1" })
+        // socket.emit('setRoom', { pseudo: auth.authState.user?.username, sprite: "1" })
+
+        socket.emit('create-room', {
+            id: auth.authState.user?.id,
+            username: auth.authState.user?.username,
+            clan: auth.authState.user?.clan,
+            title: auth.authState.user?.title
+        });
     }
 
     useEffect(() => {
-        socket.emit('clear');
+        // socket.emit('clear');
 
         if (!news) {
             fetch('https://localhost:8000/api/news?itemsPerPage=5', {
@@ -231,7 +238,7 @@ function Home() {
                             <h2>Les rôles</h2>
                             {
                                 roles &&
-                                <div className="card bg-dark">
+                                <div className="card bg-dark box-shadow">
                                     <div className={`card-body ${roles[roleIndex].side}`}>
                                         <div className="d-flex justify-content-between align-items-center">
                                             <h4>{roles[roleIndex].name}</h4>

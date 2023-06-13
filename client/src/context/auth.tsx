@@ -1,6 +1,11 @@
 import { createContext, useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 
+interface title {
+  title: string,
+  color: string
+}
+
 interface notification {
   id: number,
   description: string
@@ -8,8 +13,9 @@ interface notification {
 
 interface User {
   id: number;
-  clan: number,
-  notifications: notification[]
+  clan: number;
+  notifications: notification[];
+  title: title;
   username: string;
   roles: string[];
 }
@@ -58,6 +64,7 @@ export const AuthProvider = ({ children }: any) => {
       const user: User = {
         id: data[0].id,
         clan: data[0].membersClan ? data[0].membersClan.clan.id : null,
+        title: data[0].title,
         notifications: data[0].notifications,
         username: decode_user.username,
         roles: decode_user.roles

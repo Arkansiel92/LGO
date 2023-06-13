@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react"
 import { socketContext, } from "../../context/socket"
-import { message, player } from "../../screen/Game/Game";
+import { message, player } from "../../screen/Game/Game_old";
 import Message from "../Message/Message";
 import "./Chat.css";
 

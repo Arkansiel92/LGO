@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { socketContext } from "../../context/socket";
 import EventGypsy, { eventGypsy } from "../EventGypsy/EventGypsy";
 import Actor from "../Actor/Actor";
-import { roles } from "../../screen/Game/Game";
+import { roles } from "../../screen/Game/Game_old";
 import "./BoxRole.css";
 import EventParkRanger, { eventParkRanger } from "../EventParkRanger/EventParkRanger";
 

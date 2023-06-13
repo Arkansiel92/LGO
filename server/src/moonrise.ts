@@ -1,5 +1,7 @@
 import {Socket} from 'socket.io';
 import { Player } from './player.js';
+import { Room } from './room.js';
+import { user } from './interface.js';
 const express = require('express');
 const app = express();
 const https = require('https');
@@ -19,12 +21,53 @@ const io = new Server(server, {
     }
 });
 
+const rooms: {[roomId: string]: Room} = {}
+
 io.on('connection', (socket: Socket) => {
-    const player = new Player(socket, null, null);
-    
-    if (player) {
-        console.info(socket);
-    }
+    const player = new Player(socket);
+    let room: Room;
+
+    socket.on('create-room', (user: user) => {
+        room = new Room();
+        room.setPlayer(player);
+
+        player.socket.join(room.getId());
+        player.setUser(user);        
+        player.setRoom(room.getId());
+
+        rooms[room.getId()] = room;
+
+        socket.emit('join-room', "/game/" + room.getId())
+    })
+
+    socket.on('join-room', (id: string, user: user) => {
+        if (!rooms[id]) return;
+        
+        const room = rooms[id];
+
+        room.setPlayer(player);
+
+        player.socket.join(room.getId());
+        player.setUser(user);        
+        player.setRoom(room.getId());
+    })
+
+    socket.on('get-room', () => {
+        let roomId = player.getRoom();
+        
+        if (roomId) {
+            let room = rooms[roomId];
+            socket.emit('get-room', room.getRoom());
+        }
+    })
+
+    socket.on('inputs', inputs => {
+        player.setInputs(inputs);
+
+        if(room) {
+            socket.emit('get-room', room.getRoom());
+        }
+    })
 })
 
 server.listen(3001, () => {

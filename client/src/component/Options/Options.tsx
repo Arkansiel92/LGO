@@ -1,4 +1,4 @@
-import { room } from "../../screen/Game/Game";
+import { room } from "../../screen/Game/Game_old";
 import { useContext } from "react";
 import { socketContext } from "../../context/socket";
 import "./Options.css";

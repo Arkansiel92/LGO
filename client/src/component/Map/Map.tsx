@@ -1,7 +1,9 @@
-import { useRef, useEffect, useContext, useState } from 'react';
+import { useRef, useEffect, useContext, useState, useMemo } from 'react';
 import { socketContext } from '../../context/socket';
-import "./Map.css";
-import { room } from '../../screen/Game/Game';
+import s from "./Map.module.css";
+import { Room } from "../../screen/Game/interface";
+import player_sprite from "../../assets/img/sprites/player/player.png";
+import map_sprite from "../../assets/maps/map1.png";
 
 interface inputs {
   up: boolean,
@@ -11,27 +13,33 @@ interface inputs {
 }
 
 interface props {
-  room: room | null
+  room?: Room
 }
 
-function Map({room}: props) {
+function Map({ room }: props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const socket = useContext(socketContext);
   const [loadMap, setLoadMap] = useState<boolean>(false);
 
-  const inputs: inputs = {
+  const inputs: inputs = useMemo(() => ({
     up: false,
     down: false,
     left: false,
     right: false
-  }
+  }), []);
 
-  const spritePlayer = new Image();
-  spritePlayer.src = "assets/img/sprites/player.png"
+  const spritePlayer = useMemo(() => {
+    const sprite = new Image();
+    sprite.src = player_sprite;
+    return sprite;
+  }, []);
 
-  const map = new Image();
-  map.src = "assets/maps/map1.png";
- 
+  const map = useMemo(() => {
+    const mapImage = new Image();
+    mapImage.src = map_sprite;
+    return mapImage;
+  }, []);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
@@ -52,10 +60,10 @@ function Map({room}: props) {
             if (!player.isDead) {
               ctx.drawImage(
                 spritePlayer,
-                32 * player.frameX,
-                32 * player.frameY,
-                32,
-                32,
+                64 * player.frames.x,
+                64 * player.frames.y,
+                64,
+                64,
                 player.x,
                 player.y,
                 64,
@@ -97,21 +105,21 @@ function Map({room}: props) {
         } else if (e.key === "s") {
           inputs["down"] = false;
         }
-        
+
         if (!room?.night) {
           socket.emit("inputs", inputs);
         }
       };
 
-      // document.addEventListener("keydown", handleKeyDown);
-      // document.addEventListener("keyup", handleKeyUp);
+      document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("keyup", handleKeyUp);
 
       return () => {
-        // document.removeEventListener("keydown", handleKeyDown);
-        // document.removeEventListener("keyup", handleKeyUp);
+        document.removeEventListener("keydown", handleKeyDown);
+        document.removeEventListener("keyup", handleKeyUp);
       };
     }
-  }, [socket, room, loadMap]);
+  }, [socket, room, loadMap, inputs, map, spritePlayer]);
 
   useEffect(() => {
     map.onload = () => {
@@ -120,7 +128,7 @@ function Map({room}: props) {
   }, [map]);
 
   return (
-      <canvas id="map" ref={canvasRef}></canvas>
+    <canvas id="map" className={s.map} ref={canvasRef}></canvas>
   )
 }
 

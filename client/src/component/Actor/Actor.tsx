@@ -1,4 +1,4 @@
-import { roles } from "../../screen/Game/Game";
+import { roles } from "../../screen/Game/Game_old";
 import { socketContext, } from "../../context/socket"
 import { useContext } from "react"
 import "./Actor.css";

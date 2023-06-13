@@ -1,4 +1,4 @@
-import { player } from "../../screen/Game/Game";
+import { player } from "../../screen/Game/Game_old";
 import Counter from "../Counter/Counter";
 import "./Topbar.css";
 

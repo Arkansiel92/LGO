@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { socketContext,  } from "../../context/socket"
-import { message } from "../../screen/Game/Game";
+import { message } from "../../screen/Game/Game_old";
 import "./Message.css";
 
 interface props {

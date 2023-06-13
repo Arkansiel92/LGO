@@ -1,4 +1,4 @@
-import { player, roles, room } from "../../screen/Game/Game";
+import { player, roles, room } from "../../screen/Game/Game_old";
 import { useContext, useEffect, useState } from 'react';
 import { socketContext,  } from '../../context/socket';
 import "./ManagementRoom.css";

@@ -1,5 +1,5 @@
 import "./Mayor.css";
-import { mayor } from "../../screen/Game/Game";
+import { mayor } from "../../screen/Game/Game_old";
 import { socketContext } from '../../context/socket';
 import { useContext } from "react";
 
