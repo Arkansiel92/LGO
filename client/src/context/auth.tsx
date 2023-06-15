@@ -11,10 +11,18 @@ interface notification {
   description: string
 }
 
+interface clan {
+  id: number,
+  name: string,
+  banner: string,
+  emblem: string
+}
+
 interface User {
   id: number;
   clan: number;
   notifications: notification[];
+  membersClan: {clan: clan};
   title: title;
   username: string;
   roles: string[];
@@ -61,14 +69,19 @@ export const AuthProvider = ({ children }: any) => {
     })
     .then(res => res.json())
     .then(data => {
-      const user: User = {
-        id: data[0].id,
-        clan: data[0].membersClan ? data[0].membersClan.clan.id : null,
-        title: data[0].title,
-        notifications: data[0].notifications,
-        username: decode_user.username,
-        roles: decode_user.roles
-      };
+      // const user: User = {
+      //   id: data[0].id,
+      //   clan: data[0].membersClan ? data[0].membersClan.clan.id : null,
+      //   title: data[0].title,
+      //   notifications: data[0].notifications,
+      //   username: decode_user.username,
+      //   roles: decode_user.roles
+      // };
+
+      const user: User = data.find((user: User) => user.username === decode_user.username)
+
+      console.log(user);
+      
 
       setAuthState({ user, isAuthenticated: true });
     })

@@ -67,7 +67,7 @@ function Home() {
         socket.emit('create-room', {
             id: auth.authState.user?.id,
             username: auth.authState.user?.username,
-            clan: auth.authState.user?.clan,
+            clan: auth.authState.user?.membersClan.clan,
             title: auth.authState.user?.title
         });
     }

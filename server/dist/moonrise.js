@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
     socket.on('inputs', inputs => {
         player.setInputs(inputs);
         if (room) {
-            socket.emit('get-room', room.getRoom());
+            io.to(player.getRoom()).emit('get-room', room.getRoom());
         }
     });
 });

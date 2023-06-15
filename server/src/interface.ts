@@ -3,6 +3,12 @@ interface title {
     color: string
 }
 
+interface clan {
+    id: number,
+    banner: string,
+    emblem: string
+}
+
 export interface role {
 
 }
@@ -10,7 +16,7 @@ export interface role {
 export interface user {
     id: number
     username: string
-    clan: number
+    clan: clan
     title: title
 }
 

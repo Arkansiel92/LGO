@@ -7,10 +7,15 @@ export interface role {
 
 }
 
+interface clan {
+    id: number,
+    banner: string,
+    emblem: string
+}
 export interface user {
     id: number
     username: string
-    clan: number
+    clan: clan
     title: title
 }
 

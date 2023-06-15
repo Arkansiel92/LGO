@@ -22,8 +22,8 @@ class Player {
         this.user = null;
         this.role = null;
         this.frames = {x: 0, y: 0};
-        this.x = 0;
-        this.y = 0;
+        this.x = 500;
+        this.y = 500;
         this.isDead = false;
     }
 

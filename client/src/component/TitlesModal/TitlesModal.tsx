@@ -35,6 +35,7 @@ function TitlesModal() {
             .then(res => {
                 if(res.status === 200) {
                     setAlert({type: "success", msg: "Ton titre a été changé avec succès ! Merci d'actualiser pour voir les changements."})
+                    window.location.reload();
                 }
             })
         }

@@ -65,7 +65,7 @@ io.on('connection', (socket: Socket) => {
         player.setInputs(inputs);
 
         if(room) {
-            socket.emit('get-room', room.getRoom());
+            io.to(player.getRoom()).emit('get-room', room.getRoom());
         }
     })
 })
