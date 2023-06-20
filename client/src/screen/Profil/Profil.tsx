@@ -7,6 +7,7 @@ import HistoricGame from "../../component/HistoricGame/HistoricGame";
 import logo from "../../assets/img/role/card-werewolf.svg";
 import Challenges from "../../component/Challenges/Challenges";
 import Loader from "../../component/Loader/Loader";
+import Footer from "../../component/Footer/Footer";
 
 interface title {
     id: number,
@@ -199,6 +200,7 @@ function Profil() {
                             </div>
                         </div>
                         <TitlesModal />
+                        <Footer />
                     </div>
                     : <Loader />
             }

@@ -37,7 +37,7 @@ io.on('connection', (socket: Socket) => {
 
         rooms[room.getId()] = room;
 
-        socket.emit('join-room', "/game/" + room.getId())
+        return socket.emit('join-room', "/game/" + room.getId())
     })
 
     socket.on('join-room', (id: string, user: user) => {
@@ -45,11 +45,15 @@ io.on('connection', (socket: Socket) => {
         
         const room = rooms[id];
 
+        if(room.isCurrentRoom(player.uid)) return socket.emit('join-room', '/');
+
         room.setPlayer(player);
 
         player.socket.join(room.getId());
         player.setUser(user);        
         player.setRoom(room.getId());
+
+        return socket.emit('join-room', "/game/" + room.getId())
     })
 
     socket.on('get-room', () => {

@@ -66,6 +66,17 @@ class Room {
         return this;
     }
 
+    isCurrentRoom(uid: string): boolean {
+
+        for (let i = 0; i < this.players.length; i++) {
+            if (this.players[i].uid === uid) {
+                return true;
+            }        
+        }
+
+        return false;
+    }
+
 }
 
 export { Room };

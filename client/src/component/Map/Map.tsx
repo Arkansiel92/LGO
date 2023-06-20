@@ -90,6 +90,8 @@ function Map({ room }: props) {
         }
 
         if (!room?.night) {
+          console.log("coucou");
+          
           socket.emit("inputs", inputs);
         }
 

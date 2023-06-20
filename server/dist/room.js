@@ -30,6 +30,14 @@ class Room {
         this.players.push(player);
         return this;
     }
+    isCurrentRoom(uid) {
+        for (let i = 0; i < this.players.length; i++) {
+            if (this.players[i].uid === uid) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 exports.Room = Room;
 _Room_instances = new WeakSet(), _Room_generate_uuid = function _Room_generate_uuid() {

@@ -14,17 +14,12 @@ function Player({player}: {player: player}) {
     }
 
     return (
-        <div style={styles} className="p-3 rounded box-shadow">
-            <div className="row">
-                <div className="col-3 p-0 position-relative">
-                    <img src={player.user?.clan.banner} className={s.banner} alt="" width={20} />
-                    <img src={player.user?.clan.emblem} className={s.emblem} alt="" width={10} />
-                </div>
-                <div className="col p-0">
-                    <div style={{fontSize:'15px'}}>{player.user?.username}</div>
-                    <div style={{color: player.user?.title.color, fontSize: "10px"}}>« {player.user?.title.title} »</div>
-                </div>
+        <div style={styles} className="p-2 rounded box-shadow">
+            <div style={{fontSize:'15px'}}>{player.user?.clan.name}</div>
+            <div style={{fontSize:'15px'}}>
+                <strong>{player.user?.username}</strong>
             </div>
+            <div style={{color: player.user?.title.color, fontSize: "12px"}}>« {player.user?.title.title} »</div>
         </div>
     )
 }

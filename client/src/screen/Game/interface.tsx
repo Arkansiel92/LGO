@@ -9,6 +9,7 @@ export interface role {
 
 interface clan {
     id: number,
+    name: string
     banner: string,
     emblem: string
 }

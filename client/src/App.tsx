@@ -7,6 +7,7 @@ import Profil from './screen/Profil/Profil';
 import Admin from './screen/Admin/Admin';
 import CreateClan from './screen/Clan/CreateClan/CreateClan';
 import InfoClan from './screen/Clan/InfoClan/InfoClan';
+import Join from './screen/Join/Join';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/profil/:id" element={<Profil />} />
             <Route path='/leaderboard' element={<Leaderboard />} />
             <Route path="/game/:id" element={<Game />} />
+            <Route path="/game/join/:id" element={<Join />} />
             <Route path="/clan/create" element={<CreateClan />} />
             <Route path="/clan/info/:id" element={<InfoClan />} />
             <Route path="/admin" element={<Admin />} />

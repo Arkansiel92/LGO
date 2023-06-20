@@ -1,0 +1,10 @@
+.join {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 100px;
+    cursor: pointer
+}

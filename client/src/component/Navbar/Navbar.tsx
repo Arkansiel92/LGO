@@ -102,17 +102,23 @@ function Navbar() {
                             : <div className="collapse navbar-collapse">
                                 <ul className="navbar-nav">
                                     {
-                                        auth.authState.user.notifications.length > 0 &&
-                                        <li className="nav-item dropdown">
-                                            <NavLink to={""} className={"nav-link dropdown-toggle text-warning"} role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Notifications
-                                            </NavLink>
-                                            <ul className="dropdown-menu bg-dark">
-                                                <li><a className="dropdown-item" href="#">Action</a></li>
-                                                <li><a className="dropdown-item" href="#">Another action</a></li>
-                                                <li><a className="dropdown-item" href="#">Something else here</a></li>
-                                            </ul>
-                                        </li>
+                                        auth.authState.user.notifications.length > 0
+                                            ? <li className="nav-item dropdown nav-link">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                    <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.026A2 2 0 0 0 2 14h6.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.606-3.446l-.367-.225L8 9.586l-1.239-.757ZM16 4.697v4.974A4.491 4.491 0 0 0 12.5 8a4.49 4.49 0 0 0-1.965.45l-.338-.207L16 4.697Z" />
+                                                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1.5a.5.5 0 0 1-1 0V11a.5.5 0 0 1 1 0Zm0 3a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z" />
+                                                </svg>
+                                                <ul className="dropdown-menu bg-dark">
+                                                    <li><a className="dropdown-item" href="#">Action</a></li>
+                                                    <li><a className="dropdown-item" href="#">Another action</a></li>
+                                                    <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                                </ul>
+                                            </li>
+                                            : <li className='nav-item nav-link'>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
+                                                </svg>
+                                            </li>
                                     }
                                     <li className="nav-item">
                                         <NavLink to={"/profil/" + auth.authState.user?.id} className={"nav-link"}>
