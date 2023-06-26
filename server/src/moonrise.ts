@@ -60,7 +60,7 @@ io.on('connection', (socket: Socket) => {
         let roomId = player.getRoom();
         
         if (roomId) {
-            let room = rooms[roomId];
+            room = rooms[roomId];
             socket.emit('get-room', room.getRoom());
         }
     })

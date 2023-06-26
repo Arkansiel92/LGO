@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
     socket.on('get-room', () => {
         let roomId = player.getRoom();
         if (roomId) {
-            let room = rooms[roomId];
+            room = rooms[roomId];
             socket.emit('get-room', room.getRoom());
         }
     });
