@@ -39,6 +39,7 @@ export interface challengeUsers {
 }
 
 interface profil {
+    id: number
     username: string
     first_name: string,
     last_name: string,
@@ -83,7 +84,12 @@ function Profil() {
             {
                 profil
                     ? <div className="container">
-                        <h1>Mon profil</h1>
+                        {
+                            profil.id === auth.authState.user?.id
+                            ? <h1>Mon profil</h1>
+                            : <h1>Profil de {profil.username}</h1>
+                        }
+                        
                         <div className="row">
                             <div className="col-4">
                                 <div className="card bg-dark box-shadow">

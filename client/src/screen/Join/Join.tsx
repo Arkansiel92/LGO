@@ -25,7 +25,7 @@ function Join() {
             });
         }
 
-    }, [id, auth])
+    }, [id, auth, socket])
 
     return (
         <div className="m-5">

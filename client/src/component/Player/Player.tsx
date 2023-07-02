@@ -1,8 +1,9 @@
 import s from "./Player.module.css";
-import { CSSProperties } from "react";
+import { CSSProperties, useState } from "react";
 import { player } from "../../screen/Game/interface";
 
 function Player({player}: {player: player}) {
+    const [isHovered, setIsHovered] = useState(false);
 
     const styles: CSSProperties = {
         position: 'absolute',
@@ -14,7 +15,7 @@ function Player({player}: {player: player}) {
     }
 
     return (
-        <div style={styles} className="p-2 rounded box-shadow">
+        <div style={styles} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} className="p-2 rounded box-shadow">
             <div style={{fontSize:'15px'}}>{player.user?.clan.name}</div>
             <div style={{fontSize:'15px'}}>
                 <strong>{player.user?.username}</strong>

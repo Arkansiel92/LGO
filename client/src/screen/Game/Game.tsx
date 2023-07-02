@@ -18,7 +18,7 @@ function Game() {
             setRoom(room);
         }
 
-        socket.on('get-room' , onRoom)
+        socket.on('get-room', onRoom)
         socket.emit('get-room');
 
         return () => {
