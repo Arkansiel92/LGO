@@ -1,0 +1,29 @@
+.sidebar-false {
+    position: fixed;
+    left: -100%;
+    height: 100vh;
+    min-height: 100%;
+    transition: left 0.7s ease-in-out;
+    z-index: 1;
+}
+
+.sidebar-true {
+    position: fixed;
+    left: 0;
+    height: 100vh;
+    min-height: 100%;
+    transition: left 0.7s ease-in-out;
+    z-index: 1;
+}
+
+.container-roles {
+    height: 80vh;
+    min-height: 85%;
+    overflow-y: auto;
+}
+
+.card-game {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}

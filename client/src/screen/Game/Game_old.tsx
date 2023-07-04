@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import ManagementRoom from '../../component/ManagementRoom/ManagementRoom';
+import ManagementRoom from '../../component/DashboardGame/DashboardGame';
 import { socketContext,  } from '../../context/socket';
 import Topbar from '../../component/Topbar/Topbar';
 import BoxRole from '../../component/BoxRole/BoxRole';
@@ -222,13 +222,6 @@ function Game() {
                 textarea={boxRole?.textarea}
                 doNothing={boxRole?.doNothing} />}
 
-
-            <ManagementRoom 
-                room={room} 
-                player={player} 
-                inGame={room?.inGame} 
-                sideBar={sideBar} 
-                handleChange={handleSidebarChange} />
 
             {
                 sideBar === false &&

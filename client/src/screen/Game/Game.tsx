@@ -5,6 +5,7 @@ import { Room } from "./interface";
 import Player from "../../component/Player/Player";
 import JoinId from "../../component/JoinId/JoinId";
 import { useParams } from "react-router-dom";
+import DashboardGame from "../../component/DashboardGame/DashboardGame";
 
 function Game() {
     const socket = useContext(socketContext);
@@ -33,6 +34,7 @@ function Game() {
             {currentRoom?.players.map((player, index) => (
                 <Player key={index} player={player} />
             ))}
+            <DashboardGame room={currentRoom} />
         </div>
     )
 }

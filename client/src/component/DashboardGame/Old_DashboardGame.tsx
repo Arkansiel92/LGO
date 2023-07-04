@@ -1,7 +1,6 @@
 import { player, roles, room } from "../../screen/Game/Game_old";
 import { useContext, useEffect, useState } from 'react';
 import { socketContext,  } from '../../context/socket';
-import "./ManagementRoom.css";
 import Role from "../Role/Role";
 import Chat from "../Chat/Chat";
 import SettingsInGame from "../SettingsInGame/SettingsInGame";
@@ -14,7 +13,7 @@ interface props {
     handleChange: (bool: boolean) => void
 }
 
-function ManagementRoom({ room, player, inGame, sideBar, handleChange }: props) {
+function DashboardGame({ room, player, inGame, sideBar, handleChange }: props) {
 
     const [roleScreen, setRoleScreen] = useState(false);
     const [roles, setRoles] = useState<roles[] | null>(null);
@@ -80,4 +79,4 @@ function ManagementRoom({ room, player, inGame, sideBar, handleChange }: props) 
     )
 }
 
-export default ManagementRoom;
+export default DashboardGame;
